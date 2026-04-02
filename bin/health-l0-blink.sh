@@ -11,7 +11,7 @@ ERRORS=0
 [ -f "$ROOT/AGENTS.md" ] || { echo "FAIL: AGENTS.md missing"; ERRORS=$((ERRORS+1)); }
 
 # No hardcoded paths (fast: only check src/, not venvs/)
-HARDCODED=$(grep -r "/home/nxyme/nx_openmore" "$ROOT/src/" "$ROOT/athena/src/" --include="*.py" 2>/dev/null | wc -l || true)
+HARDCODED=$(rg --type py "/home/nxyme/nx_openmore" "$ROOT/src/" "$ROOT/athena/src/" 2>/dev/null | wc -l || true)
 [ "$HARDCODED" -eq 0 ] || { echo "FAIL: $HARDCODED hardcoded paths"; ERRORS=$((ERRORS+1)); }
 
 # Venv exists

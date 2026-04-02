@@ -91,7 +91,7 @@ CONTEXT_TRACKED=$(git -C "$ROOT" ls-files context/ 2>/dev/null | wc -l)
 # 8. Ollama (optional)
 echo ""
 echo "--- Ollama (optional) ---"
-if curl -s http://localhost:11434/api/tags >/dev/null 2>&1; then
+if curl -sf --max-time 3 http://localhost:11434/api/tags >/dev/null 2>&1; then
   pass "Ollama running"
 else
   warn "Ollama not responding at localhost:11434"

@@ -11,7 +11,7 @@ echo "Config files valid..."
 python3 -m json.tool "$ROOT/opencode.json" > /dev/null 2>&1 || { echo "FAIL: opencode.json invalid JSON"; ERRORS=$((ERRORS+1)); }
 
 # Broken symlinks
-BROKEN=$(find "$ROOT" -xtype l 2>/dev/null | wc -l)
+BROKEN=$(find "$ROOT" -not -path "*/venvs/*" -not -path "*/.git/*" -not -path "*/node_modules/*" -not -path "*/.cache/*" -xtype l 2>/dev/null | wc -l)
 [ "$BROKEN" -eq 0 ] || { echo "WARN: $BROKEN broken symlinks"; }
 
 # Python deps intact

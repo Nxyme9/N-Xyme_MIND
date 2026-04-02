@@ -27,7 +27,7 @@ git commit -m "auto-backup: $TIMESTAMP" --no-verify || echo "[WARN] Nothing to c
 # Push if remote exists
 if git remote get-url origin &>/dev/null; then
   BRANCH=$(git branch --show-current 2>/dev/null || echo "master")
-  git push origin "$BRANCH" 2>/dev/null || echo "[WARN] Push failed — will retry next backup"
+  timeout 30 git push origin "$BRANCH" 2>/dev/null || echo "[WARN] Push failed — will retry next backup"
 fi
 
 echo "[OK] Backup complete: $CHANGES files committed"
