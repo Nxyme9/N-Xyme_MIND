@@ -8,6 +8,10 @@ echo "=== N-Xyme_MIND Bootstrap ==="
 # 1. Detect OS
 if [ -f /etc/arch-release ]; then
     DISTRO="arch"
+elif [ -f /etc/fedora-release ]; then
+    DISTRO="fedora"
+elif [ -f /etc/redhat-release ]; then
+    DISTRO="rhel"
 elif [ -f /etc/debian_version ]; then
     DISTRO="debian"
 else
@@ -23,15 +27,17 @@ install_if_missing() {
         case "$DISTRO" in
             arch)   sudo pacman -S --noconfirm "$2" ;;
             debian) sudo apt install -y "$3" ;;
+            fedora) sudo dnf install -y "$4" ;;
+            rhel)   sudo yum install -y "$4" ;;
         esac
     else
         echo "$1 already installed: $(command -v $1)"
     fi
 }
 
-install_if_missing node nodejs nodejs
-install_if_missing npm npm npm
-install_if_missing curl curl curl
+install_if_missing node nodejs nodejs nodejs
+install_if_missing npm npm npm npm
+install_if_missing curl curl curl curl
 
 # 3. Install uv
 if ! command -v uv &>/dev/null; then

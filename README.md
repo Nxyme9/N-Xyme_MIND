@@ -48,3 +48,26 @@ bash bin/health-l2-vitals.sh # <60s deep integrity
 ```bash
 bash bootstrap.sh
 ```
+
+## Sprint 2 — Security & Performance Hardening
+
+### Security
+- GitHub PAT removed from remote URL (was exposed)
+- Pre-commit hook installed for secret scanning
+- `.env.example` template created
+
+### Configuration
+- OMO config deduplicated (global is source of truth)
+- Project `oh-my-opencode.json` is now minimal override only
+
+### Performance
+- athena venv slimmed: 5.6GB → 1.2GB (removed unused nvidia/torch/triton)
+- Health checks: L0 7ms, L1 41ms, L2 216ms
+
+### Cleanup
+- Empty `src/agent/` and `src/agents/` directories removed
+- Rules index created (33 rules organized by category)
+
+### Portability
+- `bootstrap.sh` now supports Arch/Debian/Fedora/RHEL
+- All shebangs portable (`#!/usr/bin/env bash/python3`)

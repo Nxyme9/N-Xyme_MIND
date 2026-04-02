@@ -41,3 +41,12 @@ logs/
 context/opencode/*.db
 context/opencode/
 context/
+
+# Runtime (auto-generated)
+.opencode/opencode.json
+
+# Evidence (QA artifacts)
+.sisyphus/evidence/
+
+# Pre-commit config
+.pre-commit-config.yaml

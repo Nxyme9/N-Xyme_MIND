@@ -1,0 +1,36 @@
+name: CI
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+jobs:
+  health-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Verify configs
+        run: |
+          python3 -m json.tool opencode.json > /dev/null
+          python3 -m json.tool oh-my-opencode.json > /dev/null
+      - name: Check hardcoded paths
+        run: |
+          COUNT=$(grep -r "/home/nxyme/nx_openmore" src/ athena/src/ --include="*.py" 2>/dev/null | wc -l || true)
+          if [ "$COUNT" -gt 0 ]; then echo "ERROR: $COUNT hardcoded paths"; exit 1; fi
+      - name: Check shebangs
+        run: |
+          COUNT=$(grep -r "^#!/usr/bin/python" src/ athena/src/ --include="*.py" 2>/dev/null | wc -l || true)
+          if [ "$COUNT" -gt 0 ]; then echo "ERROR: $COUNT hardcoded shebangs"; exit 1; fi
+      - name: Secret scan
+        run: |
+          if grep -r "ghp_[A-Za-z0-9]" . --include="*.json" --include="*.py" --include="*.md" --include="*.sh" 2>/dev/null | grep -v "example\|placeholder"; then echo "ERROR: Secrets found!"; exit 1; fi
