@@ -1,0 +1,130 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+  "hashline_edit": true,
+  "experimental": {
+    "dynamic_context_pruning": {
+      "enabled": true,
+      "notification": "minimal",
+      "turn_protection": {
+        "enabled": true,
+        "turns": 3
+      },
+      "protected_tools": ["read", "grep", "glob"],
+      "strategies": {
+        "deduplication": { "enabled": true },
+        "supersede_writes": { "enabled": true, "aggressive": false },
+        "purge_errors": { "enabled": true, "turns": 5 }
+      }
+    }
+  },
+  "agents": {
+    "sisyphus": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.3,
+      "reasoningEffort": "high",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "hephaestus": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.2,
+      "reasoningEffort": "medium",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "oracle": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.1,
+      "reasoningEffort": "xhigh",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "prometheus": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.4,
+      "reasoningEffort": "high",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "metis": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.2,
+      "reasoningEffort": "high",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "momus": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high",
+      "temperature": 0.1,
+      "reasoningEffort": "xhigh",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "atlas": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "medium",
+      "temperature": 0.2,
+      "reasoningEffort": "medium",
+      "fallback_models": ["opencode/kimi-k2.5-free", "opencode/minimax-m2.5-free"]
+    },
+    "explore": {
+      "model": "opencode/minimax-m2.5-free",
+      "temperature": 0.1,
+      "reasoningEffort": "low",
+      "fallback_models": ["opencode/mimo-v2-pro-free"]
+    },
+    "librarian": {
+      "model": "opencode/minimax-m2.5-free",
+      "temperature": 0.3,
+      "reasoningEffort": "low",
+      "fallback_models": ["opencode/mimo-v2-pro-free"]
+    },
+    "sisyphus-junior": {
+      "model": "opencode/minimax-m2.5-free",
+      "temperature": 0.2,
+      "reasoningEffort": "low",
+      "fallback_models": ["opencode/mimo-v2-pro-free"]
+    },
+    "multimodal-looker": {
+      "model": "opencode/mimo-v2-omni-free",
+      "variant": "medium",
+      "temperature": 0.2,
+      "reasoningEffort": "medium",
+      "fallback_models": ["opencode/mimo-v2-pro-free"]
+    }
+  },
+  "categories": {
+    "visual-engineering": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high"
+    },
+    "ultrabrain": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high"
+    },
+    "deep": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high"
+    },
+    "artistry": {
+      "model": "opencode/kimi-k2.5-free",
+      "variant": "high"
+    },
+    "quick": {
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "unspecified-low": {
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "unspecified-high": {
+      "model": "opencode/mimo-v2-pro-free",
+      "variant": "high"
+    },
+    "routing": {
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "writing": {
+      "model": "opencode/kimi-k2.5-free"
+    }
+  }
+}

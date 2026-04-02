@@ -1,0 +1,129 @@
+# ============================================================================
+# athena.yaml — Agent Manifest
+# ============================================================================
+# Single declarative file that defines your agent's configuration.
+# Fork Athena, override this file, and you have a new agent.
+#
+# Stolen from: GitClaw's agent.yaml pattern (github.com/open-gitagent/gitclaw)
+# Adapted for: Athena's biological stack architecture
+# ============================================================================
+
+spec_version: "1.0.0"
+name: athena
+version: 9.5.6
+description: >
+  Cognitive augmentation layer — persistent memory, structured reasoning,
+  and full data ownership across any AI model.
+
+# ---------------------------------------------------------------------------
+# Model Configuration
+# ---------------------------------------------------------------------------
+model:
+  preferred: "gemini:gemini-3.1-pro"
+  fallback:
+    - "anthropic:claude-opus-4.6"
+    - "openai:gpt-5.4"
+  constraints:
+    temperature: 0.7
+    max_tokens: 8192
+
+# ---------------------------------------------------------------------------
+# Identity (Override these to make the agent yours)
+# ---------------------------------------------------------------------------
+identity:
+  soul: ".context/memory_bank/productContext.md" # Who the agent IS
+  user: ".context/memory_bank/userContext.md" # Who the user IS
+  constraints: ".context/memory_bank/constraints.md" # Behavioral limits
+  active_context: ".context/memory_bank/activeContext.md" # Current state
+
+# ---------------------------------------------------------------------------
+# Tools — Built-in + Declarative
+# ---------------------------------------------------------------------------
+tools:
+  builtin:
+    - cli # Shell execution
+    - read # File reading
+    - write # File writing
+    - search # Exocortex semantic search
+    - memory # Quicksave / session logging
+    - browser # Web interaction
+
+  # Declarative tools: YAML definitions in tools/ directory
+  # Each .yaml file defines: name, description, input_schema, implementation
+  declarative_dir: "tools/"
+
+# ---------------------------------------------------------------------------
+# Skills — Composable instruction modules
+# ---------------------------------------------------------------------------
+skills:
+  dir: ".agent/skills/"
+  # Skills are auto-discovered from SKILL.md frontmatter.
+  # Override to restrict which skills are available:
+  # enabled: [trading-risk-gate, zenith-execution, semantic-search]
+
+# ---------------------------------------------------------------------------
+# Workflows — Slash commands
+# ---------------------------------------------------------------------------
+workflows:
+  dir: ".agent/workflows/"
+  # Each .md file with YAML frontmatter becomes a /command
+
+# ---------------------------------------------------------------------------
+# Hooks — Lifecycle gates (pre/post execution)
+# ---------------------------------------------------------------------------
+hooks:
+  dir: ".agent/hooks/"
+  # See hooks/hooks.yaml for hook definitions.
+  # Hooks return: { action: allow | block | modify, reason?: string }
+
+# ---------------------------------------------------------------------------
+# Memory Architecture
+# ---------------------------------------------------------------------------
+memory:
+  type: "hybrid" # file + vector
+  file_store: "./context/" # User's session directory
+  vector_store: "chromadb" # Local vector store (no cloud needed)
+  embedding_provider: "ollama"
+  embedding_model: "mxbai-embed-large"
+  embedding_dimensions: 1024
+  ollama_base_url: "http://localhost:11434"
+  search:
+    engine: "hybrid-rrf" # Parallel Hybrid RRF
+    sources: 5
+    include_personal: true
+
+# ---------------------------------------------------------------------------
+# Runtime
+# ---------------------------------------------------------------------------
+runtime:
+  boot_tokens: 10000 # Target boot size
+  boot_command: "/start"
+  shutdown_command: "/end"
+  max_turns: 50
+  timeout: 120
+  risk_routing:
+    sniper: { lambda_max: 10, search: false } # Direct answer
+    standard: { lambda_range: [10, 30], search: true } # Triple-Lock
+    ultra: { lambda_min: 30, search: true, reasoning: "triple-crown" }
+
+# ---------------------------------------------------------------------------
+# Governance
+# ---------------------------------------------------------------------------
+governance:
+  laws:
+    - "No Irreversible Ruin"
+    - "Context is King (SDR)"
+    - "Actions > Words"
+  capability_levels: 4 # L0 (read-only) to L3 (full agency)
+  circuit_breaker:
+    max_consecutive_failures: 2 # P514
+    action: "stop_and_diagnose"
+
+# ---------------------------------------------------------------------------
+# Inheritance (Fork & Extend)
+# ---------------------------------------------------------------------------
+# extends: "https://github.com/winstonkoh87/Athena-Public.git"
+#
+# Uncomment 'extends' in your fork to inherit Athena's base config.
+# Override only what you change — identity, model, skills.
+# Your fork IS your agent.

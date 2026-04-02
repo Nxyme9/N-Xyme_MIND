@@ -1,0 +1,25 @@
+# Athena Sandbox (Law #1: No Irreversible Ruin)
+# Isolated execution environment for untrusted/experimental code.
+#
+# Build:  docker build -f Dockerfile.sandbox -t athena-sandbox .
+# Usage:  docker run --rm --read-only --network none athena-sandbox python3 /workspace/script.py
+
+FROM python:3.12-alpine
+
+# Security: Non-root user
+RUN adduser -D -u 1000 athena
+
+# Minimal packages for common data science tasks
+RUN pip install --no-cache-dir \
+    requests \
+    numpy \
+    pandas
+
+# Working directory
+WORKDIR /workspace
+
+# Switch to non-root
+USER athena
+
+# Default command (overridden by athenad)
+CMD ["python3", "--version"]

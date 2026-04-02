@@ -1,0 +1,16 @@
+# Athena-Public Dependencies
+# Note: Pygments is a transitive dep of rich (>=2.13.0,<3.0.0).
+# CVE-2026-4539 (Low, ReDoS) has no patch yet. Monitoring.
+python-dotenv>=1.0.0
+google-generativeai>=0.7.0
+supabase>=2.0.0
+requests>=2.31.0
+pydantic>=2.0.0
+anthropic>=0.40.0
+flashrank>=0.2.9
+sentence-transformers>=2.2.0
+torch>=2.0.0
+fastapi>=0.100.0
+uvicorn>=0.23.0
+rich>=13.0.0
+watchdog>=3.0.0

@@ -1,0 +1,32 @@
+{
+  "last_agent": "Prometheus",
+  "last_action": "Fixing post-reinstall issues: drives, MCPs, agents, backup",
+  "session_started": "2026-04-02T00:00:00Z",
+  "last_updated": "2026-04-02T01:15:00Z",
+  "current_task": "Fixing agent auth, MCPs, backup extraction, game install",
+  "pending_changes": [
+    "Subagent auth - opencode providers login needed",
+    "athena MCP - disabled, needs npm alt or venv fix",
+    "Backup .img.zst decompression",
+    "Game installation via Wine"
+  ],
+  "completed_changes": [
+    "5 drives mounted via fstab",
+    "Node.js + uv installed",
+    "Ollama installed and running",
+    "6/8 MCPs working (sequential-thinking, memory, git, serena, context7, github)",
+    "hindsight imports fixed via uv pip reinstall",
+    "opencode.json paths fixed (nxyme -> n-xyme)",
+    "Agent models set to mimo-v2-pro-free",
+    "Explore/librarian bash permissions fixed",
+    "opencode startup fixed",
+    "Fish PATH fixed",
+    "external_directory permission set to allow",
+    "Game ISO mounted"
+  ],
+  "context": {
+    "system": "CachyOS post-reinstall recovery",
+    "python": "3.14 (venv broken, pip shebangs corrupted)",
+    "key_issue": "Subagents need opencode providers login"
+  }
+}

@@ -1,0 +1,32 @@
+# First declarative tool definition — wraps the existing smart_search.py
+name: exocortex_search
+description: >
+  Search the Exocortex knowledge base using Parallel Hybrid RRF
+  (semantic embeddings + keyword + reranking). Use this for any query
+  requiring contextual recall from the .context/ knowledge base.
+input_schema:
+  properties:
+    query:
+      type: string
+      description: Natural language search query
+    limit:
+      type: number
+      description: Maximum results to return
+      default: 5
+    include_personal:
+      type: boolean
+      description: Include personal/private memory files
+      default: true
+    skills_only:
+      type: boolean
+      description: Search only skill definitions
+      default: false
+  required: [query]
+implementation:
+  script: ../examples/scripts/smart_search.py
+  runtime: python3
+  args_template: >
+    {query}
+    --limit {limit}
+    {% if include_personal %}--include-personal{% endif %}
+    {% if skills_only %}--skills-only{% endif %}

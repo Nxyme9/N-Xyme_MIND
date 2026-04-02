@@ -1,0 +1,538 @@
+{
+  "version": "1.0.0",
+  "description": "Unified trigger configuration for N-Xyme Catalyst nervous system",
+  "last_updated": "2026-03-25",
+  "action_registry": {
+    "restart_service": {
+      "type": "pm2",
+      "method": "restart",
+      "description": "Restart a PM2-managed service",
+      "handler": "self_healer._restart_service",
+      "params": [
+        "service_name"
+      ],
+      "timeout_seconds": 30
+    },
+    "throttle_ollama": {
+      "type": "gpu",
+      "method": "log_warning",
+      "description": "Reduce Ollama inference concurrency to lower GPU load",
+      "handler": "gpu_heartbeat.throttle_ollama",
+      "params": [
+        "target_concurrency"
+      ],
+      "timeout_seconds": 10
+    },
+    "force_gc": {
+      "type": "pm2",
+      "method": "force_gc",
+      "description": "Force garbage collection and VRAM cleanup on GPU processes",
+      "handler": "gpu_heartbeat.force_gc",
+      "params": [],
+      "timeout_seconds": 15
+    },
+    "alert": {
+      "type": "notify",
+      "method": "log_critical",
+      "description": "Send notification to event bus and log warning",
+      "handler": "self_healer._notify_failure",
+      "params": [
+        "service_name",
+        "message"
+      ],
+      "timeout_seconds": 5
+    },
+    "quarantine": {
+      "type": "service",
+      "method": "quarantine",
+      "description": "Disable service and move to quarantine directory",
+      "handler": "self_healer._switch_fallback",
+      "params": [
+        "service_name"
+      ],
+      "timeout_seconds": 10
+    },
+    "clean_stale": {
+      "type": "service",
+      "method": "clean",
+      "description": "Remove stale sessions older than threshold",
+      "handler": "heartbeat.clean_stale_sessions",
+      "params": [
+        "max_age_days"
+      ],
+      "timeout_seconds": 60
+    },
+    "clear_lock": {
+      "type": "service",
+      "method": "clear",
+      "description": "Release database locks and restart connections",
+      "handler": "heartbeat.clear_db_lock",
+      "params": [
+        "db_path"
+      ],
+      "timeout_seconds": 15
+    },
+    "rotate_vpn": {
+      "type": "script",
+      "method": "run",
+      "description": "Rotate VPN connection to get new IP address",
+      "handler": "trigger_router._rotate_vpn",
+      "params": [
+        "provider"
+      ],
+      "timeout_seconds": 60
+    },
+    "rotate_api_key": {
+      "type": "script",
+      "method": "run",
+      "description": "Rotate to next available API key when rate limited",
+      "handler": "trigger_router._rotate_api_key",
+      "params": [
+        "provider"
+      ],
+      "timeout_seconds": 30
+    },
+    "validate_config": {
+      "type": "config",
+      "method": "validate",
+      "description": "Run startup-validate.py checks",
+      "timeout_seconds": 30
+    },
+    "check_model": {
+      "type": "graphiti",
+      "method": "check_embedding",
+      "description": "Verify embedding model and dimensions",
+      "timeout_seconds": 15
+    },
+    "restart_graphiti": {
+      "type": "pm2",
+      "method": "restart",
+      "description": "Restart graphiti-mcp via PM2",
+      "timeout_seconds": 30
+    },
+    "verify_all": {
+      "type": "system",
+      "method": "boot_verify",
+      "description": "Run full startup validation",
+      "timeout_seconds": 60
+    },
+    "pull_model": {
+      "type": "ollama",
+      "method": "pull",
+      "description": "Pull missing Ollama model",
+      "timeout_seconds": 300
+    },
+    "diagnose": {
+      "type": "ollama",
+      "method": "diagnose_tool_calling",
+      "description": "Diagnose tool calling issues",
+      "timeout_seconds": 30
+    },
+    "record_velocity": {
+      "type": "velocity",
+      "method": "complete",
+      "description": "Record task completion time",
+      "timeout_seconds": 5
+    },
+    "start_timing": {
+      "type": "velocity",
+      "method": "start",
+      "description": "Start timing a task",
+      "timeout_seconds": 5
+    },
+    "run_reality_check": {
+      "type": "consciousness",
+      "method": "verify",
+      "description": "Run real functionality tests to verify claim",
+      "timeout_seconds": 60
+    },
+    "log_verified_claim": {
+      "type": "consciousness",
+      "method": "log_pass",
+      "description": "Log verified claim with evidence",
+      "timeout_seconds": 5
+    },
+    "reject_claim": {
+      "type": "consciousness",
+      "method": "reject",
+      "description": "Reject claim and alert user",
+      "timeout_seconds": 5
+    },
+    "distill_memory": {
+      "type": "memory",
+      "method": "distill",
+      "description": "Run distill-memory.py to clean memory",
+      "timeout_seconds": 300
+    }
+  },
+  "triggers": {
+    "gpu": [
+      {
+        "id": "gpu_temp_warning",
+        "source": "gpu_heartbeat",
+        "metric": "temperature_c",
+        "condition": "greater_than",
+        "threshold": 85,
+        "severity": "warning",
+        "action": "throttle_ollama",
+        "action_params": {
+          "target_concurrency": 1
+        },
+        "cooldown_seconds": 120,
+        "notify": true,
+        "description": "GPU temperature exceeded 85\u00b0C \u2014 throttling Ollama"
+      },
+      {
+        "id": "gpu_temp_critical",
+        "source": "gpu_heartbeat",
+        "metric": "temperature_c",
+        "condition": "greater_than",
+        "threshold": 90,
+        "severity": "critical",
+        "action": "force_gc",
+        "action_params": {},
+        "cooldown_seconds": 60,
+        "notify": true,
+        "description": "GPU temperature exceeded 90\u00b0C \u2014 forcing VRAM cleanup"
+      },
+      {
+        "id": "gpu_vram_warning",
+        "source": "gpu_heartbeat",
+        "metric": "vram_percent",
+        "condition": "greater_than",
+        "threshold": 85.0,
+        "severity": "warning",
+        "action": "throttle_ollama",
+        "action_params": {
+          "target_concurrency": 1
+        },
+        "cooldown_seconds": 90,
+        "notify": true,
+        "description": "VRAM usage exceeded 85% \u2014 throttling Ollama"
+      },
+      {
+        "id": "gpu_vram_critical",
+        "source": "gpu_heartbeat",
+        "metric": "vram_percent",
+        "condition": "greater_than",
+        "threshold": 95.0,
+        "severity": "critical",
+        "action": "force_gc",
+        "action_params": {},
+        "cooldown_seconds": 30,
+        "notify": true,
+        "description": "VRAM usage exceeded 95% \u2014 forcing immediate cleanup"
+      }
+    ],
+    "pm2": [
+      {
+        "id": "pm2_memory_warning",
+        "source": "pm2",
+        "metric": "memory_mb",
+        "condition": "greater_than",
+        "threshold": 400,
+        "severity": "warning",
+        "action": "alert",
+        "action_params": {
+          "message": "PM2 process memory exceeded 400MB"
+        },
+        "cooldown_seconds": 300,
+        "notify": true,
+        "description": "PM2 process memory usage exceeded 400MB"
+      },
+      {
+        "id": "pm2_memory_critical",
+        "source": "pm2",
+        "metric": "memory_mb",
+        "condition": "greater_than",
+        "threshold": 512,
+        "severity": "critical",
+        "action": "restart_service",
+        "action_params": {},
+        "cooldown_seconds": 120,
+        "notify": true,
+        "description": "PM2 process memory exceeded 512MB \u2014 restarting service"
+      },
+      {
+        "id": "pm2_restarts_high",
+        "source": "pm2",
+        "metric": "restart_count",
+        "condition": "greater_than",
+        "threshold": 5,
+        "severity": "warning",
+        "action": "alert",
+        "action_params": {
+          "message": "PM2 process restarted more than 5 times"
+        },
+        "cooldown_seconds": 600,
+        "notify": true,
+        "description": "Excessive PM2 restarts detected \u2014 possible crash loop"
+      }
+    ],
+    "service": [
+      {
+        "id": "service_unresponsive",
+        "source": "heartbeat",
+        "metric": "response_time_ms",
+        "condition": "greater_than",
+        "threshold": 30000,
+        "severity": "warning",
+        "action": "restart_service",
+        "action_params": {},
+        "cooldown_seconds": 60,
+        "notify": true,
+        "match_pattern": "mcp-*",
+        "description": "MCP service unresponsive for >30s \u2014 restarting"
+      },
+      {
+        "id": "service_crashed",
+        "source": "heartbeat",
+        "metric": "exit_code",
+        "condition": "not_equal",
+        "threshold": 0,
+        "severity": "critical",
+        "action": "restart_service",
+        "action_params": {},
+        "cooldown_seconds": 30,
+        "notify": true,
+        "match_pattern": "mcp-*",
+        "description": "MCP service crashed with non-zero exit code \u2014 restarting"
+      },
+      {
+        "id": "service_repeated_crashes",
+        "source": "heartbeat",
+        "metric": "crash_count",
+        "condition": "greater_than",
+        "threshold": 3,
+        "severity": "critical",
+        "action": "quarantine",
+        "action_params": {},
+        "cooldown_seconds": 300,
+        "notify": true,
+        "match_pattern": "mcp-*",
+        "description": "MCP service crashed 3+ times \u2014 quarantining"
+      }
+    ],
+    "database": [
+      {
+        "id": "db_locked",
+        "source": "heartbeat",
+        "metric": "lock_held_seconds",
+        "condition": "greater_than",
+        "threshold": 10,
+        "severity": "critical",
+        "action": "clear_lock",
+        "action_params": {},
+        "cooldown_seconds": 30,
+        "notify": true,
+        "description": "Database lock held >10s \u2014 clearing"
+      }
+    ],
+    "sessions": [
+      {
+        "id": "stale_sessions",
+        "source": "heartbeat",
+        "metric": "stale_session_count",
+        "condition": "greater_than",
+        "threshold": 10,
+        "severity": "warning",
+        "action": "clean_stale",
+        "action_params": {
+          "max_age_days": 7
+        },
+        "cooldown_seconds": 3600,
+        "notify": false,
+        "description": "More than 10 stale sessions \u2014 cleaning up"
+      }
+    ],
+    "rate_limit": [
+      {
+        "id": "api_429_warning",
+        "source": "rate_limit",
+        "metric": "consecutive_429_count",
+        "condition": "greater_than",
+        "threshold": 0,
+        "severity": "warning",
+        "action": "alert",
+        "action_params": {
+          "message": "API rate limit hit (1x 429) \u2014 monitor for additional failures"
+        },
+        "cooldown_seconds": 300,
+        "notify": true,
+        "description": "First consecutive 429 detected \u2014 alerting, continuing to monitor"
+      },
+      {
+        "id": "api_429_critical",
+        "source": "rate_limit",
+        "metric": "consecutive_429_count",
+        "condition": "greater_than_or_equal",
+        "threshold": 3,
+        "severity": "critical",
+        "action": "rotate_vpn",
+        "action_params": {
+          "provider": "protonvpn"
+        },
+        "cooldown_seconds": 600,
+        "notify": true,
+        "description": "3+ consecutive 429s detected \u2014 initiating VPN rotation"
+      },
+      {
+        "id": "api_key_exhausted",
+        "source": "rate_limit",
+        "metric": "consecutive_429_count",
+        "condition": "greater_than_or_equal",
+        "threshold": 5,
+        "severity": "critical",
+        "action": "rotate_api_key",
+        "action_params": {
+          "provider": "opencode"
+        },
+        "cooldown_seconds": 300,
+        "notify": true,
+        "description": "5+ consecutive 429s after VPN rotation \u2014 trying API key rotation"
+      }
+    ],
+    "config": [
+      {
+        "id": "config_changed",
+        "source": "config",
+        "severity": "warning",
+        "action": "validate_config",
+        "cooldown_seconds": 60,
+        "notify": false,
+        "description": "Config file changed, re-validate"
+      }
+    ],
+    "graphiti": [
+      {
+        "id": "embedding_failed",
+        "source": "graphiti",
+        "severity": "critical",
+        "action": "check_model",
+        "cooldown_seconds": 300,
+        "notify": true,
+        "description": "Embedding model or dimensions wrong",
+        "type": "embedding_failed"
+      },
+      {
+        "id": "graphiti_crashed",
+        "source": "graphiti",
+        "severity": "critical",
+        "action": "restart_graphiti",
+        "cooldown_seconds": 60,
+        "notify": true,
+        "description": "Graphiti MCP crashed or disconnected",
+        "type": "crashed"
+      }
+    ],
+    "ollama": [
+      {
+        "id": "tool_calling_failed",
+        "source": "ollama",
+        "severity": "warning",
+        "action": "diagnose",
+        "cooldown_seconds": 120,
+        "notify": false,
+        "description": "Tool calling failed, diagnose issue"
+      },
+      {
+        "id": "model_missing",
+        "source": "ollama",
+        "severity": "critical",
+        "action": "pull_model",
+        "cooldown_seconds": 600,
+        "notify": true,
+        "description": "Required Ollama model missing"
+      }
+    ],
+    "system": [
+      {
+        "id": "system_boot",
+        "source": "system",
+        "severity": "info",
+        "action": "verify_all",
+        "cooldown_seconds": 0,
+        "notify": false,
+        "description": "System boot, run full verification"
+      }
+    ],
+    "velocity": [
+      {
+        "id": "task_started",
+        "source": "velocity",
+        "type": "task_started",
+        "severity": "info",
+        "action": "start_timing",
+        "cooldown_seconds": 0,
+        "notify": false
+      },
+      {
+        "id": "task_completed",
+        "source": "velocity",
+        "type": "task_completed",
+        "severity": "info",
+        "action": "record_velocity",
+        "cooldown_seconds": 0,
+        "notify": false
+      }
+    ],
+    "consciousness": [
+      {
+        "id": "claim_made",
+        "source": "consciousness",
+        "type": "claim_made",
+        "severity": "info",
+        "action": "run_reality_check",
+        "cooldown_seconds": 0,
+        "notify": false,
+        "description": "Agent made a completion claim, verify with real tests"
+      },
+      {
+        "id": "reality_check_passed",
+        "source": "consciousness",
+        "type": "reality_check_passed",
+        "severity": "info",
+        "action": "log_verified_claim",
+        "cooldown_seconds": 0,
+        "notify": false,
+        "description": "Claim verified by real tests"
+      },
+      {
+        "id": "reality_check_failed",
+        "source": "consciousness",
+        "type": "reality_check_failed",
+        "severity": "critical",
+        "action": "reject_claim",
+        "cooldown_seconds": 0,
+        "notify": true,
+        "description": "Claim failed verification, reject and alert"
+      }
+    ],
+    "memory": [
+      {
+        "id": "memory_distill",
+        "source": "memory",
+        "type": "distill",
+        "severity": "info",
+        "action": "distill_memory",
+        "cooldown_seconds": 3600,
+        "notify": false,
+        "description": "Distill noisy episodes into meaningful knowledge"
+      }
+    ]
+  },
+  "global_settings": {
+    "max_concurrent_actions": 3,
+    "default_cooldown_seconds": 60,
+    "escalation_after_failures": 3,
+    "notification_channels": [
+      "event_bus",
+      "log"
+    ],
+    "circuit_breaker": {
+      "max_failures": 3,
+      "window_seconds": 60,
+      "reset_after_seconds": 300
+    }
+  }
+}

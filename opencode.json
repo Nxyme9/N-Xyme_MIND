@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "athena": {
+      "type": "local",
+      "command": ["./venvs/athena/bin/python", "-m", "athena.mcp_server"],
+      "environment": {
+        "PYTHONPATH": "./athena/src",
+        "EMBEDDING_PROVIDER": "ollama"
+      }
+    },
+    "github": {
+      "type": "local",
+      "command": ["./bin/github-mcp-server", "stdio", "--toolsets", "all"],
+      "environment": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "hindsight": {
+      "type": "local",
+      "command": ["./venvs/athena/bin/python", "./hindsight_mcp.py"],
+      "environment": {
+        "HINDSIGHT_API_LLM_PROVIDER": "ollama",
+        "HINDSIGHT_API_LLM_MODEL": "qwen2.5:14b",
+        "HINDSIGHT_API_LLM_BASE_URL": "http://localhost:11434/v1",
+        "HINDSIGHT_API_LLM_API_KEY": "ollama"
+      }
+    }
+  }
+}

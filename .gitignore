@@ -1,0 +1,43 @@
+# Secrets
+.env
+*.key
+*.pem
+
+# Python
+venvs/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+
+# Node
+node_modules/
+.cache/
+
+# OpenCode runtime
+.opencode/data/
+.opencode/cache/
+
+# Ollama models
+.ollama/models/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temp
+*.tmp
+*.swp
+*~
+context/opencode/*.db
+context/opencode/
+context/

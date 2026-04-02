@@ -1,0 +1,10 @@
+{
+  "nl": {"name": "Netherlands", "servers": ["nl-01", "nl-02", "nl-03"], "fastest": "nl-01"},
+  "jp": {"name": "Japan", "servers": ["jp-01", "jp-02", "jp-03"], "fastest": "jp-01"},
+  "us": {"name": "United States", "servers": ["us-01", "us-02", "us-03"], "fastest": "us-01"},
+  "ca": {"name": "Canada", "servers": ["ca-01", "ca-02", "ca-03"], "fastest": "ca-01"},
+  "pl": {"name": "Poland", "servers": ["pl-01", "pl-02", "pl-03"], "fastest": "pl-01"},
+  "ro": {"name": "Romania", "servers": ["ro-01", "ro-02", "ro-03"], "fastest": "ro-01"},
+  "no": {"name": "Norway", "servers": ["no-01", "no-02", "no-03"], "fastest": "no-01"},
+  "se": {"name": "Sweden", "servers": ["se-01", "se-02", "se-03"], "fastest": "se-01"}
+}

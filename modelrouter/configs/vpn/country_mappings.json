@@ -1,0 +1,58 @@
+{
+  "nl": {
+    "name": "Netherlands",
+    "server_pattern": "ProtonVPN NL-FREE",
+    "server": "node-nl-245.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "jp": {
+    "name": "Japan",
+    "server_pattern": "ProtonVPN JP-FREE",
+    "server": "node-jp-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "us": {
+    "name": "United States",
+    "server_pattern": "ProtonVPN US-FREE",
+    "server": "node-us-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "ca": {
+    "name": "Canada",
+    "server_pattern": "ProtonVPN CA-FREE",
+    "server": "node-ca-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "pl": {
+    "name": "Poland",
+    "server_pattern": "ProtonVPN PL-FREE",
+    "server": "node-pl-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "ro": {
+    "name": "Romania",
+    "server_pattern": "ProtonVPN RO-FREE",
+    "server": "node-ro-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "no": {
+    "name": "Norway",
+    "server_pattern": "ProtonVPN NO-FREE",
+    "server": "node-no-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  },
+  "se": {
+    "name": "Sweden",
+    "server_pattern": "ProtonVPN SE-FREE",
+    "server": "node-se-01.protonvpn.net",
+    "protocol": "tcp",
+    "port": 443
+  }
+}

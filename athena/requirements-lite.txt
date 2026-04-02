@@ -1,0 +1,12 @@
+# Athena SDK - Lightweight Dependencies
+# Install: pip install -r requirements-lite.txt
+#
+# This is the minimal set for the core framework (memory, workflows, CLI).
+# No ML dependencies (torch, sentence-transformers) — installs in ~30 seconds.
+# For vector search and reranking, use: pip install -e ".[full]"
+
+python-dotenv>=1.0.0
+requests>=2.31.0
+pydantic>=2.0.0
+diskcache>=5.6.3
+rich>=13.0.0
