@@ -105,7 +105,9 @@ async def call_provider_with_retry(
                 if response.status_code == 429:
                     # Record rate limit for this key
                     if config.get("api_key"):
-                        key_notifier.record_rate_limit(str(config["api_key"][:20]))
+                        key_prefix = str(config["api_key"][:20])
+                        key_notifier.record_rate_limit(key_prefix)
+                        dashboard.record_rate_limit(key_prefix)
                     
                     # Wait and retry with backoff
                     wait_time = 2 ** attempt  # Exponential backoff
@@ -231,6 +233,11 @@ async def health():
     dashboard.update_provider_health(health_status)
     vpn_status = vpn_ip_pool.get_pool_status()
     dashboard.update_vpn_status(vpn_status)
+    
+    # Update stall status in dashboard
+    stalled = {p: stall_detector.is_provider_stalled(p) for p in ["opencode", "openrouter", "google"]}
+    dashboard.update_stalled_providers(stalled)
+    
     return {
         "status": "healthy",
         "providers": health_status,

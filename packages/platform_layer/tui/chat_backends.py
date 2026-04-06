@@ -25,7 +25,14 @@ try:
 
     LEARNING_ENGINE_AVAILABLE = True
 except ImportError:
-    LEARNING_ENGINE_AVAILABLE = False
+    # Fallback: try with hyphen naming (learning-engine)
+    try:
+        from packages.learning_engine import status as learning_status, route_task
+        from packages.learning_engine.outcome_logger import OutcomeLogger
+
+        LEARNING_ENGINE_AVAILABLE = True
+    except ImportError:
+        LEARNING_ENGINE_AVAILABLE = False
 
 # Local LLM import
 try:
@@ -86,6 +93,14 @@ INTENTS = {
         "kill",
         "reload",
     ],
+    "logs": [
+        "logs",
+        "journal",
+        "recent activity",
+        "what happened",
+        "errors",
+        "trace",
+    ],
     "session": [
         "session",
         "conversation",
@@ -101,12 +116,14 @@ INTENTS = {
 
 
 class ChatBackend:
-    """Bridge between chat and all backend systems."""
+    """Bridge between chat and all N-Xyme MIND backend systems."""
 
     def __init__(self):
         self._cache: dict[str, tuple[Any, float]] = {}
         self._cache_ttl = 30  # seconds
         self._retriever = TEMPRRetriever() if MEMORY_CORE_AVAILABLE else None
+        self._command_history: list[dict] = []  # Store recent commands
+        self._max_history = 20
 
     # ─── Intent Detection ─────────────────────────────────────────────────
 
@@ -459,10 +476,95 @@ class ChatBackend:
                 context_parts.append(f"## Command Error")
                 context_parts.append(cmd_result.get("error", "Unknown error"))
 
+        # Log retrieval (if relevant)
+        if "logs" in intents:
+            logs_result = await self.get_logs(lines=30)
+            if logs_result.get("status") == "ok":
+                context_parts.append(
+                    f"## Recent Logs ({logs_result.get('source', 'unknown')})"
+                )
+                context_parts.append(logs_result.get("logs", "No logs")[:1000])
+            else:
+                context_parts.append(f"## Logs Error")
+                context_parts.append(logs_result.get("error", "Unknown error"))
+
         return {
             "context": "\n\n".join(context_parts) if context_parts else "",
             "intents": intents,
         }
+
+    # ─── Log Retrieval ────────────────────────────────────────────────────────
+
+    async def get_logs(self, service: str = None, lines: int = 50) -> dict:
+        """Get recent logs from journalctl or files."""
+        try:
+            # Try journalctl first for user services
+            if service:
+                cmd = [
+                    "journalctl",
+                    "--user",
+                    "-u",
+                    service,
+                    "-n",
+                    str(lines),
+                    "--no-pager",
+                ]
+            else:
+                cmd = ["journalctl", "--user", "-n", str(lines), "--no-pager"]
+
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=15)
+            if result.returncode == 0 and result.stdout:
+                return {
+                    "status": "ok",
+                    "source": "journalctl",
+                    "logs": result.stdout[-3000:],  # Last 3000 chars
+                    "service": service,
+                }
+        except Exception:
+            pass
+
+        # Fallback: try reading from log files
+        log_paths = [
+            Path("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND") / ".sisyphus" / "session.log",
+            Path.home() / ".local" / "share" / "opencode" / "logs" / "agent.log",
+        ]
+
+        for log_path in log_paths:
+            if log_path.exists():
+                try:
+                    content = log_path.read_text()
+                    lines_list = content.split("\n")
+                    return {
+                        "status": "ok",
+                        "source": str(log_path.name),
+                        "logs": "\n".join(lines_list[-lines:]),
+                    }
+                except Exception:
+                    continue
+
+        return {"status": "error", "error": "No logs found"}
+
+    # ─── Command History ──────────────────────────────────────────────────────
+
+    def add_to_history(self, query: str, response: str, intents: list[str]) -> None:
+        """Add a query/response pair to command history."""
+        import time as time_module
+
+        self._command_history.append(
+            {
+                "query": query,
+                "response": response[:200] if response else "",
+                "intents": intents,
+                "timestamp": time_module.time(),
+            }
+        )
+        # Keep only max_history items
+        if len(self._command_history) > self._max_history:
+            self._command_history = self._command_history[-self._max_history :]
+
+    def get_history(self, limit: int = 10) -> list[dict]:
+        """Get recent command history."""
+        return self._command_history[-limit:]
 
 
 # ─── Convenience Functions ─────────────────────────────────────────────────

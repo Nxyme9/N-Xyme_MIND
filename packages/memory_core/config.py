@@ -11,10 +11,10 @@ Supported override sources (in order of precedence):
 
 Usage:
     from memory_core.config import get_config, MemoryCoreConfig
-    
+
     config = get_config()
     print(f"RRF k value: {config.rrf_k}")
-    
+
     # Access nested config
     db_config = get_config().database
 """
@@ -40,10 +40,11 @@ DEFAULT_DB_PATH = PROJECT_ROOT / "context" / "memory" / "mind_from_mind.db"
 # Dataclasses for Configuration Sections
 # =============================================================================
 
+
 @dataclass
 class DatabaseConfig:
     """Database configuration."""
-    
+
     path: str = "context/memory/mind_from_mind.db"
     connection_timeout_ms: int = 30000
     busy_timeout_ms: int = 5000
@@ -55,21 +56,21 @@ class DatabaseConfig:
 @dataclass
 class RetrievalConfig:
     """Retrieval pipeline configuration."""
-    
+
     # RRF Fusion
-    rrf_k: int = 60
-    
+    rrf_k: int = 35
+
     # Trust-aware reranking
     trust_weight: float = 0.3
-    
+
     # MMR (Maximal Marginal Relevance) reranking
     mmr_lambda: float = 0.5
-    
+
     # Default retrieval parameters
     default_top_k: int = 10
     semantic_weight: float = 0.5
     keyword_weight: float = 0.5
-    
+
     # Feedback threshold for weight adjustment
     feedback_threshold: int = 100
 
@@ -77,16 +78,16 @@ class RetrievalConfig:
 @dataclass
 class PipelineConfig:
     """Retrieval pipeline stage configuration."""
-    
+
     # Query analysis
     enable_query_analysis: bool = True
-    
+
     # Cross-encoder reranking
     enable_cross_encoder: bool = True
-    
+
     # MMR reranking
     enable_mmr_rerank: bool = True
-    
+
     # Latency thresholds (ms)
     query_analysis_timeout_ms: float = 50.0
     retrieve_timeout_ms: float = 500.0
@@ -96,20 +97,20 @@ class PipelineConfig:
 @dataclass
 class CognitiveConfig:
     """Cognitive engine configuration."""
-    
+
     # Forgetting / Decay
     decay_enabled: bool = True
     decay_threshold: float = 0.3
-    
+
     # Trust
     trust_initial: float = 0.5
     trust_verification_boost: float = 0.1
     trust_decay_days: int = 1
-    
+
     # Reconsolidation
     conflict_detection_enabled: bool = True
     similarity_threshold: float = 0.85
-    
+
     # Priority
     priority_update_on_access: bool = True
 
@@ -117,7 +118,7 @@ class CognitiveConfig:
 @dataclass
 class VectorStoreConfig:
     """Vector store configuration."""
-    
+
     embedding_dimension: int = 384
     index_type: str = "hnsw"
     m: int = 16
@@ -128,22 +129,22 @@ class VectorStoreConfig:
 @dataclass
 class Config:
     """Main memory_core configuration container."""
-    
+
     # Database
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
-    
+
     # Retrieval
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
-    
+
     # Pipeline
     pipeline: PipelineConfig = field(default_factory=PipelineConfig)
-    
+
     # Cognitive engines
     cognitive: CognitiveConfig = field(default_factory=CognitiveConfig)
-    
+
     # Vector store
     vector_store: VectorStoreConfig = field(default_factory=VectorStoreConfig)
-    
+
     # Environment
     env_prefix: str = "MEMORY_"
 
@@ -151,6 +152,7 @@ class Config:
 # =============================================================================
 # Configuration Loading
 # =============================================================================
+
 
 def _get_env_prefix() -> str:
     """Get environment variable prefix."""
@@ -161,23 +163,24 @@ def _load_from_file(config_path: Optional[Path]) -> dict:
     """Load configuration from JSON or YAML file."""
     if not config_path or not config_path.exists():
         return {}
-    
+
     try:
         with open(config_path) as f:
             if config_path.suffix in (".yaml", ".yml"):
                 import yaml
+
                 return yaml.safe_load(f) or {}
             elif config_path.suffix == ".json":
                 return json.load(f)
     except Exception as e:
         logger.warning(f"Failed to load config from {config_path}: {e}")
-    
+
     return {}
 
 
 def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
     """Apply environment variable overrides to config dict.
-    
+
     Environment variables are parsed with the prefix and nested keys:
     MEMORY_DATABASE_PATH -> database.path
     MEMORY_RETRIEVAL_RRF_K -> retrieval.rrf_k
@@ -190,7 +193,6 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
         "DATABASE_TIMEOUT": ("database", "connection_timeout_ms"),
         "DB_TIMEOUT_MS": ("database", "connection_timeout_ms"),
         "DATABASE_POOL_SIZE": ("database", "pool_size"),
-        
         # Retrieval
         "RRF_K": ("retrieval", "rrf_k"),
         "RETRIEVAL_RRF_K": ("retrieval", "rrf_k"),
@@ -203,7 +205,6 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
         "SEMANTIC_WEIGHT": ("retrieval", "semantic_weight"),
         "KEYWORD_WEIGHT": ("retrieval", "keyword_weight"),
         "FEEDBACK_THRESHOLD": ("retrieval", "feedback_threshold"),
-        
         # Pipeline
         "QUERY_ANALYSIS_ENABLED": ("pipeline", "enable_query_analysis"),
         "CROSS_ENCODER_ENABLED": ("pipeline", "enable_cross_encoder"),
@@ -211,7 +212,6 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
         "QUERY_ANALYSIS_TIMEOUT_MS": ("pipeline", "query_analysis_timeout_ms"),
         "RETRIEVE_TIMEOUT_MS": ("pipeline", "retrieve_timeout_ms"),
         "RERANK_TIMEOUT_MS": ("pipeline", "rerank_timeout_ms"),
-        
         # Cognitive
         "DECAY_ENABLED": ("cognitive", "decay_enabled"),
         "DECAY_THRESHOLD": ("cognitive", "decay_threshold"),
@@ -220,7 +220,6 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
         "TRUST_DECAY_DAYS": ("cognitive", "trust_decay_days"),
         "CONFLICT_DETECTION_ENABLED": ("cognitive", "conflict_detection_enabled"),
         "SIMILARITY_THRESHOLD": ("cognitive", "similarity_threshold"),
-        
         # Vector store
         "EMBEDDING_DIMENSION": ("vector_store", "embedding_dimension"),
         "INDEX_TYPE": ("vector_store", "index_type"),
@@ -228,7 +227,7 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
         "HNSW_EF_CONSTRUCTION": ("vector_store", "ef_construction"),
         "HNSW_EF_SEARCH": ("vector_store", "ef_search"),
     }
-    
+
     for env_var, (section, key) in env_mappings.items():
         full_key = prefix + env_var
         if full_key in os.environ:
@@ -236,7 +235,7 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
             # Type inference
             if section not in config:
                 config[section] = {}
-            
+
             # Try to convert to appropriate type
             if val.lower() in ("true", "false"):
                 config[section][key] = val.lower() == "true"
@@ -246,7 +245,7 @@ def _apply_env_overrides(config: dict, prefix: str = "MEMORY_") -> dict:
                 config[section][key] = float(val)
             else:
                 config[section][key] = val
-    
+
     return config
 
 
@@ -257,7 +256,7 @@ def _dict_to_config(d: dict) -> Config:
     pipeline_config = PipelineConfig(**d.get("pipeline", {}))
     cognitive_config = CognitiveConfig(**d.get("cognitive", {}))
     vector_store_config = VectorStoreConfig(**d.get("vector_store", {}))
-    
+
     return Config(
         database=db_config,
         retrieval=retrieval_config,
@@ -323,13 +322,13 @@ _config_cache: Optional[Config] = None
 
 def get_config(force_reload: bool = False) -> Config:
     """Get the current memory_core configuration.
-    
+
     Args:
         force_reload: If True, bypass cache and reload from sources.
-    
+
     Returns:
         Config dataclass with all memory_core settings.
-    
+
     Example:
         >>> from memory_core.config import get_config
         >>> config = get_config()
@@ -337,13 +336,13 @@ def get_config(force_reload: bool = False) -> Config:
         >>> print(f"DB path: {config.database.path}")
     """
     global _config_cache
-    
+
     if _config_cache is not None and not force_reload:
         return _config_cache
-    
+
     # Start with defaults as dict
     config_dict = _config_to_dict(Config())
-    
+
     # Load from file (if specified)
     config_path_str = os.environ.get("MEMORY_CONFIG_PATH")
     if config_path_str:
@@ -356,42 +355,47 @@ def get_config(force_reload: bool = False) -> Config:
                     config_dict[section].update(values)
                 else:
                     config_dict[section] = values
-    
+
     # Apply environment overrides
     prefix = _get_env_prefix()
     config_dict = _apply_env_overrides(config_dict, prefix)
-    
+
     # Convert to dataclass
     _config_cache = _dict_to_config(config_dict)
-    
+
     # Resolve relative paths
-    if _config_cache.database.path and not Path(_config_cache.database.path).is_absolute():
+    if (
+        _config_cache.database.path
+        and not Path(_config_cache.database.path).is_absolute()
+    ):
         _config_cache.database.path = str(PROJECT_ROOT / _config_cache.database.path)
-    
-    logger.debug(f"Loaded memory_core config: DB={_config_cache.database.path}, RRF_k={_config_cache.retrieval.rrf_k}")
-    
+
+    logger.debug(
+        f"Loaded memory_core config: DB={_config_cache.database.path}, RRF_k={_config_cache.retrieval.rrf_k}"
+    )
+
     return _config_cache
 
 
 def update_config(updates: dict) -> Config:
     """Update configuration with new values.
-    
+
     Args:
         updates: Dict with section.key nested values or flat keys.
-    
+
     Returns:
         Updated Config dataclass.
-    
+
     Example:
         >>> from memory_core.config import update_config
         >>> config = update_config({"retrieval": {"rrf_k": 50}})
         >>> config = update_config({"RRF_K": 50})  # Also supports env-style keys
     """
     global _config_cache
-    
+
     current = get_config()
     current_dict = _config_to_dict(current)
-    
+
     # Apply updates
     for key, value in updates.items():
         if isinstance(value, dict):
@@ -411,11 +415,11 @@ def update_config(updates: dict) -> Config:
                             break
                 if found:
                     break
-    
+
     # Re-apply env overrides after update
     prefix = _get_env_prefix()
     current_dict = _apply_env_overrides(current_dict, prefix)
-    
+
     _config_cache = _dict_to_config(current_dict)
     return _config_cache
 
@@ -428,24 +432,24 @@ def reset_config() -> None:
 
 def validate_config(config: Optional[Config] = None) -> tuple[bool, list[str]]:
     """Validate configuration values.
-    
+
     Args:
         config: Config to validate. If None, uses current config.
-    
+
     Returns:
         Tuple of (is_valid, list of validation errors).
     """
     if config is None:
         config = get_config()
-    
+
     errors = []
-    
+
     # Database validation
     if config.database.connection_timeout_ms <= 0:
         errors.append("database.connection_timeout_ms must be positive")
     if config.database.pool_size <= 0:
         errors.append("database.pool_size must be positive")
-    
+
     # Retrieval validation
     if not 1 <= config.retrieval.rrf_k <= 1000:
         errors.append("retrieval.rrf_k must be between 1 and 1000")
@@ -459,7 +463,7 @@ def validate_config(config: Optional[Config] = None) -> tuple[bool, list[str]]:
         errors.append("retrieval.semantic_weight must be between 0.0 and 1.0")
     if not 0.0 <= config.retrieval.keyword_weight <= 1.0:
         errors.append("retrieval.keyword_weight must be between 0.0 and 1.0")
-    
+
     # Pipeline validation
     if config.pipeline.query_analysis_timeout_ms <= 0:
         errors.append("pipeline.query_analysis_timeout_ms must be positive")
@@ -467,7 +471,7 @@ def validate_config(config: Optional[Config] = None) -> tuple[bool, list[str]]:
         errors.append("pipeline.retrieve_timeout_ms must be positive")
     if config.pipeline.rerank_timeout_ms <= 0:
         errors.append("pipeline.rerank_timeout_ms must be positive")
-    
+
     # Cognitive validation
     if not 0.0 <= config.cognitive.decay_threshold <= 1.0:
         errors.append("cognitive.decay_threshold must be between 0.0 and 1.0")
@@ -477,7 +481,7 @@ def validate_config(config: Optional[Config] = None) -> tuple[bool, list[str]]:
         errors.append("cognitive.trust_verification_boost must be between 0.0 and 1.0")
     if not 0.0 <= config.cognitive.similarity_threshold <= 1.0:
         errors.append("cognitive.similarity_threshold must be between 0.0 and 1.0")
-    
+
     # Vector store validation
     if config.vector_store.embedding_dimension <= 0:
         errors.append("vector_store.embedding_dimension must be positive")
@@ -489,41 +493,42 @@ def validate_config(config: Optional[Config] = None) -> tuple[bool, list[str]]:
         errors.append("vector_store.ef_construction must be positive")
     if config.vector_store.ef_search <= 0:
         errors.append("vector_store.ef_search must be positive")
-    
+
     return len(errors) == 0, errors
 
 
 def save_config(config: Optional[Config] = None, path: Optional[Path] = None) -> None:
     """Save configuration to file.
-    
+
     Args:
         config: Config to save. If None, uses current config.
         path: Path to save to. If None, uses MEMORY_CONFIG_PATH env or default.
     """
     if config is None:
         config = get_config()
-    
+
     if path is None:
         path_str = os.environ.get("MEMORY_CONFIG_PATH", "")
         if path_str:
             path = Path(path_str)
         else:
             path = PROJECT_ROOT / ".sisyphus" / "memory-config.json"
-    
+
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     config_dict = _config_to_dict(config)
-    
+
     with open(path, "w") as f:
         json.dump(config_dict, f, indent=2)
-    
+
     logger.info(f"Saved memory_core config to {path}")
 
 
 # =============================================================================
 # Convenience Accessors
 # =============================================================================
+
 
 def get_rrf_k() -> int:
     """Get RRF k value."""
@@ -573,7 +578,7 @@ if __name__ == "__main__":
     print(f"  Trust initial: {config.cognitive.trust_initial}")
     print(f"  Similarity threshold: {config.cognitive.similarity_threshold}")
     print()
-    
+
     # Validate
     is_valid, errors = validate_config(config)
     if is_valid:
@@ -582,7 +587,7 @@ if __name__ == "__main__":
         print("✗ Validation errors:")
         for error in errors:
             print(f"  - {error}")
-    
+
     # Check environment overrides
     env_vars = [k for k in os.environ if k.startswith("MEMORY_")]
     if env_vars:

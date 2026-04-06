@@ -18,6 +18,7 @@ Provides:
 - backfill_missing_embeddings: Scan and embed stale memories
 """
 
+from collections import OrderedDict
 import hashlib
 import json
 import logging
@@ -483,25 +484,40 @@ class VectorIndex(VectorStoreABC):
 
 
 class EmbeddingEngine:
-    """Synchronous wrapper for embedding generation."""
+    """Synchronous wrapper for embedding generation with query caching."""
 
     def __init__(
         self,
         ollama_url: str = "http://localhost:11434",
         ollama_model: str = "nomic-embed-text",
         st_model: str = "all-MiniLM-L6-v2",
+        cache_size: int = 256,
     ):
         self.ollama_url = ollama_url
         self.ollama_model = ollama_model
         self.st_model = st_model
         self.st_encoder = None
         self._st_loaded = False
+        # LRU cache for query embeddings
+        self._query_cache: OrderedDict = OrderedDict()
+        self._cache_size = cache_size
 
     def embed_text(self, text: str) -> List[float]:
+        # Check cache first
+        cache_key = text.strip().lower()
+        if cache_key in self._query_cache:
+            self._query_cache.move_to_end(cache_key)
+            return self._query_cache[cache_key]
+
+        embedding = None
+
         # Try Ollama first
         try:
             embedding = self._embed_ollama_sync(text)
             if embedding:
+                self._query_cache[cache_key] = embedding
+                if len(self._query_cache) > self._cache_size:
+                    self._query_cache.popitem(last=False)
                 return embedding
         except Exception as e:
             logger.debug(f"Ollama embedding failed: {e}")
@@ -511,12 +527,19 @@ class EmbeddingEngine:
             try:
                 embedding = self._embed_st(text)
                 if embedding:
+                    self._query_cache[cache_key] = embedding
+                    if len(self._query_cache) > self._cache_size:
+                        self._query_cache.popitem(last=False)
                     return embedding
             except Exception as e:
                 logger.debug(f"ST embedding failed: {e}")
 
         # Last resort: hash-based pseudo-embedding
-        return self._embed_hash(text)
+        embedding = self._embed_hash(text)
+        self._query_cache[cache_key] = embedding
+        if len(self._query_cache) > self._cache_size:
+            self._query_cache.popitem(last=False)
+        return embedding
 
     def _embed_ollama_sync(self, text: str) -> Optional[List[float]]:
         import httpx
