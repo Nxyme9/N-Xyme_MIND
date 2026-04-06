@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sqlite3
 import traceback
 from typing import Any, Dict, Optional
 
@@ -295,3 +296,122 @@ def get_outcomes(
 
 if __name__ == "__main__":
     mcp.run()
+
+
+@mcp.tool()
+def get_learning_progress() -> Dict[str, Any]:
+    """Get real-time learning progress statistics for dashboard (T8.3).
+
+    Returns:
+        Dict with:
+        - total_decisions: Total decisions made
+        - success_rate_over_time: Success rate trend
+        - top_performers: Top agent per task type
+        - q_learning_convergence: Convergence status
+        - exploration_exploitation_ratio: Exploration vs exploitation
+        - recent_reward_trend: Recent reward trend
+    """
+    try:
+        from packages.learning_engine.routing.adaptive_router import AdaptiveRouter
+        from packages.learning_engine.outcome_logger import OutcomeLogger
+
+        # Get Q-Learning stats from AdaptiveRouter
+        router = AdaptiveRouter()
+        learning_stats = router.get_learning_stats()
+
+        # Get agent stats from OutcomeLogger
+        logger = OutcomeLogger()
+        agent_stats = logger.get_all_agent_stats()
+
+        # Get top performer per task type
+        conn = sqlite3.connect(logger.db_path)
+        rows = conn.execute(
+            """SELECT task_type, agent,
+                    COUNT(*) as total,
+                    SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as successes
+               FROM outcomes GROUP BY task_type, agent"""
+        ).fetchall()
+        conn.close()
+
+        # Find top agent per task type
+        task_type_best: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            task_type, agent, total, successes = row
+            success_rate = successes / total if total > 0 else 0
+            if (
+                task_type not in task_type_best
+                or success_rate > task_type_best[task_type]["success_rate"]
+            ):
+                task_type_best[task_type] = {
+                    "agent": agent,
+                    "success_rate": success_rate,
+                    "total": total,
+                }
+
+        # Determine Q-Learning convergence status
+        convergence_status = "warming_up"
+        if learning_stats.total_decisions >= 100:
+            if abs(learning_stats.improvement_trend) < 0.05:
+                convergence_status = "converged"
+            elif learning_stats.improvement_trend > 0.1:
+                convergence_status = "improving"
+            elif learning_stats.improvement_trend < -0.1:
+                convergence_status = "degrading"
+            else:
+                convergence_status = "stable"
+        elif learning_stats.total_decisions >= 50:
+            convergence_status = "learning"
+
+        # Compute exploration vs exploitation ratio
+        total_actions = (
+            learning_stats.exploration_count + learning_stats.exploitation_count
+        )
+        if total_actions > 0:
+            exploration_ratio = learning_stats.exploration_count / total_actions
+            exploitation_ratio = learning_stats.exploitation_count / total_actions
+        else:
+            exploration_ratio = 0.5
+            exploitation_ratio = 0.5
+
+        # Recent reward trend (last 20)
+        recent_rewards = (
+            learning_stats.recent_rewards[-20:] if learning_stats.recent_rewards else []
+        )
+        reward_trend = "neutral"
+        if len(recent_rewards) >= 10:
+            first_half = sum(recent_rewards[:5]) / 5
+            second_half = sum(recent_rewards[5:10]) / 5
+            if second_half > first_half + 0.1:
+                reward_trend = "improving"
+            elif second_half < first_half - 0.1:
+                reward_trend = "declining"
+            else:
+                reward_trend = "stable"
+
+        return {
+            "status": "success",
+            "total_decisions": learning_stats.total_decisions,
+            "success_rate_over_time": {
+                "current": round(learning_stats.success_rate, 3),
+                "trend": learning_stats.improvement_trend,
+            },
+            "top_performers": task_type_best,
+            "q_learning_convergence": {
+                "status": convergence_status,
+                "average_q_value": learning_stats.average_q_value,
+                "total_decisions": learning_stats.total_decisions,
+            },
+            "exploration_exploitation_ratio": {
+                "exploration": round(exploration_ratio, 3),
+                "exploitation": round(exploitation_ratio, 3),
+                "exploration_count": learning_stats.exploration_count,
+                "exploitation_count": learning_stats.exploitation_count,
+            },
+            "recent_reward_trend": {
+                "status": reward_trend,
+                "recent_rewards": recent_rewards,
+            },
+            "agent_overall_performance": agent_stats,
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
