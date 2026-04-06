@@ -7,9 +7,9 @@ MATCHES=$(rg -n 'example\.com|CHANGEME|your-.*-here|xxx|placeholder|REPLACE_ME' 
   --glob='!athena/.venv/**' \
   src/ athena/src/ jarvis-new/src/ 2>/dev/null)
 if [ -n "$MATCHES" ]; then
-  echo "::warning::Placeholder values found"
+  echo "::error::Placeholder values found — commit blocked"
   echo "$MATCHES"
-  exit 0  # Warning only, not blocking
+  exit 1  # Block commit
 else
   echo "[PASS] No placeholders detected"
   exit 0
