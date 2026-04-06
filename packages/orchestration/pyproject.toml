@@ -1,0 +1,20 @@
+[project]
+name = "n-xyme-orchestration"
+version = "0.1.0"
+description = "Agent coordination: lifecycle, task execution, session management, tool registry"
+requires-python = ">=3.12"
+dependencies = ["sqlite3", "asyncio"]
+
+[project.optional-dependencies]
+dev = []
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["orchestration*"]
+
+[tool.setuptools]
+package-dir = {"" = "orchestration"}

@@ -1,0 +1,22 @@
+[project]
+name = "n-xyme-intelligence"
+version = "0.1.0"
+description = "Task routing and delegation intelligence"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+]
+
+[project.optional-dependencies]
+dev = []
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["intelligence*"]
+
+[tool.setuptools.package-dir]
+intelligence = "."

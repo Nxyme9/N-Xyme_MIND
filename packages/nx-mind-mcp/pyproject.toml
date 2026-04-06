@@ -1,0 +1,18 @@
+# nx-mind-mcp
+# MIND state management MCP server for N-Xyme_MIND
+
+[project]
+name = "nx-mind-mcp"
+version = "1.0.0"
+description = "MIND state management MCP server for session continuity"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=2.0.0",
+]
+
+[project.scripts]
+nx-mind-mcp = "nx_mind_mcp.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nx_mind_mcp*"]

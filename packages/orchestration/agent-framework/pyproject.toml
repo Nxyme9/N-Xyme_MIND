@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "agent-framework"
+version = "1.0.0"
+description = "Agent Framework & Permissions for N-Xyme CATALYST"
+authors = ["N-Xyme <n-xyme@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pyyaml = "^6.0"
+jsonschema = "^4.17.3"
+fastapi = "^0.104.1"
+uvicorn = "^0.24.0"
+redis = "^5.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+httpx = "^0.25.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+agent-framework-service = "src.service:app"

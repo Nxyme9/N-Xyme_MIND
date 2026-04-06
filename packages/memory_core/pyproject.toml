@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "n-xyme-memory-core"
+version = "0.1.0"
+description = "Modular memory system with TEMPR retrieval, adaptive forgetting, and cognitive features"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "N-Xyme Team", email = "nxyme@example.com"}
+]
+keywords = ["memory", "retrieval", "ai", "semantic-search", "rag"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "chromadb>=0.4.0",
+    "networkx>=3.0",
+    "numpy>=1.24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/nxyme/n-xyme"
+Repository = "https://github.com/nxyme/n-xyme"
+Documentation = "https://n-xyme.readthedocs.io"
+
+[tool.setuptools]
+packages = ["packages.memory_core", "packages.memory_core.stores", "packages.memory_core.indexing", "packages.memory_core.sessions", "packages.memory_core.cognitive", "packages.memory_core.retrievers"]
+
+[tool.setuptools.package-data]
+packages.memory_core = ["*.md", "*.json"]

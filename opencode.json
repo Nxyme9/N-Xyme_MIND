@@ -1,29 +1,386 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/minimax-m2.5-free",
+  "small_model": "opencode/minimax-m2.5-free",
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "plugin": [
+    "oh-my-openagent@latest"
+  ],
+  "enabled_providers": [
+    "opencode",
+    "openrouter",
+    "google",
+    "ollama"
+  ],
+  "permission": {
+    "external_directory": "allow",
+    "read": {
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "*.env.example": "allow",
+      "*.key": "deny",
+      "*.pem": "deny",
+      "*": "allow"
+    },
+    "edit": {
+      "*.env": "deny",
+      "*.env.*": "deny"
+    },
+    "bash": {
+      "*": "allow",
+      "rm -rf *": "deny",
+      "rm -rf /*": "deny",
+      "sudo *": "deny",
+      "mkfs *": "deny",
+      "dd *": "deny",
+      "chmod 777 *": "deny",
+      "curl * | *sh": "deny",
+      "wget * | *sh": "deny"
+    }
+  },
+  "agent": {
+    "sisyphus": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "hephaestus": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "prometheus": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "atlas": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "allow",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "oracle": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny"
+        }
+      }
+    },
+    "momus": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny"
+        }
+      }
+    },
+    "metis": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny"
+        }
+      }
+    },
+    "explore": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "librarian": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny"
+        }
+      }
+    },
+    "sisyphus-junior": {
+      "model": "opencode/minimax-m2.5-free",
+      "permission": {
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    },
+    "multimodal-looker": {
+      "model": "opencode/mimo-v2-omni-free",
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "allow",
+          "rm *": "deny",
+          "sudo *": "deny"
+        }
+      }
+    }
+  },
   "mcp": {
+    "sequential-thinking": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ]
+    },
+    "context7": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@upstash/context7-mcp@latest"
+      ]
+    },
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-server-filesystem",
+        "."
+      ]
+    },
+    "fetch": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-fetch-server"
+      ]
+    },
+    "git": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "mcp-git"
+      ]
+    },
+    "athena-context": {
+      "type": "local",
+      "command": [
+        "./packages/athena-context-mcp/venv/bin/python",
+        "-m",
+        "athena_context_mcp"
+      ]
+    },
+    "trigger-guardian": {
+      "type": "local",
+      "command": [
+        "./packages/trigger-guardian-mcp/.venv/bin/python",
+        "-m",
+        "trigger_guardian_mcp"
+      ]
+    },
+    "nx-mind": {
+      "type": "local",
+      "command": [
+        "./packages/nx-mind-mcp/venv/bin/python",
+        "-m",
+        "nx_mind_mcp"
+      ]
+    },
     "athena": {
       "type": "local",
-      "command": ["./venvs/athena/bin/python", "-m", "athena.mcp_server"],
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "athena.mcp_server"
+      ],
       "environment": {
-        "PYTHONPATH": "./athena/src",
-        "EMBEDDING_PROVIDER": "ollama"
+        "PYTHONPATH": "./athena/src:."
       }
     },
     "github": {
       "type": "local",
-      "command": ["./bin/github-mcp-server", "stdio", "--toolsets", "all"],
+      "command": [
+        "./bin/github-mcp-server",
+        "stdio",
+        "--toolsets",
+        "all"
+      ],
       "environment": {
         "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
       }
     },
-    "hindsight": {
+    "unified-memory": {
       "type": "local",
-      "command": ["./venvs/athena/bin/python", "./hindsight_mcp.py"],
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "packages.memory_core.mcp_server"
+      ],
       "environment": {
-        "HINDSIGHT_API_LLM_PROVIDER": "ollama",
-        "HINDSIGHT_API_LLM_MODEL": "qwen2.5:14b",
-        "HINDSIGHT_API_LLM_BASE_URL": "http://localhost:11434/v1",
-        "HINDSIGHT_API_LLM_API_KEY": "ollama"
+        "PYTHONPATH": ".:src/infrastructure",
+        "ROOT": "."
+      }
+    },
+    "intelligent-router": {
+      "type": "local",
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "packages.infrastructure.proxy.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "packages:src/infrastructure:."
+      }
+    },
+    "learning-engine": {
+      "type": "local",
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "packages.learning_engine.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
+    },
+    "intelligence": {
+      "type": "local",
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "packages.intelligence.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
+    },
+    "orchestration": {
+      "type": "local",
+      "command": [
+        "./venvs/athena/bin/python",
+        "-m",
+        "packages.orchestration.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
+    }
+  },
+  "provider": {
+    "openrouter": {
+      "options": {
+        "baseURL": "https://openrouter.ai/api/v1"
+      },
+      "models": {
+        "mimo-ai/mimo-v2-pro-free": {
+          "name": "Mimo v2 Pro (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "minimax/minimax-m2.5:free": {
+          "name": "MiniMax M2.5 (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        }
+      }
+    },
+    "google": {
+      "options": {
+        "baseURL": "https://generativelanguage.googleapis.com/v1beta"
+      }
+    },
+    "ollama": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Ollama (local)",
+      "options": {
+        "baseURL": "http://localhost:11434/v1"
+      },
+      "models": {
+        "qwen2.5-coder:7b": {
+          "name": "Qwen 2.5 Coder 7B (local)"
+        },
+        "llama3.2:3b": {
+          "name": "Llama 3.2 3B (local)"
+        }
+      }
+    },
+    "opencode": {
+      "options": {},
+      "models": {
+        "mimo-v2-pro-free": {
+          "name": "Mimo v2 Pro (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "mimo-v2-omni-free": {
+          "name": "Mimo v2 Omni (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "minimax-m2.5-free": {
+          "name": "MiniMax M2.5 (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        },
+        "kimi-k2.5-free": {
+          "name": "Kimi K2.5 (Free)",
+          "limit": {
+            "context": 128000,
+            "output": 8192
+          }
+        }
       }
     }
   }

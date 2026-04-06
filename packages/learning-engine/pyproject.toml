@@ -1,0 +1,25 @@
+[project]
+name = "n-xyme-learning-engine"
+version = "0.1.0"
+description = "Self-learning system: Q-Learning, Bandits, Meta-Learning, EWC, routing optimization"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "joblib",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["rl", "meta", "routing", "delegation", "models", "analytics"]
+
+[tool.typingypy]
+python-version = "3.12"
