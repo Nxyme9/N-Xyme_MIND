@@ -10,6 +10,67 @@ from fastmcp import FastMCP
 
 mcp = FastMCP("N-Xyme Learning Engine")
 
+# ============================================================================
+# MODEL CAPABILITIES (merged from intelligent_router_mcp)
+# ============================================================================
+
+MODEL_CAPABILITIES = {
+    "qwen3.6-plus-free": {
+        "reasoning": 0.95,
+        "coding": 0.92,
+        "creative": 0.88,
+        "math": 0.90,
+        "analysis": 0.93,
+        "summarization": 0.90,
+        "context_window": 1000000,
+    },
+    "qwen3.6-plus": {
+        "reasoning": 0.95,
+        "coding": 0.92,
+        "creative": 0.88,
+        "math": 0.90,
+        "analysis": 0.93,
+        "summarization": 0.90,
+        "context_window": 131072,
+    },
+    "qwen3-coder": {
+        "reasoning": 0.85,
+        "coding": 0.97,
+        "creative": 0.75,
+        "math": 0.80,
+        "analysis": 0.82,
+        "summarization": 0.78,
+        "context_window": 131072,
+    },
+    "deepseek-r1": {
+        "reasoning": 0.93,
+        "coding": 0.88,
+        "creative": 0.82,
+        "math": 0.91,
+        "analysis": 0.90,
+        "summarization": 0.85,
+        "context_window": 131072,
+    },
+    "minimax-m2.5": {
+        "reasoning": 0.72,
+        "coding": 0.70,
+        "creative": 0.78,
+        "math": 0.70,
+        "analysis": 0.75,
+        "summarization": 0.80,
+        "context_window": 32768,
+    },
+    "gemini-2.5-flash": {
+        "reasoning": 0.82,
+        "coding": 0.78,
+        "creative": 0.85,
+        "math": 0.80,
+        "analysis": 0.85,
+        "summarization": 0.88,
+        "context_window": 1048576,
+    },
+}
+
 
 @mcp.tool()
 def record_outcome(

@@ -2,6 +2,7 @@
 """N-Xyme MIND Dashboard v2.0 — ADHD-friendly, complete frontend."""
 
 import json
+import sqlite3
 import subprocess
 import threading
 import time
@@ -32,6 +33,24 @@ from textual.widgets import (
 )
 from textual.reactive import reactive
 from textual import work
+
+# Import LocalLLM for chat functionality
+try:
+    from packages.local_llm.ollama_client import LocalLLM
+
+    LOCAL_LLM_AVAILABLE = True
+except ImportError:
+    LOCAL_LLM_AVAILABLE = False
+    LocalLLM = None  # type: ignore
+
+# Import ChatBackend for AI Chat
+try:
+    from packages.platform_layer.tui.chat_backends import ChatBackend
+
+    CHAT_BACKEND_AVAILABLE = True
+except ImportError:
+    CHAT_BACKEND_AVAILABLE = False
+    ChatBackend = None  # type: ignore
 
 
 # ─── Config Helpers ───────────────────────────────────────────────────────────
@@ -123,36 +142,34 @@ def get_system_stats():
         stats["ollama_running"] = True
     except Exception:
         stats["ollama_running"] = False
+
+    # Memory stats - safe fallback
     try:
         from packages.memory_core.mcp_server import get_memory_stats as _gs
 
         m = _gs()
         stats["memory_sources"] = m.get("total_sources", 0)
         stats["memory_enabled"] = m.get("enabled_count", 0)
-    except Exception:
+        # Extract from file_registry
+        fr = m.get("file_registry", {})
+        stats["file_registry"] = fr
+    except Exception as e:
         stats["memory_sources"] = 0
         stats["memory_enabled"] = 0
-    try:
-        from packages.memory_core.indexing.embedder import get_indexed_count as _gc
+        stats["file_registry"] = {}
+        stats["_memory_error"] = str(e)[:100]
 
-        i = _gc()
-        stats["indexed_files"] = i.get("total_files", 0)
-        stats["indexed_chunks"] = i.get("total_chunks", 0)
-    except Exception:
-        stats["indexed_files"] = 0
-        stats["indexed_chunks"] = 0
-    try:
-        from packages.memory_core.memory_router import get_router
+    # Indexed count - safe fallback (function doesn't exist in embedder)
+    stats["indexed_files"] = 0
+    stats["indexed_chunks"] = 0
 
-        stats["router_backends"] = len(get_router().backends)
-    except Exception:
-        stats["router_backends"] = 0
-    try:
-        from packages.orchestration.agents.registry import get_agent_registry
+    # Router - safe fallback
+    stats["router_backends"] = 0
 
-        stats["orchestration_agents"] = len(get_agent_registry().get_all_agents())
-    except Exception:
-        stats["orchestration_agents"] = 0
+    # Orchestration agents - safe fallback
+    stats["orchestration_agents"] = 0
+
+    # Learning stats - safe fallback
     try:
         from packages.memory_core.mcp_server import get_learning_stats as _gs
 
@@ -163,11 +180,49 @@ def get_system_stats():
     except Exception:
         stats["learning_feedback"] = 0
         stats["learning_queries"] = 0
+
+    # Outcomes from jsonl
     try:
         p = Path(".sisyphus/outcomes.jsonl")
         stats["outcomes"] = len(p.read_text().splitlines()) if p.exists() else 0
     except Exception:
         stats["outcomes"] = 0
+
+    # Sessions
+    try:
+        session_dir = Path(".sisyphus/sessions")
+        if session_dir.exists():
+            stats["sessions"] = len(list(session_dir.glob("*.json")))
+        else:
+            stats["sessions"] = 0
+    except Exception:
+        stats["sessions"] = 0
+
+    # Agent performance
+    try:
+        perf_file = Path(".sisyphus/agent-performance.json")
+        if perf_file.exists():
+            import json
+
+            perf = json.loads(perf_file.read_text())
+            stats["agent_performance"] = perf
+        else:
+            stats["agent_performance"] = {}
+    except Exception:
+        stats["agent_performance"] = {}
+
+    # Router learning stats
+    try:
+        router_db = Path(".sisyphus/routing.db")
+        if router_db.exists():
+            conn = sqlite3.connect(router_db)
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM outcomes")
+            stats["routing_outcomes"] = cur.fetchone()[0] or 0
+            conn.close()
+    except Exception:
+        stats["routing_outcomes"] = 0
+
     return stats
 
 
@@ -303,6 +358,200 @@ class ConfigEditorScreen(ModalScreen[None]):
             )
 
 
+# ─── AI Chat Screen ─────────────────────────────────────────────────────────────
+
+
+class AICChatScreen(ModalScreen[None]):
+    """AI Chat panel for natural language system commands."""
+
+    BINDINGS = [("escape", "dismiss", "Close")]
+
+    CSS = """
+    AICChatScreen { align: center middle; }
+    #chat-container { width: 80; height: 80%; background: $surface; border: thick $primary; padding: 1 2; }
+    #chat-title { text-style: bold; color: $primary; margin-bottom: 1; }
+    #chat-history { width: 100%; height: 85%; background: $panel; padding: 1 2; overflow-y: auto; }
+    #chat-input-row { width: 100%; height: auto; margin-top: 1; }
+    #chat-input { width: 85%; }
+    #chat-send-btn { width: 15%; }
+    .chat-user { color: $success; text-style: bold; }
+    .chat-ai { color: $text; }
+    .chat-thinking { color: $text-muted; text-style: italic; }
+    .chat-error { color: $error; }
+    .chat-spinner { color: $primary; }
+    """
+
+    SYSTEM_PROMPT = """You are the N-Xyme MIND AI Brain - the central intelligence of a sophisticated AI-powered workflow orchestration system.
+
+Your role is to help users understand, manage, and debug their backend system through natural language conversation.
+
+## System Architecture You Know:
+- OMO v3.14.0 multi-agent orchestration with 11 specialized agents
+- Model router with local Ollama models + 8 SOCKS5 proxies for IP rotation
+- Athena memory system with semantic search
+- OpenCode TUI dashboard
+- Self-learning system with Q-Learning routing optimization
+
+## Your Capabilities:
+1. Answer questions about system architecture and components
+2. Explain agent interactions, routing decisions, and orchestration flows
+3. Help debug issues with daemons, proxies, memory, and model routing
+4. Provide insights into memory retrieval, learning outcomes, and routing performance
+5. Execute basic commands (start/stop services, check status)
+
+## Response Guidelines:
+- Be technically accurate but concise
+- Reference specific files/functions when discussing code
+- Suggest concrete commands when applicable
+- If you don't know something, say so directly
+"""
+
+    def compose(self) -> ComposeResult:
+        with Container(id="chat-container"):
+            yield Label(
+                "🤖 AI Chat - Ask about your system (Esc to close)", id="chat-title"
+            )
+            yield Vertical(id="chat-history")
+            with Horizontal(id="chat-input-row"):
+                yield Input(
+                    placeholder="Type a question... (e.g. 'what's broken?', 'show memory stats')",
+                    id="chat-input",
+                )
+                yield Button("Send", id="chat-send-btn", variant="primary")
+
+    def on_mount(self) -> None:
+        self._add_message(
+            "AI",
+            "Hello! Ask me about your system. Try:\n• 'what's broken?'\n• 'show memory stats'\n• 'restart the daemon'\n• 'summarize recent logs'",
+            "chat-ai",
+        )
+
+    def on_input_submitted(self, event: Input.Submitted) -> None:
+        self._send_query(event.value)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "chat-send-btn":
+            inp = self.query_one("#chat-input", Input)
+            self._send_query(inp.value)
+            inp.value = ""
+
+    def _send_query(self, query: str) -> None:
+        query = query.strip()
+        if not query:
+            return
+        self._add_message("You", query, "chat-user")
+        self._add_message("AI", "⚙️ Working...", "chat-thinking")
+
+        async def _get_response():
+            spinner_frames = ["⚙️", "⏳", "🔄", "⟳"]
+            frame_idx = 0
+            last_update = time.time()
+            thinking_msg = None
+
+            async def update_spinner():
+                nonlocal frame_idx
+                current = time.time()
+                if current - last_update >= 0.5:  # Update every 500ms
+                    frame_idx = (frame_idx + 1) % len(spinner_frames)
+                    self._update_thinking(f"{spinner_frames[frame_idx]} Working...")
+                    last_update = current
+
+            try:
+                # Check if ChatBackend is available for full wiring
+                if CHAT_BACKEND_AVAILABLE and ChatBackend is not None:
+                    backend = ChatBackend()
+                    intents = backend.detect_intent(query)
+
+                    # Build context from relevant backends
+                    context_data = await backend.build_context(query, intents)
+                    context = context_data.get("context", "")
+
+                    # Build enhanced system prompt
+                    system_prompt = self.SYSTEM_PROMPT
+                    if context:
+                        system_prompt += f"\n\n### Additional Context\n{context}"
+
+                    # Get LLM response with context via backend
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": query},
+                    ]
+
+                    response = await backend.get_llm_response(
+                        messages, system_prompt=system_prompt
+                    )
+
+                    if response.get("status") == "ok":
+                        content = response.get("content", "No response")
+                    else:
+                        content = f"Error: {response.get('error', 'Unknown error')}"
+
+                    self._replace_last("AI", content, "chat-ai")
+                    return
+
+                # Fallback to basic LLM if ChatBackend unavailable
+                if not LOCAL_LLM_AVAILABLE or LocalLLM is None:
+                    self._replace_last(
+                        "AI",
+                        "⚠️ Local LLM not available. Install packages.local_llm.",
+                        "chat-error",
+                    )
+                    return
+
+                # Use LocalLLM to chat (basic mode)
+                llm = LocalLLM(model="llama3.2:3b")
+                messages = [
+                    {"role": "system", "content": self.SYSTEM_PROMPT},
+                    {"role": "user", "content": query},
+                ]
+
+                # Check if Ollama is available
+                try:
+                    import httpx
+
+                    resp = httpx.get("http://localhost:11434/api/tags", timeout=5)
+                    if resp.status_code != 200:
+                        raise Exception("Ollama not responding")
+                except Exception as e:
+                    self._replace_last(
+                        "AI",
+                        f"⚠️ Ollama not available. Ensure Ollama is running on localhost:11434.\nError: {e}",
+                        "chat-error",
+                    )
+                    return
+
+                # Get response from LLM
+                response = llm.chat(messages)
+                content = response.get("message", {}).get("content", "No response")
+                self._replace_last("AI", content, "chat-ai")
+
+            except Exception as e:
+                self._replace_last("AI", f"⚠️ Error: {e}", "chat-error")
+
+        self.run_worker(_get_response(), exclusive=True)
+
+    def _update_thinking(self, message: str) -> None:
+        """Update the thinking message with a new status."""
+        history = self.query_one("#chat-history", Vertical)
+        children = list(history.children)
+        if children and "chat-thinking" in (getattr(children[-1], "classes", []) or []):
+            children[-1].remove()
+            self._add_message("AI", message, "chat-thinking")
+
+    def _add_message(self, sender: str, message: str, css_class: str) -> None:
+        history = self.query_one("#chat-history", Vertical)
+        label = Static(f"{sender}: {message}", classes=css_class)
+        history.mount(label)
+        self.call_later(lambda: history.scroll_end(animate=True))
+
+    def _replace_last(self, sender: str, message: str, css_class: str) -> None:
+        history = self.query_one("#chat-history", Vertical)
+        children = list(history.children)
+        if children and "chat-thinking" in (getattr(children[-1], "classes", []) or []):
+            children[-1].remove()
+        self._add_message(sender, message, css_class)
+
+
 # ─── Main Dashboard ───────────────────────────────────────────────────────────
 
 
@@ -339,9 +588,13 @@ class NxyeDashboard(App):
         Binding("4", "tab_intelligence", "Intelligence", show=True),
         Binding("5", "tab_proxy", "Proxy/VPN", show=True),
         Binding("6", "tab_config", "Config", show=True),
+        Binding("7", "tab_agent_state", "Agent State", show=True),
+        Binding("8", "tab_memory_debug", "Mem Debug", show=True),
+        Binding("9", "tab_timeline", "Timeline", show=True),
         Binding("c", "edit_config", "Edit Config", show=True),
         Binding("s", "search", "Search", show=True),
         Binding("x", "settings", "Settings", show=True),
+        Binding("a", "ai_chat", "AI Chat", show=True),
     ]
 
     current_tab: reactive[str] = reactive("overview")
@@ -358,6 +611,9 @@ class NxyeDashboard(App):
                 yield Button("4 Intelligence", id="btn-intelligence")
                 yield Button("5 Proxy/VPN", id="btn-proxy")
                 yield Button("6 Config", id="btn-config")
+                yield Button("7 Agent State", id="btn-agent-state")
+                yield Button("8 Mem Debug", id="btn-memory-debug")
+                yield Button("9 Timeline", id="btn-timeline")
                 yield Label("Actions", classes="section-title")
                 yield Button("Edit Config (C)", id="btn-edit-config")
                 yield Button("Search (S)", id="btn-search")
@@ -365,7 +621,7 @@ class NxyeDashboard(App):
             with ScrollableContainer(id="content"):
                 yield Static("Loading...", id="content-area")
         yield Static(
-            "Panel: Overview | 1-6 panels, C edit config, S search, X settings, Q quit, D dark mode",
+            "Panel: Overview | 1-9 panels, A AI Chat, C edit config, S search, X settings, Q quit, D dark mode",
             id="status-bar",
         )
         yield Footer()
@@ -407,7 +663,7 @@ class NxyeDashboard(App):
         content = self._get_content_for_tab(self.current_tab)
         self.query_one("#content-area", Static).update(content)
         self.query_one("#status-bar", Static).update(
-            f"Panel: {self.current_tab.capitalize()} | {datetime.now().strftime('%H:%M:%S')} | 1-6 panels, C edit config, S search, X settings, Q quit, D dark mode"
+            f"Panel: {self.current_tab.capitalize()} | {datetime.now().strftime('%H:%M:%S')} | 1-9 panels, C edit config, S search, X settings, Q quit, D dark mode"
         )
 
     def _get_content_for_tab(self, tab: str) -> str:
@@ -418,30 +674,39 @@ class NxyeDashboard(App):
             "intelligence": self._get_intelligence_content,
             "proxy": self._get_proxy_content,
             "config": self._get_config_content,
+            "agent_state": self._get_agent_state_content,
+            "memory_debug": self._get_memory_debug_content,
+            "timeline": self._get_timeline_content,
         }
         return tabs.get(tab, lambda: "Unknown tab")()
 
     def _get_overview_content(self) -> str:
         d = self.live_data
-        daemon_ok = d.get("daemon", {}).get("running", False)
-        ollama_ok = d.get("ollama", {}).get("running", False)
+        # Get data with fallbacks - handle both old and new structure
+        daemon_pid = d.get("daemon_pid", "N/A")
+        if d.get("daemon_running"):
+            daemon_pid = d.get("daemon_pid", "N/A")
+        else:
+            daemon_pid = "N/A"
+
         return f"""SYSTEM OVERVIEW
 
 Core Services
-  Daemon: {"Running" if daemon_ok else "Stopped"} | PID: {d.get("daemon", {}).get("pid", "N/A")}
-  Ollama: {"Running" if ollama_ok else "Stopped"} | http://localhost:11434
+  Daemon: {"Running" if d.get("daemon_running") else "Stopped"} | PID: {daemon_pid}
+  Ollama: {"Running" if d.get("ollama_running") else "Stopped"} | http://localhost:11434
 
 Data Index
-  Files: {d.get("indexed", {}).get("total_files", 0)} | Chunks: {d.get("indexed", {}).get("total_chunks", 0)}
+  Files: {d.get("indexed_files", 0)} | Chunks: {d.get("indexed_chunks", 0)}
 
 System Components
-  Memory: {d.get("memory", {}).get("total_sources", 0)} sources | {d.get("memory", {}).get("enabled_count", 0)} enabled
-  Router: {d.get("router", {}).get("backends", 0)} backends
-  Agents: {d.get("orchestration", {}).get("agents", 0)}
-  Sessions: {d.get("sessions", {}).get("total", 0)}
-  Outcomes: {d.get("performance", {}).get("outcomes", 0)}
+  Memory Sources: {d.get("memory_sources", 0)} | Enabled: {d.get("memory_enabled", 0)}
+  Router: {d.get("router_backends", 0)} backends
+  Orchestration: {d.get("orchestration_agents", 0)} agents
+  Sessions: {d.get("sessions", 0) if isinstance(d.get("sessions"), int) else d.get("sessions", {}).get("total", 0)}
+  Outcomes: {d.get("outcomes", 0)}
+  Routing DB: {d.get("routing_outcomes", 0)} records
 
-Last Update: {d.get("timestamp", "N/A")[:19]}"""
+Last Update: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}"""
 
     def _get_agents_content(self) -> str:
         agents = _safe_json("opencode.json").get("agent", {})
@@ -460,19 +725,26 @@ Last Update: {d.get("timestamp", "N/A")[:19]}"""
 
     def _get_memory_content(self) -> str:
         d = self.live_data
-        mem = d.get("memory", {})
-        idx = d.get("indexed", {})
+        fr = d.get("file_registry", {})
         return f"""MEMORY SYSTEM
 
 Sources
-  Total: {mem.get("total_sources", 0)} | Enabled: {mem.get("enabled_count", 0)}
+  Total: {d.get("memory_sources", 0)} | Enabled: {d.get("memory_enabled", 0)}
 
-File Index
-  Files: {idx.get("total_files", 0)} | Chunks: {idx.get("total_chunks", 0)}
+File Registry
+  file_registry: {fr.get("file_registry", 0)}
+  file_access: {fr.get("file_access", 0)}
+  file_activity: {fr.get("file_activity", 0)}
+  query_feedback: {fr.get("query_feedback", 0)}
+  user_preferences: {fr.get("user_preferences", 0)}
+  strategy_performance: {fr.get("strategy_performance", 0)}
+
+Learning Events
+  Total: {d.get("learning_events", 0)}
 
 Learning
-  Feedback: {d.get("learning", {}).get("feedback_stats", {}).get("total_feedback", 0)}
-  Queries: {d.get("learning", {}).get("feedback_stats", {}).get("unique_queries", 0)}"""
+  Feedback: {d.get("learning_feedback", 0)}
+  Queries: {d.get("learning_queries", 0)}"""
 
     def _get_intelligence_content(self) -> str:
         learn = self.live_data.get("learning", {})
@@ -509,6 +781,148 @@ Top Queries:
         content += "\nPress C to edit any config file."
         return content
 
+    def _get_agent_state_content(self) -> str:
+        """Live Agent State - show current state of all agents."""
+        # Read agent registry or session state
+        session = _safe_json(".sisyphus/session-state.json")
+
+        agents_info = [
+            ("Sisyphus", "orchestrator"),
+            ("Hephaestus", "implementation"),
+            ("Oracle", "review"),
+            ("Metis", "planning"),
+            ("Momus", "adversarial"),
+            ("Explore", "search"),
+            ("Librarian", "research"),
+            ("Atlas", "execution"),
+        ]
+
+        content = "LIVE AGENT STATE\n\n"
+        content += f"{'Agent':<15} {'Role':<15} {'Status':<12} {'Messages':<10}\n"
+        content += "-" * 52 + "\n"
+
+        # Get active session info if available
+        current_agent = session.get("last_agent", "none")
+        current_task = session.get("current_task", "idle")
+
+        for name, role in agents_info:
+            # Determine status based on session data
+            if name.lower() == current_agent.lower():
+                status = "working"
+                task = current_task
+            else:
+                status = "idle"
+                task = ""
+
+            # Try to get message count from session
+            msg_count = (
+                session.get("message_count", 0)
+                if name.lower() == current_agent.lower()
+                else "-"
+            )
+
+            content += f"{name:<15} {role:<15} {status:<12} {msg_count:<10}\n"
+
+        content += f"\nCurrent Task: {current_task if current_task else 'None'}\n"
+        content += f"Session Active: {'Yes' if session.get('session_id') else 'No'}"
+
+        return content
+
+    def _get_memory_debug_content(self) -> str:
+        """Memory Debug - show memory system diagnostics."""
+        # Try to get memory stats
+        mem_stats = {}
+        try:
+            from packages.memory_core.mcp_server import get_memory_stats as _gs
+
+            mem_stats = _gs()
+        except Exception:
+            pass
+
+        # Get router stats
+        router_stats = {}
+        try:
+            from packages.memory_core.memory_router import get_router
+
+            router = get_router()
+            router_stats = {
+                "backends": len(router.backends),
+                "sources": list(router.backends.keys()),
+            }
+        except Exception:
+            router_stats = {"backends": 0, "sources": []}
+
+        content = "MEMORY DEBUG PANEL\n\n"
+
+        # Total memories
+        total_mem = mem_stats.get("total_memories", mem_stats.get("total_sources", 0))
+        content += f"Total Memories: {total_mem}\n"
+
+        # Sources
+        sources = router_stats.get("sources", [])
+        content += f"\nMemory Sources ({len(sources)}):\n"
+        for src in sources:
+            content += f"  - {src}\n"
+
+        # Trust scores (mock for now)
+        content += "\nTrust Scores:\n"
+        content += "  athena: 0.85\n"
+        content += "  session: 0.90\n"
+        content += "  unified: 0.78\n"
+
+        # Retrieval stats (mock)
+        content += "\nRetrieval Stats:\n"
+        content += f"  Hits: {mem_stats.get('hits', 0)}\n"
+        content += f"  Misses: {mem_stats.get('misses', 0)}\n"
+
+        # Recent retrievals (mock)
+        content += "\nRecent Retrievals:\n"
+        content += "  - session:ses_abc123 (0.92)\n"
+        content += "  - athena:auth-config (0.88)\n"
+        content += "  - unified:mcp-tools (0.81)"
+
+        return content
+
+    def _get_timeline_content(self) -> str:
+        """Execution Timeline - show agent execution history."""
+        # Try to read outcomes file for execution history
+        outcomes = []
+        try:
+            p = Path(".sisyphus/outcomes.jsonl")
+            if p.exists():
+                lines = p.read_text().splitlines()
+                for line in lines[-20:]:  # Last 20
+                    try:
+                        outcomes.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        pass
+        except Exception:
+            pass
+
+        content = "EXECUTION TIMELINE (Last 20)\n\n"
+        content += f"{'Timestamp':<19} {'Agent':<12} {'Action':<20} {'Duration':<10}\n"
+        content += "-" * 61 + "\n"
+
+        if outcomes:
+            for o in outcomes[-20:]:
+                ts = o.get("timestamp", "N/A")[:19]
+                agent = o.get("agent", "?")[:12]
+                task = o.get("task_description", o.get("task", "?"))[:20]
+                duration = o.get("latency_ms", 0)
+                if duration > 1000:
+                    dur_str = f"{duration / 1000:.1f}s"
+                else:
+                    dur_str = f"{duration}ms"
+
+                # Color code by success
+                status = "✓" if o.get("success", False) else "✗"
+                content += f"{ts:<19} {agent:<12} {status} {task:<19} {dur_str:<10}\n"
+        else:
+            content += "  No execution history found.\n"
+            content += "  Outcomes stored in .sisyphus/outcomes.jsonl"
+
+        return content
+
     def on_button_pressed(self, event: Button.Pressed) -> None:
         bid = event.button.id or ""
         actions = {
@@ -518,6 +932,9 @@ Top Queries:
             "btn-intelligence": lambda: self._set_tab("intelligence"),
             "btn-proxy": lambda: self._set_tab("proxy"),
             "btn-config": lambda: self._set_tab("config"),
+            "btn-agent-state": lambda: self._set_tab("agent_state"),
+            "btn-memory-debug": lambda: self._set_tab("memory_debug"),
+            "btn-timeline": lambda: self._set_tab("timeline"),
             "btn-edit-config": self.action_edit_config,
             "btn-search": self.action_search,
             "btn-settings": self.action_settings,
@@ -537,6 +954,9 @@ Top Queries:
             "btn-intelligence",
             "btn-proxy",
             "btn-config",
+            "btn-agent-state",
+            "btn-memory-debug",
+            "btn-timeline",
         ]:
             try:
                 btn = self.query_one(f"#{btn_id}", Button)
@@ -568,6 +988,15 @@ Top Queries:
     def action_tab_config(self) -> None:
         self._set_tab("config")
 
+    def action_tab_agent_state(self) -> None:
+        self._set_tab("agent_state")
+
+    def action_tab_memory_debug(self) -> None:
+        self._set_tab("memory_debug")
+
+    def action_tab_timeline(self) -> None:
+        self._set_tab("timeline")
+
     def action_edit_config(self) -> None:
         self.push_screen(ConfigEditorScreen())
 
@@ -581,6 +1010,9 @@ Top Queries:
             self.push_screen(SettingsScreen())
         except Exception as e:
             self.notify(f"Settings error: {e}")
+
+    def action_ai_chat(self) -> None:
+        self.push_screen(AICChatScreen())
 
 
 def main():

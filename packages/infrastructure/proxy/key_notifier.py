@@ -25,6 +25,18 @@ class KeyNotifier:
                 usage["requests"] = 0
                 usage["last_reset"] = time.time()
 
+    def record_rate_limit(self, key_prefix: str) -> None:
+        """Record a rate limit hit for a key."""
+        with self._lock:
+            usage = self._key_usage[key_prefix]
+            usage["rate_limits"] = usage.get("rate_limits", 0) + 1
+            self._alerts.append({
+                "time": time.time(),
+                "severity": "WARNING",
+                "key": key_prefix,
+                "message": f"Rate limit hit for key {key_prefix}"
+            })
+
     def check_limits(self) -> List[dict]:
         """Check all keys for limit warnings."""
         alerts = []

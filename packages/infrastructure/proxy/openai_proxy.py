@@ -11,7 +11,7 @@ import uuid
 import os
 import asyncio
 import httpx
-from typing import Dict, List, Optional
+from typing import Any
 
 from . import (
     intelligent_router,
@@ -61,8 +61,13 @@ MODEL_PROVIDER_MAP = {
 }
 
 
-async def call_provider(model: str, messages: List[dict], provider: str = None) -> dict:
-    """Call the actual provider API."""
+async def call_provider_with_retry(
+    model: str, 
+    messages: list[dict[str, Any]], 
+    provider: str | None = None,
+    max_retries: int = 2
+) -> dict[str, Any]:
+    """Call provider with automatic retry on rate limits."""
     if not provider:
         provider = MODEL_PROVIDER_MAP.get(model, "opencode")
 
@@ -90,13 +95,42 @@ async def call_provider(model: str, messages: List[dict], provider: str = None) 
         "stream": False,
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        response = await client.post(url, headers=headers, json=payload)
-        response.raise_for_status()
-        return response.json()
+    last_error = None
+    for attempt in range(max_retries + 1):
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(url, headers=headers, json=payload)
+                
+                # Handle rate limiting (429)
+                if response.status_code == 429:
+                    # Record rate limit for this key
+                    if config.get("api_key"):
+                        key_notifier.record_rate_limit(str(config["api_key"][:20]))
+                    
+                    # Wait and retry with backoff
+                    wait_time = 2 ** attempt  # Exponential backoff
+                    await asyncio.sleep(wait_time)
+                    last_error = "rate_limit"
+                    continue
+                
+                response.raise_for_status()
+                return response.json()
+                
+        except httpx.HTTPStatusError as e:
+            last_error = str(e)
+            if attempt < max_retries:
+                await asyncio.sleep(2 ** attempt)
+                continue
+        except Exception as e:
+            last_error = str(e)
+            if attempt < max_retries:
+                await asyncio.sleep(2 ** attempt)
+                continue
+    
+    raise Exception(f"Provider failed after {max_retries + 1} attempts: {last_error}")
 
 
-async def chat_completions(request: dict) -> dict:
+async def chat_completions(request: dict[str, Any]) -> dict[str, Any]:
     """Handle chat completions request through intelligent router."""
     request_id = str(uuid.uuid4())[:8]
     messages = request.get("messages", [])
@@ -134,10 +168,12 @@ async def chat_completions(request: dict) -> dict:
     route = intelligent_router.select_route(prompt, agent_type="opencode")
     stall_detector.start_request(f"opencode:{request_id}")
 
+    # Initialize timing for error handling
+    start = time.time()
+    
     try:
-        # Call provider
-        start = time.time()
-        result = await call_provider(route["model"], messages, route["provider"])
+        # Call provider with retry on rate limits
+        result = await call_provider_with_retry(route["model"], messages, route["provider"])
         latency_ms = (time.time() - start) * 1000
 
         # Record success

@@ -19,6 +19,8 @@ class Dashboard:
             "active_sessions": {},
             "agent_stats": {},
             "provider_health": {},
+            "provider_stalled": {},  # Track stalled providers
+            "rate_limit_hits": {},    # Track rate limits per key
             "vpn_ip_status": {},
             "recent_requests": [],
             "alerts": [],
@@ -85,6 +87,21 @@ class Dashboard:
     def update_provider_health(self, health: Dict) -> None:
         with self._lock:
             self._data["provider_health"] = health
+
+    def update_stalled_providers(self, stalled: Dict) -> None:
+        """Update stalled provider status."""
+        with self._lock:
+            self._data["provider_stalled"] = stalled
+
+    def record_rate_limit(self, key_prefix: str) -> None:
+        """Record a rate limit hit."""
+        with self._lock:
+            self._data["rate_limit_hits"][key_prefix] = self._data["rate_limit_hits"].get(key_prefix, 0) + 1
+            self._data["alerts"].append({
+                "time": time.time(),
+                "severity": "WARNING",
+                "message": f"Rate limit hit for key {key_prefix}",
+            })
 
     def update_vpn_status(self, status: Dict) -> None:
         with self._lock:

@@ -56,11 +56,17 @@ def build_sessions_menu():
 
     # Add each session as a button
     for session in sessions[:8]:  # Max 8 buttons
+        # Show more useful info in the button
+        label = session.get("id", "unknown")[:12]
+        if "current_task" in session:
+            task = str(session.get("current_task", ""))[:20]
+            label = f"{label}: {task}"
+
         keyboard["inline_keyboard"].append(
             [
                 {
-                    "text": f"📄 {session['id'][:12]}...",
-                    "callback_data": f"session_{session['id']}",
+                    "text": f"📄 {label}",
+                    "callback_data": f"session_{session.get('id', 'unknown')}",
                 }
             ]
         )
@@ -84,24 +90,53 @@ def build_back_menu(callback_data="menu_main"):
 
 
 def get_active_sessions():
-    """Get active OpenCode sessions"""
+    """Get active OpenCode sessions from real session files"""
     sessions = []
     try:
-        # Try to get session info from nx-mind MCP
-        result = subprocess.run(
-            ["python3", "-c", "import json; print(json.dumps({'sessions': []}))"],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        # For now, return mock sessions
+        # Read from session-state.json
+        if Path(SESSION_FILE).exists():
+            with open(SESSION_FILE) as f:
+                state = json.load(f)
+
+            # Create a session entry from current state
+            session_info = {
+                "id": state.get("last_agent", "unknown"),
+                "current_task": state.get("current_task", "No active task"),
+                "last_active": state.get("last_updated", ""),
+                "messages": state.get("memory_stats", {}).get("files_indexed", 0),
+            }
+            sessions.append(session_info)
+
+        # Also check mind-state.json for additional context
+        mind_file = f"{MIND_DIR}/.context/mind-state.json"
+        if Path(mind_file).exists():
+            with open(mind_file) as f:
+                mind = json.load(f)
+
+            if mind.get("phase"):
+                sessions.append(
+                    {
+                        "id": "MIND",
+                        "current_task": f"Phase: {mind.get('phase')}",
+                        "last_active": mind.get("last_updated", ""),
+                        "messages": mind.get("context", {}).get("tests_passed", 0),
+                    }
+                )
+
+    except Exception as e:
+        print(f"Session read error: {e}")
+
+    # Always have at least one entry for the UI
+    if not sessions:
         sessions = [
-            {"id": "ses_abc123", "messages": 45, "last_active": "2 min ago"},
-            {"id": "ses_def456", "messages": 23, "last_active": "1 hour ago"},
-            {"id": "ses_ghi789", "messages": 12, "last_active": "3 hours ago"},
+            {
+                "id": "No sessions",
+                "current_task": "Start a new session",
+                "last_active": "Now",
+                "messages": 0,
+            }
         ]
-    except:
-        pass
+
     return sessions
 
 
@@ -152,13 +187,22 @@ def get_system_status():
 # ============ TELEGRAM API ============
 
 
-def send_message(chat_id, text, reply_markup=None):
+def send_message(chat_id, text, reply_markup=None, parse_mode=None):
     """Send a message with optional keyboard"""
+    import json
+    import urllib.parse
+
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     data = {"chat_id": chat_id, "text": text}
     if reply_markup:
-        data["reply_markup"] = reply_markup
-    requests.post(url, json=data, timeout=10)
+        # Convert dict to JSON string for form-encoded request
+        data["reply_markup"] = (
+            json.dumps(reply_markup) if isinstance(reply_markup, dict) else reply_markup
+        )
+    if parse_mode:
+        data["parse_mode"] = parse_mode
+    # Always use data= (form-encoded) for reliable keyboard + markdown
+    requests.post(url, data=data, timeout=10)
 
 
 def answer_callback(callback_id, text, show_alert=False):
@@ -166,6 +210,25 @@ def answer_callback(callback_id, text, show_alert=False):
     url = f"https://api.telegram.org/bot{TOKEN}/answerCallbackQuery"
     data = {"callback_query_id": callback_id, "text": text, "show_alert": show_alert}
     requests.post(url, json=data, timeout=10)
+
+
+def edit_message_text(chat_id, message_id, text, reply_markup=None, parse_mode=None):
+    """Edit an existing message - faster than sending new ones"""
+    import json
+
+    url = f"https://api.telegram.org/bot{TOKEN}/editMessageText"
+    data = {
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "text": text,
+    }
+    if reply_markup:
+        data["reply_markup"] = (
+            json.dumps(reply_markup) if isinstance(reply_markup, dict) else reply_markup
+        )
+    if parse_mode:
+        data["parse_mode"] = parse_mode
+    requests.post(url, data=data, timeout=10)
 
 
 # ============ VOICE HANDLING ============
@@ -257,13 +320,13 @@ def handle_voice_message(chat_id: str, voice: dict):
         # Download voice file
         file_id = voice.get("file_id", "")
         if not file_id:
-            send_message(chat_id, "❌ No voice file found", "markdown")
+            send_message(chat_id, "❌ No voice file found", parse_mode="markdown")
             return
 
         voice_path = download_voice_file(file_id)
 
         # Transcribe
-        send_message(chat_id, "🧠 *Transcribing...*", "markdown")
+        send_message(chat_id, "🧠 *Transcribing...*", parse_mode="markdown")
         result = transcribe_voice(voice_path)
 
         # Clean up
@@ -277,26 +340,32 @@ def handle_voice_message(chat_id: str, voice: dict):
             send_message(
                 chat_id,
                 "⚠️ *Voice transcription not available*\n\nfaster-whisper is not installed.\n\nTo enable voice commands, run:\n`pip install faster-whisper`\n\nUse buttons instead!",
-                "markdown",
+                parse_mode="markdown",
                 reply_markup=build_main_menu(),
             )
             return
 
         if not result.get("success"):
             send_message(
-                chat_id, f"❌ Transcription failed: {result.get('error')}", "markdown"
+                chat_id,
+                f"❌ Transcription failed: {result.get('error')}",
+                parse_mode="markdown",
             )
             return
 
         transcript = result.get("text", "")
         if not transcript:
             send_message(
-                chat_id, "😕 Could not understand audio. Try again?", "markdown"
+                chat_id,
+                "😕 Could not understand audio. Try again?",
+                parse_mode="markdown",
             )
             return
 
         # Show transcript
-        send_message(chat_id, f"📝 *You said:*\n\n_{transcript}_", "markdown")
+        send_message(
+            chat_id, f"📝 *You said:*\n\n_{transcript}_", parse_mode="markdown"
+        )
 
         # Parse command
         parsed = parse_voice_command(transcript)
@@ -307,25 +376,28 @@ def handle_voice_message(chat_id: str, voice: dict):
             send_message(
                 chat_id,
                 f"📊 *Status*\n\n{get_system_status()}",
-                "markdown",
+                parse_mode="markdown",
                 reply_markup=build_back_menu(),
             )
         elif action == "menu_sessions":
             sessions = get_active_sessions()
             session_list = "\n".join(
-                [f"• {s['id'][:12]}... ({s['messages']} msgs)" for s in sessions]
+                [
+                    f"• {s.get('id', 'unknown')[:20]} — {s.get('messages', 0)} items"
+                    for s in sessions
+                ]
             )
             send_message(
                 chat_id,
                 f"📂 *Sessions*\n\n{session_list or 'No sessions'}",
-                "markdown",
+                parse_mode="markdown",
                 reply_markup=build_sessions_menu(),
             )
         elif action == "menu_newtask":
             send_message(
                 chat_id,
                 f"🎯 *New Task*\n\nI'll help you create a task!\n\n_Topic: {transcript[:100]}..._",
-                "markdown",
+                parse_mode="markdown",
                 reply_markup=build_back_menu(),
             )
         elif action == "menu_help":
@@ -337,49 +409,57 @@ def handle_voice_message(chat_id: str, voice: dict):
 • "Help" → Show this help
 
 Or just speak naturally - I'll understand!"""
-            send_message(chat_id, help_text, "markdown", reply_markup=build_main_menu())
+            send_message(
+                chat_id,
+                help_text,
+                parse_mode="markdown",
+                reply_markup=build_main_menu(),
+            )
         else:
             send_message(
                 chat_id,
                 f"✅ Understood: {parsed.get('intent')}\n\nUse buttons for more control!",
-                "markdown",
+                parse_mode="markdown",
                 reply_markup=build_main_menu(),
             )
 
     except Exception as e:
         print(f"Voice error: {e}")
-        send_message(chat_id, f"❌ Error: {str(e)}", "markdown")
+        send_message(chat_id, f"❌ Error: {str(e)}", parse_mode="markdown")
 
 
 # ============ CALLBACK HANDLERS ============
 
 
-def handle_callback(callback_data, chat_id, callback_id):
+def handle_callback(callback_data, chat_id, callback_id, message_id=None):
     """Handle callback query button presses"""
 
-    # Answer immediately
+    # Answer immediately for snappy feel
     answer_callback(callback_id, "Loading...")
 
     if callback_data == "menu_main":
-        # Show main menu
+        # Show main menu - single consolidated message
+        status = get_system_status()
         send_message(
-            chat_id, "🧠 *N-Xyme_MIND Control*\n\nSelect an option:", "markdown"
+            chat_id,
+            f"🧠 *N-Xyme_MIND Control*\n\n{status}\n\nSelect an option:",
+            parse_mode="markdown",
+            reply_markup=build_main_menu(),
         )
-        send_message(chat_id, get_system_status(), reply_markup=build_main_menu())
 
     elif callback_data == "menu_sessions":
         # Show sessions
         sessions = get_active_sessions()
         session_list = "\n".join(
             [
-                f"• {s['id'][:12]}... ({s['messages']} msgs, {s['last_active']})"
+                f"• {s.get('id', 'unknown')[:20]} — {s.get('messages', 0)} items"
                 for s in sessions
             ]
         )
         send_message(
             chat_id,
             f"📂 *Active Sessions*\n\n{session_list or 'No active sessions'}",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=build_sessions_menu(),
         )
 
@@ -389,7 +469,7 @@ def handle_callback(callback_data, chat_id, callback_id):
         send_message(
             chat_id,
             f"📊 *System Status*\n\n{status}",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=build_back_menu(),
         )
 
@@ -411,7 +491,7 @@ def handle_callback(callback_data, chat_id, callback_id):
         send_message(
             chat_id,
             "🎯 *New Task*\n\nWhat type of task?",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=keyboard,
         )
 
@@ -429,7 +509,7 @@ def handle_callback(callback_data, chat_id, callback_id):
         send_message(
             chat_id,
             "⚙️ *Settings*\n\nConfigure your bot preferences",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=keyboard,
         )
 
@@ -438,7 +518,7 @@ def handle_callback(callback_data, chat_id, callback_id):
         send_message(
             chat_id,
             "📜 *Recent Activity*\n\nComing soon - view your recent actions and sessions",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=build_back_menu(),
         )
 
@@ -457,7 +537,9 @@ def handle_callback(callback_data, chat_id, callback_id):
 3. Tap 📊 Status to check system health
 
 Need more help? Just type /help but try buttons first!"""
-        send_message(chat_id, help_text, "markdown", reply_markup=build_back_menu())
+        send_message(
+            chat_id, help_text, parse_mode="markdown", reply_markup=build_back_menu()
+        )
 
     elif callback_data.startswith("task_"):
         # Task type selected
@@ -465,17 +547,40 @@ Need more help? Just type /help but try buttons first!"""
         send_message(
             chat_id,
             f"✅ Task type: *{task_type.upper()}*\n\nThis will open a new task in OpenCode. Continue?",
-            "markdown",
+            parse_mode="markdown",
             reply_markup=build_back_menu(),
         )
 
     elif callback_data.startswith("session_"):
-        # Session selected
+        # Session selected - show details
         session_id = callback_data.replace("session_", "")
+
+        # Find the session data
+        sessions = get_active_sessions()
+        session_data = None
+        for s in sessions:
+            if s.get("id") == session_id:
+                session_data = s
+                break
+
+        if session_data:
+            details = f"""📄 *Session: {session_data.get("id", "unknown")}*
+
+📝 *Current Task:*
+{session_data.get("current_task", "None")}
+
+⏰ *Last Active:*
+{session_data.get("last_active", "Unknown")}
+
+📊 *Stats:*
+{session_data.get("messages", 0)} files indexed"""
+        else:
+            details = f"📄 Session: `{session_id}`\n\nNo additional details."
+
         send_message(
             chat_id,
-            f"📄 *Session Selected*\n\n`{session_id}`\n\nLoading session details...",
-            "markdown",
+            details,
+            parse_mode="markdown",
             reply_markup=build_back_menu(),
         )
 
@@ -538,7 +643,7 @@ def main():
                                 send_message(
                                     chat_id,
                                     "🧠 *N-Xyme_MIND Control*\n\nYour ADHD-friendly remote control!",
-                                    "markdown",
+                                    parse_mode="markdown",
                                 )
                                 send_message(
                                     chat_id,
@@ -549,7 +654,7 @@ def main():
                                 send_message(
                                     chat_id,
                                     f"📊 *Status*\n\n{get_system_status()}",
-                                    "markdown",
+                                    parse_mode="markdown",
                                     reply_markup=build_back_menu(),
                                 )
                             elif text == "/menu":

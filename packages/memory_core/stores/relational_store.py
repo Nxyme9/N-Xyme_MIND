@@ -15,6 +15,11 @@ from packages.memory_core.stores.base import (
 logger = logging.getLogger(__name__)
 
 
+# Project root detection - resolve relative to module location
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_DEFAULT_DB_PATH = _PROJECT_ROOT / "context" / "memory" / "mind_from_mind.db"
+
+
 # Migration definitions
 MIGRATIONS = [
     {
@@ -62,14 +67,31 @@ MIGRATIONS = [
             ALTER TABLE memories ADD COLUMN updated_at TEXT DEFAULT (datetime('now'));
         """,
     },
+    {
+        "version": 5,
+        "description": "Fix duplicate column on migration 4 (ignore if exists)",
+        "sql": """
+            -- Migration 4 may fail if column already exists - this handles that case
+            SELECT 1;  -- No-op, handled by Python logic
+        """,
+    },
 ]
 
 
 class RelationalStore(RelationalStoreABC):
     """SQLite-based relational memory store."""
 
-    def __init__(self, db_path: str = "context/memory/mind_from_mind.db"):
-        self.db_path = Path(db_path)
+    def __init__(self, db_path: str = None):
+        # Default to the correct absolute path if no path provided
+        if db_path is None:
+            db_path = str(_DEFAULT_DB_PATH)
+
+        # Resolve relative paths against project root
+        path = Path(db_path)
+        if not path.is_absolute():
+            path = _PROJECT_ROOT / path
+
+        self.db_path = path
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = self._ensure_migrations_table()
         self._set_wal_mode(conn)
@@ -123,24 +145,42 @@ class RelationalStore(RelationalStoreABC):
             (version, datetime.now().isoformat(), description),
         )
 
-    def _run_pending_migrations(self, conn):
+    def _run_pending_migrations(self, conn: sqlite3.Connection):
         """Run any pending migrations that haven't been applied yet."""
         applied = self._get_applied_migrations(conn)
         for migration in MIGRATIONS:
             if migration["version"] not in applied:
-                conn.executescript(migration["sql"])
-                conn.execute(
-                    "INSERT INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)",
-                    (
-                        migration["version"],
-                        datetime.now().isoformat(),
-                        migration["description"],
-                    ),
-                )
-                conn.commit()
-                logger.info(
-                    f"Applied migration v{migration['version']}: {migration['description']}"
-                )
+                try:
+                    conn.executescript(migration["sql"])
+                    conn.execute(
+                        "INSERT INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)",
+                        (
+                            migration["version"],
+                            datetime.now().isoformat(),
+                            migration["description"],
+                        ),
+                    )
+                    conn.commit()
+                    logger.info(
+                        f"Applied migration v{migration['version']}: {migration['description']}"
+                    )
+                except sqlite3.OperationalError as e:
+                    # Handle case where column already exists (migration 4)
+                    if "duplicate column name" in str(e).lower():
+                        logger.warning(
+                            f"Migration v{migration['version']} failed - column may already exist: {e}"
+                        )
+                        conn.execute(
+                            "INSERT INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)",
+                            (
+                                migration["version"],
+                                datetime.now().isoformat(),
+                                migration["description"] + " (column existed)",
+                            ),
+                        )
+                        conn.commit()
+                    else:
+                        raise
 
     def _ensure_tables(self):
         """Legacy method - tables are now created via migrations."""

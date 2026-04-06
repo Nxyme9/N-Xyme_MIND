@@ -39,12 +39,20 @@ class MemoryManager:
     to provide adaptive memory management with automatic cognitive triggers.
     """
 
-    def __init__(self, db_path: str = "context/memory/mind_from_mind.db"):
+    def __init__(self, db_path: str = None):
         """Initialize MemoryManager with all cognitive engines.
 
         Args:
-            db_path: Path to the memory SQLite database.
+            db_path: Path to the memory SQLite database. Defaults to context/memory/mind_from_mind.db.
         """
+        # Resolve relative paths against project root
+        if db_path is None:
+            project_root = Path(__file__).resolve().parents[2]
+            db_path = str(project_root / "context" / "memory" / "mind_from_mind.db")
+        elif not Path(db_path).is_absolute():
+            project_root = Path(__file__).resolve().parents[2]
+            db_path = str(project_root / db_path)
+
         self.db_path = db_path
         self._lock = threading.Lock()
         self.store = RelationalStore(db_path)

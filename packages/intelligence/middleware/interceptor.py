@@ -6,6 +6,7 @@ Automatically intercepts delegation-related tool calls and:
 3. Tracks task IDs and outcomes for learning
 4. Automatic retry on failure with fallback agent
 5. Advanced Learning: Q-Learning, Bandits, Meta-Learning, EWC, Counterfactual
+6. MEMORY_BRIDGE: Pre-read memory before task, post-write memory after task
 """
 
 import asyncio
@@ -29,7 +30,12 @@ MAX_RETRIES = 2
 
 
 class DelegationInterceptor(Middleware):
-    """Middleware that automatically routes and logs delegation outcomes."""
+    """Middleware that automatically routes and logs delegation outcomes.
+
+    Integrates MEMORY_BRIDGE for cross-session memory awareness:
+    - Pre-read: Queries memory for relevant context before task execution
+    - Post-write: Stores task outcome to memory after completion
+    """
 
     def __init__(self, router=None, outcome_logger=None, advanced_learner=None):
         super().__init__()
@@ -39,6 +45,7 @@ class DelegationInterceptor(Middleware):
         self._pending_tasks: Dict[str, Dict[str, Any]] = {}
         self._retry_counts: Dict[str, int] = {}
         self._initialized = False
+        self._hivemind = None  # Lazy-loaded MEMORY_BRIDGE wrapper
 
     def _ensure_initialized(self):
         if self._initialized:
@@ -73,6 +80,20 @@ class DelegationInterceptor(Middleware):
         except Exception as e:
             logger.warning(f"Failed to initialize DelegationInterceptor: {e}")
             self._initialized = False
+
+    def _get_hivemind(self):
+        """Lazy-load NX-MEMORY_BRIDGE TaskWrapper."""
+        if self._hivemind is None:
+            try:
+                from packages.learning_engine.memory_bridge import get_wrapper
+
+                self._hivemind = get_wrapper()
+                logger.info(
+                    "NX-MEMORY_BRIDGE TaskWrapper loaded in DelegationInterceptor"
+                )
+            except Exception as e:
+                logger.warning(f"Could not initialize NX-MEMORY_BRIDGE: {e}")
+        return self._hivemind
 
     async def on_call_tool(
         self, context: MiddlewareContext, call_next: CallNext
@@ -162,6 +183,19 @@ class DelegationInterceptor(Middleware):
                 "ml_metadata": ml_metadata,
             }
 
+            # === MEMORY_BRIDGE PRE-READ: Inject memory context before task ===
+            hivemind = self._get_hivemind()
+            if hivemind is not None:
+                try:
+                    memory_context = hivemind.pre_read_memory(task_description, top_k=3)
+                    if memory_context:
+                        # Inject memory context into tool_args for the agent
+                        original_prompt = tool_args.get("prompt", "")
+                        tool_args["prompt"] = f"{memory_context}\n\n{original_prompt}"
+                        logger.info(f"MEMORY_BRIDGE pre-read injected for: {task_id}")
+                except Exception as e:
+                    logger.debug(f"MEMORY_BRIDGE pre-read skipped: {e}")
+
             try:
                 result = await call_next(context)
                 success = self._is_successful_result(result)
@@ -212,6 +246,22 @@ class DelegationInterceptor(Middleware):
                         )
                 except Exception as e:
                     logger.warning(f"Failed to update advanced learning: {e}")
+
+            # === MEMORY_BRIDGE POST-WRITE: Store task outcome in memory ===
+            hivemind = self._get_hivemind()
+            if hivemind is not None:
+                try:
+                    outcome_str = f"Success: {success}, Latency: {elapsed_ms:.0f}ms"
+                    hivemind.post_write_memory(
+                        task_id=task_id,
+                        description=task_description[:100],
+                        outcome=outcome_str,
+                        success=success,
+                    )
+                    logger.info(f"MEMORY_BRIDGE post-write completed for: {task_id}")
+                except Exception as e:
+                    logger.debug(f"MEMORY_BRIDGE post-write skipped: {e}")
+
             return result
 
         except Exception as e:

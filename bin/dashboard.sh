@@ -14,6 +14,6 @@ if ! "$PYTHON" -c "import textual" 2>/dev/null; then
     "$PYTHON" -m pip install textual -q
 fi
 
-# Run the dashboard
+# Run the dashboard v2
 cd "$ROOT_DIR"
-PYTHONPATH=. "$PYTHON" -m src.ui.tui.ultimate_dashboard
+PYTHONPATH=. "$PYTHON" -m packages.platform_layer.tui.dashboard_v2

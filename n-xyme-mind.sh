@@ -17,6 +17,13 @@ cp "$ROOT/opencode.json" "$ROOT/.opencode/opencode.json" 2>/dev/null || true
 # Load .env if exists
 [ -f "$ROOT/.env" ] && set -a && source "$ROOT/.env" && set +a
 
+# Start remote services in background (telegram bot + dashboard)
+mkdir -p "$ROOT/logs"
+echo "Starting remote services..."
+nohup bash "$ROOT/athena/examples/scripts/start-remote-services.sh" > "$ROOT/logs/remote-services.log" 2>&1 &
+REMOTE_PID=$!
+echo "Remote services started (PID: $REMOTE_PID)"
+
 # Launch OpenCode
 cd "$ROOT"
 exec ~/.opencode/bin/opencode "$@"

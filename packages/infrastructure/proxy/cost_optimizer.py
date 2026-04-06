@@ -7,11 +7,16 @@ import time
 from typing import Dict, Optional
 
 MODEL_COSTS = {
+    # OpenCode models (approximate - these are provider estimates)
+    "mimo-v2-pro": {"input": 0.0, "output": 0.0, "provider": "opencode"},
+    "mimo-v2-omni": {"input": 0.0, "output": 0.0, "provider": "opencode"},
+    "minimax-m2.5": {"input": 0.0, "output": 0.0, "provider": "opencode"},
     "qwen3.6-plus": {"input": 0.0, "output": 0.0, "provider": "opencode"},
     "qwen3-coder": {"input": 0.0, "output": 0.0, "provider": "opencode"},
+    "kimi-k2.5": {"input": 0.0, "output": 0.0, "provider": "opencode"},
+    # OpenRouter fallbacks (if used)
     "nemotron-30b": {"input": 0.0, "output": 0.0, "provider": "openrouter"},
     "nemotron-12b": {"input": 0.0, "output": 0.0, "provider": "openrouter"},
-    "minimax-m2.5": {"input": 0.0, "output": 0.0, "provider": "opencode"},
 }
 
 

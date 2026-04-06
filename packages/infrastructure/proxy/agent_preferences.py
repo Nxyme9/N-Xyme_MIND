@@ -56,6 +56,25 @@ class AgentPreferences:
         }
         # Per-session overrides
         self._session_overrides: Dict[str, Dict[str, list]] = {}
+        # Track session last-access time for cleanup
+        self._session_access_time: Dict[str, float] = {}
+        self._max_sessions = 100  # Max sessions to track before cleanup
+        self._cleanup_threshold = 0.8  # Cleanup when 80% of max
+
+    def _cleanup_old_sessions(self, current_time: float) -> None:
+        """Remove old session overrides to prevent memory leak."""
+        if len(self._session_overrides) < self._max_sessions * self._cleanup_threshold:
+            return
+        
+        # Remove sessions not accessed in >1 hour
+        cutoff = current_time - 3600
+        to_remove = [
+            sid for sid, last_access in self._session_access_time.items()
+            if last_access < cutoff
+        ]
+        for sid in to_remove:
+            self._session_overrides.pop(sid, None)
+            self._session_access_time.pop(sid, None)
 
     def get_preferred_models(self, agent_type: str, session_id: str = "") -> List[str]:
         """Get preferred models for an agent, with session overrides."""
@@ -77,19 +96,26 @@ class AgentPreferences:
             return list(self._preferences.get(agent_type, {}).get("avoid_models", []))
 
     def set_session_override(
-        self, session_id: str, preferred: List[str] = None, avoid: List[str] = None
+        self, session_id: str, preferred: list[str] | None = None, avoid: list[str] | None = None
     ) -> None:
         """Set model preferences for a specific session."""
+        import time
         with self._lock:
+            # Trigger cleanup if needed
+            self._cleanup_old_sessions(time.time())
+            
             if session_id not in self._session_overrides:
                 self._session_overrides[session_id] = {}
+                self._session_access_time[session_id] = time.time()
             if preferred:
                 self._session_overrides[session_id]["preferred"] = preferred
+                self._session_access_time[session_id] = time.time()
             if avoid:
                 self._session_overrides[session_id]["avoid"] = avoid
+                self._session_access_time[session_id] = time.time()
 
     def update_preferences(
-        self, agent_type: str, preferred: List[str] = None, avoid: List[str] = None
+        self, agent_type: str, preferred: list[str] | None = None, avoid: list[str] | None = None
     ) -> None:
         """Update default preferences for an agent."""
         with self._lock:
