@@ -8,29 +8,38 @@ import time
 import logging
 from typing import Optional, List
 from functools import wraps
+from enum import Enum
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class Country:
-    NL = "nl"
-    JP = "jp"
-    US = "us"
-    CA = "ca"
-    PL = "pl"
-    RO = "ro"
-    NO = "no"
-    SE = "se"
+class Country(Enum):
+    NL = ("nl", "Netherlands")
+    JP = ("jp", "Japan")
+    US = ("us", "United States")
+    CA = ("ca", "Canada")
+    PL = ("pl", "Poland")
+    RO = ("ro", "Romania")
+    NO = ("no", "Norway")
+    SE = ("se", "Sweden")
     
     def __init__(self, code: str, name: str):
-        self.code = code
-        self.name = name
+        self._code = code
+        self._name = name
+    
+    @property
+    def code(self) -> str:
+        return self._code
+    
+    @property
+    def name(self) -> str:
+        return self._name
     
     @classmethod
-    def from_code(cls, code: str) -> 'Country':
+    def from_code(cls, code: str) -> "Country":
         code = code.lower()
-        for c in cls.COUNTRIES:
+        for c in cls:
             if c.code == code:
                 return c
         raise ValueError(f"Unknown country code: {code}")
@@ -46,17 +55,8 @@ class Country:
         return f"Country.{self.code.upper()}"
 
 
-Country.NL = Country("nl", "Netherlands")
-Country.JP = Country("jp", "Japan")
-Country.US = Country("us", "United States")
-Country.CA = Country("ca", "Canada")
-Country.PL = Country("pl", "Poland")
-Country.RO = Country("ro", "Romania")
-Country.NO = Country("no", "Norway")
-Country.SE = Country("se", "Sweden")
-
-Country.COUNTRIES = [Country.NL, Country.JP, Country.US, Country.CA,
-                     Country.PL, Country.RO, Country.NO, Country.SE]
+# Build COUNTRIES list from enum members
+COUNTRIES = list(Country)
 
 
 class VPNStatus:
@@ -78,7 +78,7 @@ def retry_with_backoff(max_retries: int = 3, initial_delay: float = 1.0):
         @wraps(func)
         def wrapper(*args, **kwargs):
             delay = initial_delay
-            last_exception = None
+            last_exception: Optional[Exception] = None
             for attempt in range(max_retries):
                 try:
                     return func(*args, **kwargs)
@@ -90,7 +90,9 @@ def retry_with_backoff(max_retries: int = 3, initial_delay: float = 1.0):
                         delay *= 2
                     else:
                         logger.error(f"All {max_retries} attempts failed")
-            raise last_exception
+            if last_exception:
+                raise last_exception
+            return None
         return wrapper
     return decorator
 
@@ -98,7 +100,7 @@ def retry_with_backoff(max_retries: int = 3, initial_delay: float = 1.0):
 class VPNRotator:
     """Manages ProtonVPN connections for IP rotation."""
     
-    COUNTRIES = Country.COUNTRIES
+    COUNTRIES = COUNTRIES  # type: ignore[assignment]
     
     def __init__(self, data_dir: str = "~/.vpn-configs"):
         self.data_dir = os.path.expanduser(data_dir)
@@ -164,7 +166,7 @@ class VPNRotator:
         """Extract country from connection name"""
         if not connection_name:
             return None
-        for country in Country.COUNTRIES:
+        for country in COUNTRIES:
             if country.code.upper() in connection_name.upper():
                 return country
         return None

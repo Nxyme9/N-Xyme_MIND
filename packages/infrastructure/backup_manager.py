@@ -2,7 +2,7 @@
 
 import logging, shutil, time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ class BackupManager:
         self.backup_dir = Path(backup_dir)
         self.backup_dir.mkdir(parents=True, exist_ok=True)
 
-    def backup(self, source_path: str, name: str = None) -> Dict:
+    def backup(self, source_path: str, name: Optional[str] = None) -> Dict:
         source = Path(source_path)
         if not source.exists():
             return {"success": False, "error": "Source not found"}

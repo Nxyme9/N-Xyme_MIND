@@ -1,7 +1,7 @@
 """Feature Flags — On/off/percentage feature toggles"""
 
 import logging, random
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -11,7 +11,7 @@ class FeatureFlags:
         self._flags: Dict[str, dict] = {}
 
     def set_flag(
-        self, name: str, enabled: bool = True, percentage: int = 100, metadata: dict = None
+        self, name: str, enabled: bool = True, percentage: int = 100, metadata: Optional[dict] = None
     ):
         self._flags[name] = {
             "enabled": enabled,
@@ -19,7 +19,7 @@ class FeatureFlags:
             "metadata": metadata or {},
         }
 
-    def is_enabled(self, name: str, user_id: str = None) -> bool:
+    def is_enabled(self, name: str, user_id: Optional[str] = None) -> bool:
         flag = self._flags.get(name)
         if not flag or not flag["enabled"]:
             return False

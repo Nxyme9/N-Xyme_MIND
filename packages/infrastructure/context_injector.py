@@ -18,7 +18,7 @@ NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = "neo4j"
 
 
-def get_startup_context(project_path: str = None) -> str:
+def get_startup_context(project_path: Optional[str] = None) -> str:
     """Get context to inject at session start"""
     context_parts = []
     
@@ -98,7 +98,7 @@ def search_memory(query: str, max_results: int = 5) -> List[dict]:
     return results
 
 
-def store_decision(decision: str, context: str = "", tags: List[str] = None) -> bool:
+def store_decision(decision: str, context: str = "", tags: Optional[List[str]] = None) -> bool:
     """Store a decision in memory"""
     try:
         text = f"Decision: {decision}"

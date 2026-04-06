@@ -4,7 +4,7 @@ Routes HTTP requests through SOCKS5 proxy using httpx native support.
 """
 
 import httpx
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from src.core.backend import Backend
@@ -16,7 +16,7 @@ class SOCKS5Transport:
     def __init__(self, backend: "Backend"):
         self.backend = backend
         self.proxy_url = f"socks5://{backend.socks_host}:{backend.socks_port}"
-        self._client: httpx.AsyncClient | None = None
+        self._client: "httpx.AsyncClient | None" = None
 
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None or self._client.is_closed:

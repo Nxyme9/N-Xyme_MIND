@@ -2,7 +2,7 @@
 
 import json, logging, time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +26,8 @@ class DecisionTracker:
         title: str,
         context: str,
         decision: str,
-        alternatives: List[str] = None,
-        tags: List[str] = None,
+        alternatives: Optional[List[str]] = None,
+        tags: Optional[List[str]] = None,
     ):
         entry = {
             "title": title,

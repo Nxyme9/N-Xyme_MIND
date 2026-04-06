@@ -12,24 +12,21 @@ import os
 import sys
 import os
 
-# Clean sys.path first - remove any paths that could shadow stdlib
+# Clean sys.path first - keep only stdlib paths and add our paths
+# Stdlib paths start with /usr/lib or contain lib-dynload
 _project_root = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
-_proxy_dir = os.path.join(_project_root, "packages", "infrastructure", "proxy")
-_filtered_path = [
-    p for p in sys.path 
-    if 'athena' not in p and 'packages/infrastructure' not in p
-]
-# Put stdlib paths first, then project paths including proxy dir
-sys.path = _filtered_path[:3] + [
+_stdlib_paths = [p for p in sys.path if p.startswith('/usr/lib') or 'lib-dynload' in p]
+_project_paths = [
     _project_root,
-    _proxy_dir,  # Add proxy dir so it can find intelligent_router
+    os.path.join(_project_root, "packages"),
     os.path.join(_project_root, "athena", "src"),
     os.path.join(_project_root, "src", "infrastructure"),
 ]
+# Stdlib first, then project paths
+sys.path = _stdlib_paths + _project_paths
 
 # Import our router (after sys.path is fixed)
 # Use absolute imports from the proxy package
-import sys
 sys.path.insert(0, os.path.join(_project_root, "packages"))
 from infrastructure.proxy import intelligent_router
 from infrastructure.proxy.router_brain import MODEL_CAPABILITIES

@@ -2,7 +2,7 @@
 
 import json, logging, time
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -13,14 +13,14 @@ class Analytics:
         self.data_file.parent.mkdir(parents=True, exist_ok=True)
         self._events: List[Dict] = []
 
-    def track(self, event: str, properties: Dict = None):
+    def track(self, event: str, properties: Optional[Dict] = None):
         self._events.append(
             {"event": event, "properties": properties or {}, "timestamp": time.time()}
         )
         if len(self._events) > 1000:
             self._events = self._events[-1000:]
 
-    def get_events(self, event_type: str = None, limit: int = 100) -> List[Dict]:
+    def get_events(self, event_type: Optional[str] = None, limit: int = 100) -> List[Dict]:
         if event_type:
             return [e for e in self._events if e["event"] == event_type][-limit:]
         return self._events[-limit:]

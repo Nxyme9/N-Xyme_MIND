@@ -7,7 +7,7 @@ import time
 import json
 import logging
 import functools
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any, Callable, Union
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from collections import defaultdict
@@ -137,11 +137,10 @@ class TelemetryManager:
         total_cost = sum(u.cost_usd for u in self.token_usage)
 
         spans_with_duration = [s for s in self.spans if s.duration_ms is not None]
-        avg_duration = (
-            (sum(s.duration_ms for s in spans_with_duration) / len(spans_with_duration))
-            if spans_with_duration
-            else 0
-        )
+        avg_duration: float = 0.0
+        if spans_with_duration:
+            durations: List[float] = [s.duration_ms for s in spans_with_duration]  # type: ignore[list-item]
+            avg_duration = sum(durations) / len(durations)
 
         return {
             "service": self.service_name,

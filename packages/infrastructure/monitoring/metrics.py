@@ -269,14 +269,6 @@ class MetricsStore:
         return value > baseline["upper"] or value < baseline["lower"]
 
 
-    def is_anomaly(self, source, metric, value, hours=168):
-        """Check if value is anomalous (outside mean +/- 2*stddev)."""
-        baseline = self.get_baseline(source, metric, hours)
-        if not baseline:
-            return False
-        return value > baseline["upper"] or value < baseline["lower"]
-
-
     def record_task_start(self, task_id, task_name, plan_name='', estimated_minutes=0, category='general'):
         """Record task start time."""
         with self._get_connection() as conn:
