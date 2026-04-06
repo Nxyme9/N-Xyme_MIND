@@ -44,29 +44,55 @@ def record_outcome(
 
 @mcp.tool()
 def route_task(task_description: str) -> Dict[str, Any]:
-    """Get routing recommendation for a task.
+    """Get routing recommendation for a task using AdaptiveRouter with Q-Learning.
+
+    Uses learned routing decisions from past outcomes. Falls back to
+    heuristic routing during cold start (first 50 decisions).
 
     Args:
         task_description: The task to route
 
     Returns:
-        Dict with level, agent, confidence, and strategy
+        Dict with level, agent, confidence, strategy, and learning info
     """
     try:
-        from packages.learning_engine import route_task as _route
+        from packages.learning_engine.routing.adaptive_router import AdaptiveRouter
 
-        # Default level for now
-        level = 3
-        result = _route(task_description=task_description, level=level)
+        router = AdaptiveRouter()
+        result = router.route(task_description)
 
         return {
             "status": "success",
-            "agent": result.recommended_agent,
-            "confidence": result.confidence,
-            "reason": result.reason,
+            "agent": result.get("agent", "hephaestus"),
+            "level": result.get("level", 3),
+            "confidence": result.get("confidence", 0.5),
+            "reason": result.get("reason", "AdaptiveRouter recommendation"),
+            "learning": {
+                "decisions_made": result.get("decisions_made", 0),
+                "cold_start": result.get("decisions_made", 0) < 50,
+            },
         }
     except Exception as e:
-        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+        # Fallback to old routing if AdaptiveRouter fails
+        try:
+            from packages.learning_engine import route_task as _route
+
+            level = 3
+            result = _route(task_description=task_description, level=level)
+
+            return {
+                "status": "success",
+                "agent": result.recommended_agent,
+                "confidence": result.confidence,
+                "reason": result.reason,
+                "learning": {"cold_start": True, "decisions_made": 0},
+            }
+        except Exception as e2:
+            return {
+                "status": "error",
+                "error": str(e2),
+                "traceback": traceback.format_exc(),
+            }
 
 
 @mcp.tool()

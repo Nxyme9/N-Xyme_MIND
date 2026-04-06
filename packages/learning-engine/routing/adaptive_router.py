@@ -60,6 +60,61 @@ class AdaptiveRouter:
         # Track decisions for stats
         self._decision_history: list[dict[str, Any]] = []
 
+    def route(self, task_description: str) -> dict[str, Any]:
+        """Route a task to optimal agent using Q-Learning.
+
+        Uses learned routing decisions from past outcomes. Falls back to
+        heuristic routing during cold start (first 50 decisions).
+
+        Args:
+            task_description: The task to route
+
+        Returns:
+            Dict with agent, level, confidence, reason, and learning info
+        """
+        # Determine available agents for this task
+        available_actions = self._get_available_actions(task_description, {})
+
+        # Build state from task description
+        state = QState.from_context(task_description, {"task_type": "delegation"})
+
+        # Select action using Q-Learning (epsilon-greedy)
+        selected_action = self._q_learning.select_action(state, available_actions)
+
+        # Map action to agent and level
+        agent = self._action_to_agent(selected_action)
+        level = self._action_to_level(selected_action)
+
+        # Determine confidence based on Q-values
+        q_values = self._q_learning.get_q_values(state)
+        action_q = q_values.get(selected_action.value, 0.0)
+        confidence = min(max(0.5 + action_q * 0.1, 0.1), 0.95)
+
+        # Build reason
+        reason = f"Q-Learning selected {agent} (L{level})"
+        if len(self._decision_history) < 50:
+            reason = f"Heuristic routing (cold start: {len(self._decision_history)}/50 decisions)"
+
+        return {
+            "agent": agent,
+            "level": level,
+            "confidence": round(confidence, 2),
+            "reason": reason,
+            "decisions_made": len(self._decision_history),
+        }
+
+    def _action_to_agent(self, action: ActionType) -> str:
+        """Map ActionType to agent name."""
+        mapping = {
+            ActionType.EXPLORE: "explore",
+            ActionType.DELEGATE: "hephaestus",
+            ActionType.ORACLE: "oracle",
+            ActionType.LIBRARIAN: "librarian",
+            ActionType.HEPHAESTUS: "hephaestus",
+            ActionType.MULTIMODAL: "multimodal-looker",
+        }
+        return mapping.get(action, "hephaestus")
+
     def search(self, query: str, **kwargs) -> SearchResults:
         """Search with learning — logs outcome and updates Q-values.
 
@@ -132,7 +187,9 @@ class AdaptiveRouter:
             "has_filters": bool(kwargs.get("filters")),
         }
 
-    def _get_available_actions(self, query: str, context: dict[str, Any]) -> list[ActionType]:
+    def _get_available_actions(
+        self, query: str, context: dict[str, Any]
+    ) -> list[ActionType]:
         """Determine available actions based on query characteristics."""
         # All actions available by default
         available = [
@@ -182,7 +239,9 @@ class AdaptiveRouter:
         """Build DelegationOutcome from routing decision."""
         # Determine success based on results
         has_results = len(results.results) > 0
-        success = has_results and latency_ms < 500  # Consider slow queries as partial failure
+        success = (
+            has_results and latency_ms < 500
+        )  # Consider slow queries as partial failure
 
         # Map action to task type
         task_type = self._action_to_task_type(action)
@@ -217,7 +276,7 @@ class AdaptiveRouter:
         mapping = {
             ActionType.EXPLORE: 3,  # L3: research
             ActionType.DELEGATE: 2,  # L2: simple delegation
-            ActionType.ORACLE: 4,   # L4: complex review
+            ActionType.ORACLE: 4,  # L4: complex review
             ActionType.LIBRARIAN: 3,  # L3: research
             ActionType.HEPHAESTUS: 3,  # L3: implementation
             ActionType.MULTIMODAL: 3,  # L3: research
@@ -244,7 +303,9 @@ class AdaptiveRouter:
         # Latency penalty: -0.001 per ms over threshold
         latency_penalty = 0.0
         if latency_ms > LATENCY_THRESHOLD_MS:
-            latency_penalty = -LATENCY_PENALTY_PER_MS * (latency_ms - LATENCY_THRESHOLD_MS)
+            latency_penalty = -LATENCY_PENALTY_PER_MS * (
+                latency_ms - LATENCY_THRESHOLD_MS
+            )
 
         # Quality bonus: +0.5 if quality is high
         quality_bonus = 0.0
@@ -267,14 +328,16 @@ class AdaptiveRouter:
             ActionType.DELEGATE,
         ]
 
-        self._decision_history.append({
-            "state": state.to_key(),
-            "action": action.value,
-            "reward": reward,
-            "latency_ms": latency_ms,
-            "timestamp": datetime.now().isoformat(),
-            "is_exploration": is_exploration,
-        })
+        self._decision_history.append(
+            {
+                "state": state.to_key(),
+                "action": action.value,
+                "reward": reward,
+                "latency_ms": latency_ms,
+                "timestamp": datetime.now().isoformat(),
+                "is_exploration": is_exploration,
+            }
+        )
 
         # Keep only last 1000 decisions
         if len(self._decision_history) > 1000:
@@ -287,7 +350,9 @@ class AdaptiveRouter:
 
         total = len(self._decision_history)
         successful = sum(1 for d in self._decision_history if d["reward"] > 0)
-        exploration_count = sum(1 for d in self._decision_history if d.get("is_exploration"))
+        exploration_count = sum(
+            1 for d in self._decision_history if d.get("is_exploration")
+        )
         exploitation_count = total - exploration_count
 
         # Get Q-values from all states
@@ -324,7 +389,9 @@ class AdaptiveRouter:
         """Reset Q-table and decision history (for testing)."""
         self._decision_history = []
         # Re-initialize Q-table
-        self._q_learning = QLearningEngine(db_path=getattr(self._q_learning, "_db_path", None))
+        self._q_learning = QLearningEngine(
+            db_path=getattr(self._q_learning, "_db_path", None)
+        )
 
 
 # Import path for UnifiedMemoryQuery and SearchResults
