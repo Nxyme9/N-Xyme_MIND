@@ -93,5 +93,47 @@
       "outcome": "success",
       "task_id": "test_003"
     }
+  },
+  {
+    "id": "af3399b0",
+    "source_session": "hivemind-active",
+    "content": "test task description: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.386706",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "af3399b0-7f64-4803-9632-f697811c8e31"
+    }
+  },
+  {
+    "id": "af621ae3",
+    "source_session": "hivemind-active",
+    "content": "manual task: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.397407",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "af621ae3-e137-4d48-9828-fda29df69f10"
+    }
+  },
+  {
+    "id": "4769a644",
+    "source_session": "hivemind-active",
+    "content": "failing task: FAILED: Simulated failure",
+    "knowledge_type": "outcome",
+    "confidence": 0.5,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.429245",
+    "metadata": {
+      "outcome": "failed",
+      "task_id": "4769a644-4664-4cb8-8ff9-7b7e62e34aa8"
+    }
   }
 ]
