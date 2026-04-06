@@ -14,10 +14,17 @@ from pathlib import Path
 from typing import Any
 
 try:
-    from packages.intelligence.db import SQLiteStore
+    from packages.intelligence.db import SQLiteStore  # type: ignore[import]
+
     HAS_STATE_DB = True
 except ImportError:
     HAS_STATE_DB = False
+
+# Import StateDB from src
+try:
+    from src.tools.state.db import StateDB  # type: ignore[import]
+except ImportError:
+    StateDB = None
 
 
 TTL_MAP: dict[int, int] = {1: 1, 2: 4, 3: 24, 4: 24, 5: 24}
@@ -28,7 +35,7 @@ RESEARCH_KEYWORDS = ["search", "find", "explore", "research", "document"]
 
 def _get_ttl(task: str) -> int:
     """Get TTL hours based on task complexity and keywords."""
-    from packages.intelligence.router.keyword import score_complexity
+    from packages.intelligence.router.keyword import score_complexity  # type: ignore[import]
 
     level = score_complexity(task).level
     ttl = TTL_MAP.get(level, 24)
@@ -59,7 +66,7 @@ def _match_task(query: str, stored: str) -> bool:
 
 def _check_sqlite(db_path: Path, task: str, ttl_hours: int) -> dict[str, Any]:
     """Check results in SQLite database."""
-    if not HAS_STATE_DB:
+    if not HAS_STATE_DB or StateDB is None:
         return {"found": False, "reason": "db unavailable"}
 
     try:

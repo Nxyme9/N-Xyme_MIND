@@ -1,0 +1,29 @@
+# Oracle Agent - Enhanced with Memory Recall
+# Add memory capabilities to Oracle for Q&A and context retrieval
+
+skills:
+  - bmad-memory-recall
+  - bmad-memory-search
+  - bmad-recall-project-context
+  - bmad-recall-agent-history
+
+trigger_phrases:
+  - "recall context"
+  - "what do we know about"
+  - "refresh my memory"
+  - "search memories"
+  - "what was discussed"
+  - "what did we work on"
+
+capabilities:
+  memory_recall: true
+  memory_search: true
+  project_context_retrieval: true
+  agent_history_retrieval: true
+
+context_sources:
+  - opencode.db
+  - Graphiti
+  - Memory MCP
+  - project-manifest.json
+  - session-state.json

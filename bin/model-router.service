@@ -1,0 +1,31 @@
+[Unit]
+Description=N-Xyme Model Router Proxy Server
+After=network.target
+Wants=network.target
+
+[Service]
+Type=forking
+User=nxyme
+Group=nxyme
+WorkingDirectory=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND
+ExecStart=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bin/start-model-router.sh
+ExecStop=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bin/stop-model-router.sh
+PIDFile=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/logs/model-router.pid
+Restart=on-failure
+RestartSec=10
+StandardOutput=append:/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/logs/model-router.log
+StandardError=append:/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/logs/model-router.log
+SyslogIdentifier=n-xyme-model-router
+
+# Resource limits
+MemoryMax=8G
+CPUQuota=400%
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/logs
+ReadWritePaths=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/src
+
+[Install]
+WantedBy=multi-user.target

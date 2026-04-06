@@ -1,0 +1,12 @@
+{
+  "qwen3-coder": {
+    "state": "closed",
+    "failure_count": 1,
+    "last_failure_time": 1775503960.8011777,
+    "last_success_time": 1775503960.8010721,
+    "half_open_requests": 0,
+    "failure_threshold": 3,
+    "recovery_timeout_seconds": 120,
+    "half_open_max_requests": 1
+  }
+}

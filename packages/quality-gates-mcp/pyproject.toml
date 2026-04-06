@@ -1,0 +1,8 @@
+[project]
+name = "quality-gates-mcp"
+version = "0.1.0"
+description = "MCP server wrapping quality gate scripts"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# VPN Rotate Command
+# Usage: bin/vpn-rotate [command]
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VPN_DIR="$SCRIPT_DIR/../vpn"
+
+case "${1:-list}" in
+    list)
+        echo "=== Available VPN Configs ==="
+        python3 "$VPN_DIR/rotator.py" --list
+        ;;
+    status)
+        echo "=== VPN Status ==="
+        # Check active WireGuard interfaces
+        if command -v wg &>/dev/null; then
+            wg show || echo "No active WireGuard interfaces"
+        else
+            echo "WireGuard not installed"
+        fi
+        ;;
+    rotate)
+        echo "=== Rotating VPN ==="
+        echo "To rotate: download configs to vpn/providers/*/configs/"
+        echo "Then use: sudo wg-quick up /path/to/config.conf"
+        ;;
+    *)
+        echo "Usage: $0 {list|status|rotate}"
+        exit 1
+        ;;
+esac

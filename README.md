@@ -71,3 +71,39 @@ bash bootstrap.sh
 ### Portability
 - `bootstrap.sh` now supports Arch/Debian/Fedora/RHEL
 - All shebangs portable (`#!/usr/bin/env bash/python3`)
+
+## 🚀 Complete LLM Routing System
+
+### Features
+- **Smart Routing**: Classifies tasks → routes to optimal provider
+- **IP Rotation**: 8 SOCKS5 proxies bypass rate limits
+- **Local Models**: llama3.2:3b + qwen2.5-coder:7b for fast local inference
+- **Memory Learning**: Stores routing outcomes → improves over time
+- **Auto-Recovery**: Health monitor restarts failed services automatically
+
+### Quick Start
+```bash
+# Start all services
+systemctl --user start model-router.service
+
+# Verify health
+bash bin/health-monitor.sh
+
+# Launch TUI Dashboard
+PYTHONPATH=. python3 -m src.tui.ultimate_dashboard
+
+# Open OpenCode Desktop (routes through proxy automatically)
+opencode-desktop
+```
+
+### System Status
+- **Model Router**: ✅ Running on localhost:8080
+- **SOCKS5 Proxies**: ✅ 8 running (ports 1080-1087)
+- **Local Models**: ✅ llama3.2:3b, qwen2.5-coder:7b
+- **Tests**: ✅ 79/79 passing
+- **Health Monitor**: ✅ Active with auto-recovery
+
+### Documentation
+- [Complete System Guide](docs/complete-system-guide.md)
+- [Model Router Documentation](docs/model-router.md)
+- [Migration Guide](MIGRATION.md)

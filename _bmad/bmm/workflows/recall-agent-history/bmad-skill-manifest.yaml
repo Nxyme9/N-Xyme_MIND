@@ -1,0 +1,7 @@
+---
+name: recall_agent_history
+description: Get agent work history from memory. Use when user asks what has been done, what work has been completed, or what did we work on last time.
+canonicalId: bmad-recall-agent-history
+module: bmm
+path: _bmad/bmm/workflows/recall-agent-history/workflow.md
+install_to_bmad: "true"

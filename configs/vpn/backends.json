@@ -1,0 +1,12 @@
+{
+  "backends": [
+    {"name": "proxy-1", "socks_host": "127.0.0.1", "socks_port": 1080, "provider": "local", "country": "nl"},
+    {"name": "proxy-2", "socks_host": "127.0.0.1", "socks_port": 1081, "provider": "local", "country": "us"},
+    {"name": "proxy-3", "socks_host": "127.0.0.1", "socks_port": 1082, "provider": "local", "country": "de"},
+    {"name": "proxy-4", "socks_host": "127.0.0.1", "socks_port": 1083, "provider": "local", "country": "ca"},
+    {"name": "proxy-5", "socks_host": "127.0.0.1", "socks_port": 1084, "provider": "local", "country": "jp"},
+    {"name": "proxy-6", "socks_host": "127.0.0.1", "socks_port": 1085, "provider": "local", "country": "ro"},
+    {"name": "proxy-7", "socks_host": "127.0.0.1", "socks_port": 1086, "provider": "local", "country": "no"},
+    {"name": "proxy-8", "socks_host": "127.0.0.1", "socks_port": 1087, "provider": "local", "country": "se"}
+  ]
+}

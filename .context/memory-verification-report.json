@@ -1,0 +1,16 @@
+{
+  "verified_at": "2026-04-04T18:25:00Z",
+  "checks": {
+    "embedding_coverage": {"expected": 323, "actual": 323, "pass": true},
+    "semantic_enabled": {"pass": true},
+    "preferences_cleaned": {"expected": 1, "actual": 1, "pass": true},
+    "empty_dbs_moved": {"count": 4, "pass": true},
+    "chromadb_installed": {"version": "1.5.5", "pass": true},
+    "knowledge_graph": {"entities": 54, "relations": 104, "pass": true},
+    "global_messages_indexed": {"count": 175, "pass": true},
+    "auto_embed_pipeline": {"pass": true},
+    "backup_exists": {"pass": true}
+  },
+  "all_checks_passed": true,
+  "summary": "All 9 memory system verification checks passed. Embedding coverage at 100% (323/323), semantic search enabled, preferences cleaned (1 remaining), 4 empty DBs moved to .trash, ChromaDB 1.5.5 installed, knowledge graph has 54 entities and 104 relations, 175 global messages indexed, auto-embed pipeline functional, backup exists."
+}

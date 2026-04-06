@@ -1,0 +1,189 @@
+{
+  "timestamp": 1775506265.1686752,
+  "training_duration_seconds": 24.281489849090576,
+  "total_samples": 1000,
+  "final_weights": {
+    "qwen3.6-plus": 0.1385,
+    "qwen3-coder": 0.1633,
+    "deepseek-r1": 0.1063,
+    "minimax-m2.5": 0.1529,
+    "gemini-2.5-flash": 0.1864,
+    "ollama/qwen2.5-coder:7b": 0.0275,
+    "ollama/llama3.2:3b": 0.0428,
+    "qwen3.6-plus-free": 0.1823
+  },
+  "weight_changes": {
+    "ollama/qwen2.5-coder:7b": -0.0,
+    "ollama/llama3.2:3b": -0.0,
+    "qwen3.6-plus": 0.001,
+    "minimax-m2.5": -0.001,
+    "qwen3.6-plus-free": -0.0,
+    "deepseek-r1": 0.001,
+    "gemini-2.5-flash": -0.002,
+    "qwen3-coder": 0.001
+  },
+  "model_performance": {
+    "qwen3.6-plus": {
+      "success_rate": 0.5210938677113154,
+      "avg_latency_ms": 833.9783692210964,
+      "total_requests": 13274
+    },
+    "qwen3-coder": {
+      "success_rate": 0.5444538526672311,
+      "avg_latency_ms": 655.2597180274306,
+      "total_requests": 12991
+    },
+    "deepseek-r1": {
+      "success_rate": 0.5293629852996607,
+      "avg_latency_ms": 1201.9388921781306,
+      "total_requests": 13265
+    },
+    "minimax-m2.5": {
+      "success_rate": 0.5782072368421053,
+      "avg_latency_ms": 517.9343719166719,
+      "total_requests": 12160
+    },
+    "gemini-2.5-flash": {
+      "success_rate": 0.5450761740223025,
+      "avg_latency_ms": 418.30491609412644,
+      "total_requests": 12734
+    },
+    "ollama/qwen2.5-coder:7b": {
+      "success_rate": 0.6022645145748012,
+      "avg_latency_ms": 3031.1551952719497,
+      "total_requests": 8302
+    },
+    "ollama/llama3.2:3b": {
+      "success_rate": 0.6770480704129993,
+      "avg_latency_ms": 1770.7573902597383,
+      "total_requests": 7385
+    },
+    "qwen3.6-plus-free": {
+      "success_rate": 0.5225321888412017,
+      "avg_latency_ms": 513.7593032867755,
+      "total_requests": 3728
+    }
+  },
+  "test_routing_results": [
+    {
+      "prompt": "implement a new API endpoint",
+      "expected": "coding",
+      "selected": "qwen3-coder",
+      "reason": "performance"
+    },
+    {
+      "prompt": "explain why the system is slow",
+      "expected": "reasoning",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "review the code for security",
+      "expected": "analysis",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "write a story about AI",
+      "expected": "creative",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "calculate the time complexity",
+      "expected": "math",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "summarize the main findings",
+      "expected": "summarization",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "fix the authentication bug",
+      "expected": "coding",
+      "selected": "qwen3-coder",
+      "reason": "performance"
+    },
+    {
+      "prompt": "compare microservices vs monolith",
+      "expected": "reasoning",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "audit the database queries",
+      "expected": "analysis",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "compose a poem",
+      "expected": "creative",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "implement a new API endpoint",
+      "expected": "coding",
+      "selected": "qwen3-coder",
+      "reason": "performance"
+    },
+    {
+      "prompt": "explain why the system is slow",
+      "expected": "reasoning",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "review the code for security",
+      "expected": "analysis",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "write a story about AI",
+      "expected": "creative",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "calculate the time complexity",
+      "expected": "math",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "summarize the main findings",
+      "expected": "summarization",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "fix the authentication bug",
+      "expected": "coding",
+      "selected": "qwen3-coder",
+      "reason": "performance"
+    },
+    {
+      "prompt": "compare microservices vs monolith",
+      "expected": "reasoning",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "audit the database queries",
+      "expected": "analysis",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    },
+    {
+      "prompt": "compose a poem",
+      "expected": "creative",
+      "selected": "qwen3.6-plus-free",
+      "reason": "performance"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+---
+name: bmad_memory_consolidate
+description: Consolidate current session to unified memory for future recall. Use when the user says "save session", "consolidate to memory", or "remember this".
+canonicalId: bmad-memory-consolidate
+module: bmm
+path: _bmad/bmm/workflows/memory/bmad-memory-consolidate/SKILL.md
+install_to_bmad: "true"

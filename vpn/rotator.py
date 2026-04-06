@@ -20,6 +20,14 @@ from dataclasses import dataclass, field
 from typing import Optional, List, Dict
 from pathlib import Path
 
+# Wire to vpn_ip_pool for health tracking across the proxy layer
+try:
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+    from src.infrastructure.proxy.vpn_ip_pool import vpn_ip_pool
+    _VPN_IP_POOL_WIRED = True
+except ImportError:
+    _VPN_IP_POOL_WIRED = False
+
 logger = logging.getLogger("rotator")
 
 # ANSI escape codes
@@ -531,6 +539,12 @@ class RotatingProxy:
                             self.stats["total_429s"] += 1
                             logger.warning("429 detected on %s",
                                            backend.name)
+                            # Wire to vpn_ip_pool for cross-layer health tracking
+                            if _VPN_IP_POOL_WIRED:
+                                vpn_ip_pool.record_failure(
+                                    next((ip for ip in vpn_ip_pool._ips
+                                          if ip.host == backend.socks_host and ip.port == backend.socks_port), None),
+                                    "429")
                     dst.write(data)
                     await dst.drain()
             except (asyncio.CancelledError, ConnectionError, OSError):
@@ -595,6 +609,12 @@ class RotatingProxy:
                 # Rate limited by local bucket
                 backend.mark_429()
                 self.stats["total_429s"] += 1
+                # Wire to vpn_ip_pool
+                if _VPN_IP_POOL_WIRED:
+                    vpn_ip_pool.record_failure(
+                        next((ip for ip in vpn_ip_pool._ips
+                              if ip.host == backend.socks_host and ip.port == backend.socks_port), None),
+                        "429")
                 writer.write(b"HTTP/1.1 429 Too Many Requests\r\n\r\n")
                 await writer.drain()
                 writer.close()
@@ -611,6 +631,12 @@ class RotatingProxy:
                 logger.error("Backend %s failed: %s", backend.name, exc)
                 backend.error_count += 1
                 self.mark_backend_unhealthy(backend)
+                # Wire to vpn_ip_pool for connection failure tracking
+                if _VPN_IP_POOL_WIRED:
+                    vpn_ip_pool.record_failure(
+                        next((ip for ip in vpn_ip_pool._ips
+                              if ip.host == backend.socks_host and ip.port == backend.socks_port), None),
+                        "connection_error")
                 # Try fallback
                 backend = self.select_backend()
                 if not backend:
@@ -638,6 +664,12 @@ class RotatingProxy:
             writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
             await writer.drain()
             backend.request_count += 1
+            # Wire success to vpn_ip_pool for health tracking
+            if _VPN_IP_POOL_WIRED:
+                vpn_ip = next((ip for ip in vpn_ip_pool._ips
+                               if ip.host == backend.socks_host and ip.port == backend.socks_port), None)
+                if vpn_ip:
+                    vpn_ip_pool.record_success(vpn_ip, backend.latency * 1000 if backend.latency > 0 else 50.0)
 
             # Relay data with 429 watching
             await self._relay(
@@ -779,12 +811,25 @@ async def main():
                         help="Enable stealth mode with random delays")
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Verbose logging")
+    parser.add_argument("--list", action="store_true",
+                        help="List configured backends and exit")
     args = parser.parse_args()
 
     setup_logging(args.verbose)
 
     # Load backends
     backends = load_backends(args.config)
+
+    # Handle --list flag
+    if args.list:
+        if backends:
+            print(f"Configured backends ({len(backends)}):")
+            for b in backends:
+                print(f"  - {b.name}: {b.socks_host}:{b.socks_port}")
+        else:
+            print("No backends configured")
+        sys.exit(0)
+
     if not backends:
         logger.error("No backends configured. Set ROTATOR_SOCKS_HOST/PORT "
                       "or create ~/.config/opencode-vpn/state/servers.json")

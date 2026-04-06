@@ -1,0 +1,22 @@
+{
+  "validated_at": "2026-04-04T10:47:23Z",
+  "ollama_running": true,
+  "nomic_model_available": true,
+  "chromadb_installed": false,
+  "python_version": "3.12.13",
+  "databases": {
+    "context/memory/mind_from_mind.db": {"status": "valid", "tables": 13},
+    "context/memory/nxm_from_mind.db": {"status": "valid", "tables": 8},
+    "context/memory/jarvis_memory.db": {"status": "valid", "tables": 4},
+    "context/memory/jarvis_events.db": {"status": "valid", "tables": 2},
+    "context/opencode/opencode.db": {"status": "valid", "tables": 14},
+    "context/opencode/opencode-global.db": {"status": "valid", "tables": 12},
+    "modelrouter/data/orchestrator.db": {"status": "valid", "tables": 7},
+    "data/nervous_system.db": {"status": "valid", "tables": 5},
+    "data/memory_migration.db": {"status": "valid", "tables": 3}
+  },
+  "all_checks_passed": false,
+  "failures": [
+    "chromadb Python package is not installed"
+  ]
+}

@@ -2,9 +2,8 @@
 # N-Xyme Catalyst Heartbeat Monitor
 # Tests all services every 30 seconds
 
-API_KEY="h1_2qaF6NEK1XjNCNho1ToJvdmL5eRMJNEluKGOMBxg"
+API_KEY="${JARVIS_API_KEY:-}"
 INTERVAL=30
-
 while true; do
     clear
     echo "=== N-Xyme Catalyst Heartbeat Monitor ==="

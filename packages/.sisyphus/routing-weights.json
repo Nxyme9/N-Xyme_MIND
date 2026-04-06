@@ -1,0 +1,87 @@
+{
+  "hephaestus": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "sisyphus-junior": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "explore": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "librarian": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "oracle": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "momus": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "prometheus": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "metis": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "atlas": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "test": {
+    "success_rate": 0.55,
+    "avg_latency_ms": 100,
+    "total_tasks": 1,
+    "success_count": 1,
+    "failure_count": 0,
+    "by_level": {
+      "3": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 100
+      }
+    }
+  }
+}

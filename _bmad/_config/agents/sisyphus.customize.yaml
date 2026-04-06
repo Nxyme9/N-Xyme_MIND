@@ -1,0 +1,36 @@
+# Sisyphus Agent - Enhanced with Session Consolidation
+# Add memory capabilities to Sisyphus for session management
+
+skills:
+  - bmad-memory-consolidate
+  - bmad-consolidate-session
+
+trigger_phrases:
+  - "save session"
+  - "consolidate to memory"
+  - "remember this"
+  - "end session"
+
+capabilities:
+  session_consolidation: true
+  auto_consolidate_on_breakpoints: true
+  context_persistence: true
+
+consolidation_triggers:
+  - task_completion
+  - natural_breakpoints
+  - context_switches
+  - session_end
+
+memory_targets:
+  - Memory MCP
+  - Graphiti
+  - opencode.db
+
+auto_save:
+  enabled: true
+  frequency: natural_breakpoints
+  include:
+    - session-state.json
+    - project-manifest.json
+    - mind-state.json

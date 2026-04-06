@@ -1,0 +1,23 @@
+[project]
+name = "intelligent-router-mcp"
+version = "1.0.0"
+description = "Self-healing, self-optimizing LLM routing MCP server"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [{name = "N-Xyme", email = "nxyme@example.com"}]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["intelligent_router_mcp*"]

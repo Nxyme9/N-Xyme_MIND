@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-04-04T03:38:47",
+  "iterations": 10,
+  "results": [
+    {
+      "name": "tool_register_trigger",
+      "mean_ms": 0.0002553002559579909,
+      "ops_per_sec": 3916956.51164779
+    },
+    {
+      "name": "tool_list_triggers",
+      "mean_ms": 0.00010629919415805489,
+      "ops_per_sec": 9407409.039367815
+    },
+    {
+      "name": "tool_check_trigger",
+      "mean_ms": 0.000140099655254744,
+      "ops_per_sec": 7137776.307741046
+    }
+  ]
+}

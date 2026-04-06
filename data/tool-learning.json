@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "last_updated": 1775462072.2401688,
+  "models": {
+    "qwen2.5-coder:7b": {
+      "best_tools": [
+        "filesystem_read_text_file",
+        "bash",
+        "grep"
+      ],
+      "failure_patterns": {
+        "bash": [
+          "permission denied"
+        ]
+      },
+      "success_count": 0,
+      "failure_count": 0,
+      "avg_latency_ms": 0
+    }
+  }
+}

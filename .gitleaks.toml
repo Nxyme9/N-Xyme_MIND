@@ -1,0 +1,45 @@
+title = "gitleaks config"
+
+[allowlist]
+paths = [
+    '''(\.env|\.env\.example)$''',
+    '''node_modules''',
+    '''\.git''',
+    '''\.sisyphus/plans/.*''',
+    '''_bmad/.*''',
+    '''scripts/heartbeat-.*''',
+    '''src/test_security\.py''',
+    '''src/blocks/test_security\.py''',
+    '''context/.*''',
+    '''tests/.*''',
+]
+regexes = [
+    '''.*REDACTED.*''',
+    '''\$[a-zA-Z_]+\$''',
+    '''const expired.*''',
+]
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[a-zA-Z0-9]{36}'''
+
+[[rules]]
+id = "github-oauth"
+description = "GitHub OAuth Token"
+regex = '''gho_[a-zA-Z0-9]{36}'''
+
+[[rules]]
+id = "openrouter-key"
+description = "OpenRouter API Key"
+regex = '''sk-or-v1-[a-zA-Z0-9]{60,70}'''
+
+[[rules]]
+id = "opencode-key"
+description = "OpenCode API Key"
+regex = '''sk-[a-zA-Z0-9]{40,}'''
+
+[[rules]]
+id = "google-api-key"
+description = "Google API Key"
+regex = '''AIzaSy[a-zA-Z0-9_-]{33}'''

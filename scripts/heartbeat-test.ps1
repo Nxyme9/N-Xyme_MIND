@@ -2,7 +2,7 @@
 # Tests all services automatically every 30 seconds
 
 $ErrorActionPreference = "Continue"
-$API_KEY = "h1_2qaF6NEK1XjNCNho1ToJvdmL5eRMJNEluKGOMBxg"
+$API_KEY = "${JARVIS_API_KEY}"
 $INTERVAL = 30  # seconds
 
 function Write-Status {

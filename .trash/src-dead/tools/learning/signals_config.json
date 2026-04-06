@@ -1,0 +1,47 @@
+{
+  "categories": {
+    "interaction": {
+      "name": "Interaction Signals",
+      "signals": [
+        "misalignment",
+        "stagnation",
+        "disengagement",
+        "satisfaction"
+      ],
+      "weights": {
+        "misalignment": 0.8,
+        "stagnation": 0.6,
+        "disengagement": 0.7,
+        "satisfaction": 0.9
+      },
+      "description": "Signals derived from user-query-response interaction patterns"
+    },
+    "execution": {
+      "name": "Execution Signals",
+      "signals": [
+        "failure",
+        "loop"
+      ],
+      "weights": {
+        "failure": 0.9,
+        "loop": 0.7
+      },
+      "description": "Signals derived from tool execution outcomes and errors"
+    },
+    "environment": {
+      "name": "Environment Signals",
+      "signals": [
+        "exhaustion"
+      ],
+      "weights": {
+        "exhaustion": 0.8
+      },
+      "description": "Signals derived from resource constraints and limits"
+    }
+  },
+  "metadata": {
+    "source": "arXiv 2604.00356",
+    "version": "1.0",
+    "purpose": "Implicit feedback learning taxonomy"
+  }
+}

@@ -325,11 +325,11 @@
       "type": "local",
       "command": [
         "python3",
-        "-m",
-        "intelligent_router_mcp"
+        "packages/infrastructure/proxy/simple_mcp_server.py"
       ],
       "environment": {
-        "PYTHONPATH": "packages:."
+        "PYTHONPATH": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND:/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/packages",
+        "PATH": "/usr/bin:/bin"
       }
     },
     "learning-engine": {

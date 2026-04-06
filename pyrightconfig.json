@@ -1,0 +1,8 @@
+{
+  "include": ["src/"],
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportUnknownParameterType": "warning",
+  "reportUnknownVariableType": "warning",
+  "reportUnknownMemberType": "warning"
+}

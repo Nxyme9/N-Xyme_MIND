@@ -1,0 +1,255 @@
+{
+  "version": "1.0.0",
+  "description": "N-Xyme MIND Model Router Configuration - Local↔Cloud routing rules",
+  "metadata": {
+    "created": "2026-04-06",
+    "hardware": {
+      "cpu": "AMD Ryzen 7 7800X3D",
+      "ram_gb": 32,
+      "vram_gb": 12,
+      "gpu": "RTX 3080 Ti"
+    },
+    "ollama_endpoint": "http://localhost:11434"
+  },
+  "models": {
+    "local": {
+      "ollama/qwen2.5-coder:7b": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "type": "coding-focused",
+        "vram_requirement_gb": 7,
+        "context_window": 8192,
+        "max_tokens": 4096
+      },
+      "ollama/llama3.2:3b": {
+        "provider": "ollama",
+        "endpoint": "http://localhost:11434",
+        "type": "lightweight",
+        "vram_requirement_gb": 4,
+        "context_window": 4096,
+        "max_tokens": 2048
+      }
+    },
+    "cloud": {
+      "opencode/qwen3.6-plus-free": {
+        "provider": "opencode",
+        "type": "high-reasoning",
+        "strengths": ["orchestration", "planning", "analysis", "coding"],
+        "context_window": 1000000,
+        "max_tokens": 8192
+      },
+      "opencode/minimax-m2.5-free": {
+        "provider": "opencode",
+        "type": "general-purpose",
+        "strengths": ["fast", "code-writing", "SWE-bench 80.2%"],
+        "context_window": 8192,
+        "max_tokens": 4096
+      },
+      "opencode/mimo-v2-pro-free": {
+        "provider": "opencode",
+        "type": "high-reasoning",
+        "strengths": ["orchestration", "planning", "complex-reasoning"],
+        "context_window": 16384,
+        "max_tokens": 8192
+      },
+      "opencode/mimo-v2-omni-free": {
+        "provider": "opencode",
+        "type": "multimodal",
+        "strengths": ["vision", "image-understanding", "visual-analysis"],
+        "context_window": 8192,
+        "max_tokens": 4096
+      },
+      "opencode/kimi-k2.5-free": {
+        "provider": "opencode",
+        "type": "review-adversarial",
+        "strengths": ["critical-analysis", "red-teaming", "adversarial-review"],
+        "context_window": 8192,
+        "max_tokens": 4096
+      },
+      "openrouter/qwen/qwen3-coder:free": {
+        "provider": "openrouter",
+        "type": "coding",
+        "strengths": ["code-generation", "implementation"],
+        "context_window": 262144,
+        "max_tokens": 8192
+      },
+      "openrouter/deepseek/deepseek-r1:free": {
+        "provider": "openrouter",
+        "type": "reasoning",
+        "strengths": ["math", "logic", "reasoning"],
+        "context_window": 131072,
+        "max_tokens": 8192
+      }
+    }
+  },
+  "fallback_chain": [
+    "opencode/qwen3.6-plus-free",
+    "ollama/qwen2.5-coder:7b",
+    "ollama/llama3.2:3b",
+    "opencode/minimax-m2.5-free",
+    "opencode/mimo-v2-pro-free"
+  ],
+  "latency_thresholds": {
+    "local_max_ms": 2000,
+    "cloud_max_ms": 5000,
+    "fallback_trigger_ms": 3000,
+    "timeout_buffer_ms": 500
+  },
+  "complexity_rules": {
+    "L1": {
+      "level": "trivial",
+      "description": "Single-line typo fixes, version bumps, trivial changes",
+      "preferred_model": "ollama/llama3.2:3b",
+      "timeout_ms": 1500
+    },
+    "L2": {
+      "level": "simple",
+      "description": "Single-file fixes, simple modifications",
+      "preferred_model": "ollama/qwen2.5-coder:7b",
+      "timeout_ms": 2000
+    },
+    "L3": {
+      "level": "moderate",
+      "description": "Multi-file changes, new features",
+      "preferred_model": "ollama/qwen2.5-coder:7b",
+      "fallback": "opencode/minimax-m2.5-free",
+      "timeout_ms": 3000
+    },
+    "L4": {
+      "level": "complex",
+      "description": "System design, new architecture",
+      "preferred_model": "opencode/qwen3.6-plus-free",
+      "fallback": "opencode/minimax-m2.5-free",
+      "timeout_ms": 5000
+    },
+    "L5": {
+      "level": "architect",
+      "description": "System-wide decisions, strategic planning",
+      "preferred_model": "opencode/qwen3.6-plus-free",
+      "fallback": "opencode/mimo-v2-pro-free",
+      "timeout_ms": 8000
+    }
+  },
+  "health_check": {
+    "enabled": true,
+    "interval_seconds": 30,
+    "timeout_seconds": 5,
+    "consecutive_failures_threshold": 3,
+    "retry_on_failure": true,
+    "restart_on_critical": true,
+    "checks": {
+      "ollama": {
+        "endpoint": "http://localhost:11434/api/tags",
+        "expected_response_time_ms": 1000
+      },
+      "opencode": {
+        "endpoint": "https://opencode.ai/api/health",
+        "expected_response_time_ms": 3000
+      }
+    }
+  },
+  "vram_limits": {
+    "max_vram_gb": 12,
+    "local_switch_threshold_gb": 5,
+    "vram_check_interval_seconds": 60,
+    "auto_switch_to_cloud": true,
+    "reserve_vram_gb": 2,
+    "model_vram_buffers": {
+      "ollama/qwen2.5-coder:7b": 7,
+      "ollama/llama3.2:3b": 4
+    }
+  },
+  "agent_overrides": {
+    "hephaestus": {
+      "prefer": "opencode/minimax-m2.5-free",
+      "fallback_to_cloud": true,
+      "fallback_order": ["ollama/qwen2.5-coder:7b"],
+      "skip_local": false
+    },
+    "oracle": {
+      "prefer": "opencode/mimo-v2-pro-free",
+      "skip_local": true,
+      "fallback_order": ["opencode/kimi-k2.5-free"],
+      "reason": "High-reasoning tasks require cloud models"
+    },
+    "momus": {
+      "prefer": "opencode/kimi-k2.5-free",
+      "skip_local": true,
+      "fallback_order": ["opencode/mimo-v2-pro-free"],
+      "reason": "Adversarial review benefits from different model perspective"
+    },
+    "explore": {
+      "prefer": "opencode/minimax-m2.5-free",
+      "fallback": "ollama/qwen2.5-coder:7b",
+      "fallback_to_cloud": true,
+      "skip_local": false
+    },
+    "librarian": {
+      "prefer": "opencode/minimax-m2.5-free",
+      "skip_local": true,
+      "fallback_order": ["opencode/mimo-v2-pro-free"],
+      "reason": "External research needs web access, local models insufficient"
+    },
+    "multimodal-looker": {
+      "prefer": "opencode/mimo-v2-omni-free",
+      "skip_local": true,
+      "reason": "Only cloud model with vision capability"
+    },
+    "sisyphus-junior": {
+      "prefer": "ollama/llama3.2:3b",
+      "fallback_to_cloud": true,
+      "fallback_order": ["opencode/minimax-m2.5-free"],
+      "reason": "Lightweight for trivial tasks"
+    },
+    "sisyphus": {
+      "prefer": "opencode/qwen3.6-plus-free",
+      "skip_local": false,
+      "fallback_order": ["opencode/mimo-v2-pro-free", "opencode/minimax-m2.5-free"]
+    },
+    "prometheus": {
+      "prefer": "opencode/mimo-v2-pro-free",
+      "skip_local": false,
+      "fallback_order": ["opencode/minimax-m2.5-free"]
+    },
+    "metis": {
+      "prefer": "opencode/mimo-v2-pro-free",
+      "skip_local": true,
+      "fallback_order": ["opencode/minimax-m2.5-free"],
+      "reason": "Pre-planning analysis requires high-reasoning"
+    },
+    "atlas": {
+      "prefer": "opencode/minimax-m2.5-free",
+      "fallback_order": ["ollama/qwen2.5-coder:7b"]
+    }
+  },
+  "circuit_breaker": {
+    "enabled": true,
+    "failure_threshold": 3,
+    "recovery_timeout_seconds": 120,
+    "half_open_max_requests": 1,
+    "state_transitions": {
+      "closed": {
+        "on_failure": "open",
+        "description": "Normal operation, tracking failures"
+      },
+      "open": {
+        "on_timeout": "half-open",
+        "description": "Rejecting requests, waiting for recovery"
+      },
+      "half-open": {
+        "on_success": "closed",
+        "on_failure": "open",
+        "description": "Testing recovery with limited requests"
+      }
+    }
+  },
+  "routing_strategy": {
+    "default": "complexity-based",
+    "fallback": "latency-aware",
+    "options": {
+      "prefer_local_on_low_vram": true,
+      "auto_scale_on_high_load": false,
+      "parallel_health_checks": true
+    }
+  }
+}

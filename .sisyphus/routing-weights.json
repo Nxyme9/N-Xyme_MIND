@@ -1,0 +1,141 @@
+{
+  "hephaestus": {
+    "success_rate": 0.9999999992624791,
+    "avg_latency_ms": 19.248919494234062,
+    "total_tasks": 193,
+    "success_count": 193,
+    "failure_count": 0,
+    "by_level": {
+      "3": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 100
+      },
+      "2": {
+        "success_rate": 0.9999867193005562,
+        "avg_latency_ms": 50.0
+      },
+      "3": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 100
+      }
+    }
+  },
+  "sisyphus-junior": {
+    "success_rate": 0.5950000000000001,
+    "avg_latency_ms": 50.0,
+    "total_tasks": 2,
+    "success_count": 2,
+    "failure_count": 0,
+    "by_level": {
+      "1": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 50
+      }
+    }
+  },
+  "explore": {
+    "success_rate": 0.55,
+    "avg_latency_ms": 0.5276203155517578,
+    "total_tasks": 1,
+    "success_count": 1,
+    "failure_count": 0,
+    "by_level": {
+      "2": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 0.5276203155517578
+      }
+    }
+  },
+  "librarian": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "oracle": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "momus": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "prometheus": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "metis": {
+    "success_rate": 0.55,
+    "avg_latency_ms": 50,
+    "total_tasks": 1,
+    "success_count": 1,
+    "failure_count": 0,
+    "by_level": {
+      "5": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 50
+      }
+    }
+  },
+  "atlas": {
+    "success_rate": 0.5,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 0,
+    "success_count": 0,
+    "failure_count": 0,
+    "by_level": {}
+  },
+  "test": {
+    "success_rate": 0.67195,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 4,
+    "success_count": 4,
+    "failure_count": 0,
+    "by_level": {
+      "1": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 0.0
+      }
+    }
+  },
+  "a": {
+    "success_rate": 0.6355000000000001,
+    "avg_latency_ms": 0.0,
+    "total_tasks": 3,
+    "success_count": 3,
+    "failure_count": 0,
+    "by_level": {
+      "1": {
+        "success_rate": 0.55,
+        "avg_latency_ms": 0.0
+      }
+    }
+  },
+  "unknown": {
+    "success_rate": 0.405,
+    "avg_latency_ms": 0.5562543869018555,
+    "total_tasks": 2,
+    "success_count": 0,
+    "failure_count": 2,
+    "by_level": {
+      "2": {
+        "success_rate": 0.45,
+        "avg_latency_ms": 0.24747848510742188
+      }
+    }
+  }
+}

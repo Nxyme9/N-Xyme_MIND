@@ -14,9 +14,26 @@ from typing import Any
 
 try:
     from packages.intelligence.db import SQLiteStore
+
     HAS_STATE_DB = True
 except ImportError:
     HAS_STATE_DB = False
+
+# Import from src for StateDB and Delegation
+try:
+    from packages.intelligence.db import SQLiteStore  # type: ignore[import]
+
+    HAS_STATE_DB = True
+except ImportError:
+    HAS_STATE_DB = False
+
+# Import from src for StateDB and Delegation
+try:
+    from src.tools.state.db import StateDB  # type: ignore[import]
+    from src.tools.state.models import Delegation  # type: ignore[import]
+except ImportError:
+    StateDB = None
+    Delegation = None
 
 
 def _log_sqlite(
@@ -29,7 +46,7 @@ def _log_sqlite(
     timestamp: str,
 ) -> str:
     """Log delegation to SQLite."""
-    if not HAS_STATE_DB:
+    if not HAS_STATE_DB or StateDB is None or Delegation is None:
         return _log_jsonl(
             db_path.parent.parent, task_id, agent, level, status, tokens, timestamp
         )
@@ -83,7 +100,7 @@ def _log_jsonl(
 
 def _show_sqlite(db_path: Path, count: int) -> str:
     """Show recent delegations from SQLite."""
-    if not HAS_STATE_DB:
+    if not HAS_STATE_DB or StateDB is None:
         return _show_jsonl(db_path.parent.parent, count)
 
     try:
@@ -176,7 +193,12 @@ def log_delegation(
     state_db = root_dir / ".sisyphus" / "state.db"
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    if state_db.exists() and HAS_STATE_DB:
+    if (
+        state_db.exists()
+        and HAS_STATE_DB
+        and StateDB is not None
+        and Delegation is not None
+    ):
         try:
             db = StateDB(state_db)
             delegation = Delegation(

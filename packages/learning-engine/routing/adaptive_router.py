@@ -3,12 +3,15 @@
 from __future__ import annotations
 
 import logging
+import random
 import time
 import uuid
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime
+from enum import Enum
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional, TypeVar
 
 from ..outcome_logger import DelegationOutcome, OutcomeLogger
 from ..rl.q_learning import ActionType, QLearningEngine, QState
@@ -16,11 +19,18 @@ from ...memory_core.router import MemoryRouter, SearchResults, UnifiedMemoryQuer
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar("T")
+
 # Constants for reward computation
 LATENCY_THRESHOLD_MS = 100.0
 LATENCY_PENALTY_PER_MS = 0.001
 QUALITY_BONUS_THRESHOLD = 0.8
 QUALITY_BONUS_VALUE = 0.5
+
+# Circuit breaker configuration
+CIRCUIT_BREAKER_FAILURE_THRESHOLD = 5
+CIRCUIT_BREAKER_RECOVERY_TIMEOUT_SECONDS = 30
+CIRCUIT_BREAKER_HALF_OPEN_MAX_CALLS = 3
 
 
 @dataclass
@@ -35,6 +45,127 @@ class LearningStats:
     exploitation_count: int = 0
     recent_rewards: list[float] = field(default_factory=list)
     improvement_trend: float = 0.0
+
+
+class CircuitState(Enum):
+    """Circuit breaker states."""
+
+    CLOSED = "closed"  # Normal operation, requests allowed
+    OPEN = "open"  # Failure threshold exceeded, requests blocked
+    HALF_OPEN = "half_open"  # Testing if service recovered
+
+
+class CircuitBreaker:
+    """Circuit breaker with open/half-open/closed states.
+
+    Prevents cascading failures by stopping requests to failing services
+    and allowing them to recover after a timeout.
+    """
+
+    def __init__(
+        self,
+        failure_threshold: int = CIRCUIT_BREAKER_FAILURE_THRESHOLD,
+        recovery_timeout: int = CIRCUIT_BREAKER_RECOVERY_TIMEOUT_SECONDS,
+        half_open_max_calls: int = CIRCUIT_BREAKER_HALF_OPEN_MAX_CALLS,
+    ):
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.half_open_max_calls = half_open_max_calls
+
+        self._state = CircuitState.CLOSED
+        self._failure_count = 0
+        self._last_failure_time: Optional[float] = None
+        self._half_open_calls = 0
+
+    @property
+    def state(self) -> CircuitState:
+        """Get current circuit state, auto-transitioning if needed."""
+        if self._state == CircuitState.OPEN and self._last_failure_time:
+            # Check if recovery timeout has passed
+            if time.time() - self._last_failure_time >= self.recovery_timeout:
+                logger.info("Circuit breaker transitioning OPEN -> HALF_OPEN")
+                self._state = CircuitState.HALF_OPEN
+                self._half_open_calls = 0
+        return self._state
+
+    def record_success(self) -> None:
+        """Record a successful call."""
+        if self._state == CircuitState.HALF_OPEN:
+            self._half_open_calls += 1
+            if self._half_open_calls >= self.half_open_max_calls:
+                logger.info("Circuit breaker transitioning HALF_OPEN -> CLOSED")
+                self._state = CircuitState.CLOSED
+                self._failure_count = 0
+        elif self._state == CircuitState.CLOSED:
+            self._failure_count = 0
+
+    def record_failure(self) -> None:
+        """Record a failed call."""
+        self._failure_count += 1
+        self._last_failure_time = time.time()
+
+        if self._state == CircuitState.HALF_OPEN:
+            logger.warning(
+                "Circuit breaker transitioning HALF_OPEN -> OPEN (test failed)"
+            )
+            self._state = CircuitState.OPEN
+        elif self._state == CircuitState.CLOSED:
+            if self._failure_count >= self.failure_threshold:
+                logger.warning(
+                    f"Circuit breaker transitioning CLOSED -> OPEN "
+                    f"(failures: {self._failure_count}/{self.failure_threshold})"
+                )
+                self._state = CircuitState.OPEN
+
+    def is_available(self) -> bool:
+        """Check if a request can be made."""
+        return self.state != CircuitState.OPEN
+
+
+def retry_with_backoff(
+    func: Callable[[], T],
+    max_attempts: int = 3,
+    base_delay: float = 0.1,
+    max_delay: float = 2.0,
+    backoff_factor: float = 2.0,
+) -> T:
+    """Retry a function with exponential backoff for SQLite operations.
+
+    Args:
+        func: Function to execute
+        max_attempts: Maximum number of attempts (default 3)
+        base_delay: Initial delay in seconds (default 0.1)
+        max_delay: Maximum delay in seconds (default 2.0)
+        backoff_factor: Multiplier for each retry (default 2.0)
+
+    Returns:
+        Result of the function
+
+    Raises:
+        Last exception if all attempts fail
+    """
+    last_exception: Optional[Exception] = None
+    delay = base_delay
+
+    for attempt in range(max_attempts):
+        try:
+            return func()
+        except Exception as e:
+            last_exception = e
+            if attempt < max_attempts - 1:
+                logger.warning(
+                    f"SQLite operation failed (attempt {attempt + 1}/{max_attempts}): {e}. "
+                    f"Retrying in {delay:.2f}s..."
+                )
+                time.sleep(delay)
+                delay = min(delay * backoff_factor, max_delay)
+            else:
+                logger.error(
+                    f"SQLite operation failed after {max_attempts} attempts: {e}"
+                )
+
+    # All attempts failed, raise the last exception
+    raise last_exception  # type: ignore
 
 
 class AdaptiveRouter:
@@ -60,11 +191,18 @@ class AdaptiveRouter:
         # Track decisions for stats
         self._decision_history: list[dict[str, Any]] = []
 
+        # Circuit breaker for Q-Learning database
+        self._circuit_breaker = CircuitBreaker()
+
+        # Track if using fallback mode
+        self._using_fallback = False
+
     def route(self, task_description: str) -> dict[str, Any]:
         """Route a task to optimal agent using Q-Learning.
 
         Uses learned routing decisions from past outcomes. Falls back to
-        heuristic routing during cold start (first 50 decisions).
+        heuristic routing during cold start (first 50 decisions) or if
+        Q-Learning database is unavailable (circuit breaker open).
 
         Args:
             task_description: The task to route
@@ -72,6 +210,21 @@ class AdaptiveRouter:
         Returns:
             Dict with agent, level, confidence, reason, and learning info
         """
+        # Check if Q-Learning is available (circuit breaker not open)
+        if not self._circuit_breaker.is_available():
+            logger.warning("Q-Learning circuit breaker OPEN, using heuristic fallback")
+            return self._heuristic_route(task_description)
+
+        # Try Q-Learning route with circuit breaker protection
+        try:
+            return self._route_with_q_learning(task_description)
+        except Exception as e:
+            logger.error(f"Q-Learning routing failed: {e}, falling back to heuristic")
+            self._circuit_breaker.record_failure()
+            return self._heuristic_route(task_description)
+
+    def _route_with_q_learning(self, task_description: str) -> dict[str, Any]:
+        """Route using Q-Learning with circuit breaker protection."""
         # Determine available agents for this task
         available_actions = self._get_available_actions(task_description, {})
 
@@ -79,16 +232,23 @@ class AdaptiveRouter:
         state = QState.from_context(task_description, {"task_type": "delegation"})
 
         # Select action using Q-Learning (epsilon-greedy)
-        selected_action = self._q_learning.select_action(state, available_actions)
+        try:
+            selected_action = self._q_learning.select_action(state, available_actions)
+            self._circuit_breaker.record_success()
+        except Exception as e:
+            raise RuntimeError(f"Q-Learning select_action failed: {e}") from e
 
         # Map action to agent and level
         agent = self._action_to_agent(selected_action)
         level = self._action_to_level(selected_action)
 
         # Determine confidence based on Q-values
-        q_values = self._q_learning.get_q_values(state)
-        action_q = q_values.get(selected_action.value, 0.0)
-        confidence = min(max(0.5 + action_q * 0.1, 0.1), 0.95)
+        try:
+            q_values = self._q_learning.get_q_values(state)
+            action_q = q_values.get(selected_action.value, 0.0)
+            confidence = min(max(0.5 + action_q * 0.1, 0.1), 0.95)
+        except Exception:
+            confidence = 0.5  # Default confidence if Q-value lookup fails
 
         # Build reason
         reason = f"Q-Learning selected {agent} (L{level})"
@@ -100,6 +260,34 @@ class AdaptiveRouter:
             "level": level,
             "confidence": round(confidence, 2),
             "reason": reason,
+            "decisions_made": len(self._decision_history),
+        }
+
+    def _heuristic_route(self, task_description: str) -> dict[str, Any]:
+        """Fallback heuristic routing when Q-Learning is unavailable."""
+        task_lower = task_description.lower()
+
+        # Simple heuristic based on keywords
+        if any(w in task_lower for w in ["find", "search", "locate", "explore"]):
+            agent, level = "explore", 3
+        elif any(w in task_lower for w in ["fix", "debug", "error", "bug"]):
+            agent, level = "hephaestus", 2
+        elif any(
+            w in task_lower for w in ["design", "architecture", "review", "analyze"]
+        ):
+            agent, level = "oracle", 4
+        elif any(w in task_lower for w in ["implement", "create", "add", "build"]):
+            agent, level = "hephaestus", 3
+        elif any(w in task_lower for w in ["doc", "explain", "what", "how"]):
+            agent, level = "librarian", 3
+        else:
+            agent, level = "hephaestus", 3  # Default
+
+        return {
+            "agent": agent,
+            "level": level,
+            "confidence": 0.3,  # Lower confidence for fallback
+            "reason": f"Heuristic fallback (circuit breaker: {self._circuit_breaker.state.value})",
             "decisions_made": len(self._decision_history),
         }
 
@@ -119,6 +307,7 @@ class AdaptiveRouter:
         """Search with learning — logs outcome and updates Q-values.
 
         This is the main entry point that wraps the underlying router's search.
+        Uses circuit breaker and retry logic for database operations.
         """
         start_time = time.time()
 
@@ -131,8 +320,23 @@ class AdaptiveRouter:
         # Determine available actions based on query characteristics
         available_actions = self._get_available_actions(query, context)
 
-        # Select action using Q-Learning (epsilon-greedy)
-        selected_action = self._q_learning.select_action(state, available_actions)
+        # Check if Q-Learning is available
+        if not self._circuit_breaker.is_available():
+            # Fall back to heuristic routing - just search without learning
+            logger.warning("Q-Learning circuit breaker OPEN, skipping learning updates")
+            return self._search_without_learning(query, kwargs, available_actions)
+
+        # Select action using Q-Learning (epsilon-greedy) with retry
+        try:
+            selected_action = retry_with_backoff(
+                lambda: self._q_learning.select_action(state, available_actions),
+                max_attempts=3,
+            )
+            self._circuit_breaker.record_success()
+        except Exception as e:
+            logger.error(f"Q-Learning select_action failed: {e}")
+            self._circuit_breaker.record_failure()
+            return self._search_without_learning(query, kwargs, available_actions)
 
         # Execute search using the router (route to appropriate retriever)
         unified_query = self._build_unified_query(query, selected_action, kwargs)
@@ -141,7 +345,7 @@ class AdaptiveRouter:
         # Compute latency
         latency_ms = (time.time() - start_time) * 1000
 
-        # Build outcome and log it
+        # Build outcome and log it with retry logic
         outcome = self._build_outcome(
             query=query,
             action=selected_action,
@@ -150,8 +354,14 @@ class AdaptiveRouter:
             context=context,
         )
 
-        # Log outcome to database
-        self._outcome_logger.log(outcome)
+        # Log outcome to database with retry
+        try:
+            retry_with_backoff(
+                lambda: self._outcome_logger.log(outcome),
+                max_attempts=3,
+            )
+        except Exception as e:
+            logger.warning(f"Failed to log outcome after retries: {e}")
 
         # Compute reward signal
         reward = self._compute_reward(
@@ -160,13 +370,19 @@ class AdaptiveRouter:
             quality_score=outcome.quality_score,
         )
 
-        # Update Q-Learning with actual reward
-        self._q_learning.update(
-            state=state,
-            action=selected_action,
-            reward=reward,
-            task_id=outcome.task_id,
-        )
+        # Update Q-Learning with actual reward with retry
+        try:
+            retry_with_backoff(
+                lambda: self._q_learning.update(
+                    state=state,
+                    action=selected_action,
+                    reward=reward,
+                    task_id=outcome.task_id,
+                ),
+                max_attempts=3,
+            )
+        except Exception as e:
+            logger.warning(f"Failed to update Q-Learning after retries: {e}")
 
         # Track decision for stats
         self._track_decision(
@@ -177,6 +393,22 @@ class AdaptiveRouter:
         )
 
         return results
+
+    def _search_without_learning(
+        self,
+        query: str,
+        kwargs: dict[str, Any],
+        available_actions: list[ActionType],
+    ) -> SearchResults:
+        """Search without Q-Learning updates (circuit breaker open or error)."""
+        # Pick first available action as heuristic
+        selected_action = (
+            available_actions[0] if available_actions else ActionType.EXPLORE
+        )
+
+        # Execute search
+        unified_query = self._build_unified_query(query, selected_action, kwargs)
+        return self._router.search(unified_query)
 
     def _build_context(self, query: str, kwargs: dict[str, Any]) -> dict[str, Any]:
         """Build context dict for QState.from_context()."""
@@ -392,6 +624,117 @@ class AdaptiveRouter:
         self._q_learning = QLearningEngine(
             db_path=getattr(self._q_learning, "_db_path", None)
         )
+        # Reset circuit breaker
+        self._circuit_breaker = CircuitBreaker()
+
+    def recover_from_outcomes(self) -> dict[str, Any]:
+        """Recover Q-table from outcome history when database is corrupted.
+
+        Reads all outcomes from the OutcomeLogger database and rebuilds the
+        Q-table by computing rewards from historical data. This allows the
+        learning system to recover from a corrupted Q-Learning database.
+
+        Returns:
+            Dict with recovery stats: outcomes_processed, q_entries_updated, success
+        """
+        logger.info("Starting Q-table recovery from outcome history")
+
+        try:
+            # Get all outcomes with retry logic
+            outcomes = retry_with_backoff(
+                lambda: self._outcome_logger.get_outcomes(limit=10000),
+                max_attempts=3,
+            )
+        except Exception as e:
+            logger.error(f"Failed to retrieve outcomes for recovery: {e}")
+            return {
+                "success": False,
+                "outcomes_processed": 0,
+                "q_entries_updated": 0,
+                "error": str(e),
+            }
+
+        if not outcomes:
+            logger.warning("No outcomes found for recovery")
+            return {
+                "success": True,
+                "outcomes_processed": 0,
+                "q_entries_updated": 0,
+                "error": None,
+            }
+
+        # Rebuild Q-table from outcomes
+        q_updates: dict[str, dict[str, float]] = defaultdict(lambda: defaultdict(float))
+        outcomes_processed = 0
+
+        for outcome in outcomes:
+            outcomes_processed += 1
+
+            # Build state from outcome
+            state = QState.from_context(
+                outcome.task_description,
+                {"task_type": outcome.task_type, "level": outcome.level},
+            )
+            state_key = state.to_key()
+
+            # Compute reward from historical outcome
+            reward = self._compute_reward(
+                success=outcome.success,
+                latency_ms=outcome.latency_ms,
+                quality_score=outcome.quality_score,
+            )
+
+            # Map agent to action
+            action = self._agent_to_action(outcome.agent)
+
+            # Accumulate reward for this (state, action) pair
+            q_updates[state_key][action.value] += reward
+
+        # Apply accumulated Q-value updates
+        q_entries_updated = 0
+        for state_key, action_values in q_updates.items():
+            state = QState.from_context(state_key.split("|")[0], {})
+            for action_str, reward_sum in action_values.items():
+                try:
+                    action = ActionType(action_str)
+                    # Apply average reward (divided by number of occurrences)
+                    count = len([o for o in outcomes if o.agent == action_str])
+                    avg_reward = reward_sum / max(count, 1)
+                    self._q_learning.update(
+                        state=state,
+                        action=action,
+                        reward=avg_reward,
+                    )
+                    q_entries_updated += 1
+                except ValueError:
+                    continue
+
+        # Reset circuit breaker after successful recovery
+        self._circuit_breaker = CircuitBreaker()
+
+        logger.info(
+            f"Q-table recovery complete: {outcomes_processed} outcomes, "
+            f"{q_entries_updated} Q-entries updated"
+        )
+
+        return {
+            "success": True,
+            "outcomes_processed": outcomes_processed,
+            "q_entries_updated": q_entries_updated,
+            "error": None,
+        }
+
+    def _agent_to_action(self, agent: str) -> ActionType:
+        """Map agent name to ActionType."""
+        mapping = {
+            "explore": ActionType.EXPLORE,
+            "hephaestus": ActionType.HEPHAESTUS,
+            "oracle": ActionType.ORACLE,
+            "librarian": ActionType.LIBRARIAN,
+            "delegate": ActionType.DELEGATE,
+            "multimodal-looker": ActionType.MULTIMODAL,
+        }
+        return mapping.get(agent, ActionType.HEPHAESTUS)
 
 
 # Import path for UnifiedMemoryQuery and SearchResults
@@ -399,4 +742,7 @@ class AdaptiveRouter:
 __all__ = [
     "AdaptiveRouter",
     "LearningStats",
+    "CircuitBreaker",
+    "CircuitState",
+    "retry_with_backoff",
 ]

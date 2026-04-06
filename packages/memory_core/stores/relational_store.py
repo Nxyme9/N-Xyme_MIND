@@ -55,6 +55,13 @@ MIGRATIONS = [
             CREATE INDEX IF NOT EXISTS idx_memories_archived ON memories(archived);
         """,
     },
+    {
+        "version": 4,
+        "description": "Add updated_at column for record tracking",
+        "sql": """
+            ALTER TABLE memories ADD COLUMN updated_at TEXT DEFAULT (datetime('now'));
+        """,
+    },
 ]
 
 

@@ -11,6 +11,8 @@ __version__ = "0.1.0"
 
 # Re-export from submodules
 from .router.unified import UnifiedDelegationRouter, RoutingDecision
+from .circuit_breaker import get_circuit_breaker_registry
+from .fallback import get_fallback_chain, FallbackChain
 
 
 async def route(task_description: str) -> RoutingDecision:

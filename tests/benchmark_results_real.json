@@ -1,0 +1,151 @@
+{
+  "local": {
+    "avg_response_time_ms": 827.6508251825968,
+    "tool_detection_accuracy": 100.0,
+    "results": [
+      {
+        "prompt": "Search for python tutorials",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 2061.3059997558594,
+        "result": {
+          "type": "tool_calls",
+          "calls": [
+            {
+              "name": "search",
+              "arguments": {
+                "query": "python tutorials"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prompt": "Find information about AI",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 610.3923320770264,
+        "result": {
+          "type": "tool_calls",
+          "calls": [
+            {
+              "name": "search",
+              "arguments": {
+                "query": "AI"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prompt": "Look up docker docs",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 636.059045791626,
+        "result": {
+          "type": "tool_calls",
+          "calls": [
+            {
+              "name": "search",
+              "arguments": {
+                "query": "docker documentation"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "prompt": "What is 2+2?",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 556.3375949859619,
+        "result": {
+          "type": "text",
+          "content": "{\"name\": \"_none\", \"arguments\": {}}"
+        }
+      },
+      {
+        "prompt": "Hello world",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 525.2258777618408,
+        "result": {
+          "type": "text",
+          "content": "{\"name\": \"_none\", \"arguments\": {}}"
+        }
+      },
+      {
+        "prompt": "Tell me a joke",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 576.5841007232666,
+        "result": {
+          "type": "text",
+          "content": "{\"name\": \"_none\", \"arguments\": {}}"
+        }
+      }
+    ]
+  },
+  "cloud": {
+    "avg_response_time_ms": 153.66666666666666,
+    "tool_detection_accuracy": 100.0,
+    "results": [
+      {
+        "prompt": "Search for python tutorials",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 166
+      },
+      {
+        "prompt": "Find information about AI",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 166
+      },
+      {
+        "prompt": "Look up docker docs",
+        "expected": true,
+        "got_tool": true,
+        "correct": true,
+        "time_ms": 141
+      },
+      {
+        "prompt": "What is 2+2?",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 154
+      },
+      {
+        "prompt": "Hello world",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 143
+      },
+      {
+        "prompt": "Tell me a joke",
+        "expected": false,
+        "got_tool": false,
+        "correct": true,
+        "time_ms": 152
+      }
+    ]
+  },
+  "test_prompts": [
+    "Search for python tutorials",
+    "Find information about AI",
+    "Look up docker docs",
+    "What is 2+2?",
+    "Hello world",
+    "Tell me a joke"
+  ]
+}

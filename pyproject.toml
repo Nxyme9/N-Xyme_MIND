@@ -1,0 +1,12 @@
+[project]
+name = "n-xyme-mind"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "fastmcp>=0.1.0",
+    "pyyaml>=6.0",
+    "platformdirs>=4.0",
+]
+
+[project.optional-dependencies]
+embeddings = ["sentence-transformers>=2.0"]

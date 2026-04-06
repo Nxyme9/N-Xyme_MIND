@@ -1,0 +1,41 @@
+[
+  {
+    "id": "c3a6c20e",
+    "source_session": "session-001",
+    "content": "Use FastAPI for new API endpoints",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 1.0,
+    "occurrence_count": 3,
+    "created_at": "2026-04-06T04:53:29.176820+00:00",
+    "metadata": {
+      "outcome": "success"
+    }
+  },
+  {
+    "id": "98947c55",
+    "source_session": "session-001",
+    "content": "Avoid mocking database in tests for file:/src/db.py line 42",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 0.7066666666666667,
+    "occurrence_count": 1,
+    "created_at": "2026-04-06T04:53:29.176839+00:00",
+    "metadata": {
+      "outcome": "success"
+    }
+  },
+  {
+    "id": "9710847c",
+    "source_session": "session-001",
+    "content": "Python is better than JavaScript for backend",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 0.9333333333333333,
+    "occurrence_count": 2,
+    "created_at": "2026-04-06T04:53:29.176847+00:00",
+    "metadata": {
+      "outcome": "positive"
+    }
+  }
+]

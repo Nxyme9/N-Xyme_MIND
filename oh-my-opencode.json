@@ -1,4 +1,41 @@
 {
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
-  "_comment": "Project-level overrides only. Global config at ~/.config/opencode/oh-my-opencode.json is the source of truth."
+  "model_fallback": true,
+  "default_run_agent": "sisyphus",
+  "git_master": {
+    "commit_footer": false,
+    "include_co_authored_by": false,
+    "git_env_prefix": "GIT_MASTER=1"
+  },
+  "agents": {
+    "sisyphus": { "model": "opencode/qwen3.6-plus-free", "variant": "high", "mode": "primary", "description": "Primary orchestrator — plans, delegates, drives tasks to completion", "fallback_models": ["opencode/mimo-v2-pro-free", "opencode/minimax-m2.5-free"] },
+    "prometheus": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "mode": "all", "description": "Strategic planning — interview mode, detailed implementation plans", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "oracle": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "mode": "all", "description": "Architecture review — validates design decisions, catches flaws", "fallback_models": ["opencode/kimi-k2.5-free"] },
+    "metis": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "mode": "all", "description": "Gap analysis — finds missing pieces before work starts", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "momus": { "model": "opencode/kimi-k2.5-free", "variant": "high", "mode": "all", "description": "Adversarial review — red-team analysis, finds edge cases", "fallback_models": ["opencode/mimo-v2-pro-free"] },
+    "hephaestus": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Implementation agent — writes code, creates files, builds features", "fallback_models": ["ollama/qwen2.5-coder:7b", "opencode/minimax-m2.5-free"] },
+    "atlas": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Plan executor — step-by-step implementation from plans", "fallback_models": ["ollama/qwen2.5-coder:7b"] },
+    "explore": { "model": "opencode/minimax-m2.5-free", "mode": "subagent", "description": "Codebase search — fast grep, file discovery, pattern matching", "fallback_models": ["ollama/qwen2.5-coder:7b"] },
+    "librarian": { "model": "opencode/minimax-m2.5-free", "mode": "subagent", "description": "External research — web search, documentation, stack overflow", "fallback_models": ["opencode/mimo-v2-pro-free"] },
+    "sisyphus-junior": { "model": "ollama/llama3.2:3b", "mode": "subagent", "description": "Light tasks — quick fixes, simple modifications", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "multimodal-looker": { "model": "opencode/mimo-v2-omni-free", "variant": "medium", "mode": "all", "description": "Vision agent — image, video, audio analysis", "fallback_models": ["opencode/minimax-m2.5-free"] }
+  },
+  "categories": {
+    "visual-engineering": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/mimo-v2-pro-free"] },
+    "ultrabrain": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "deep": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/mimo-v2-pro-free"] },
+    "artistry": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "quick": { "model": "ollama/llama3.2:3b", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "unspecified-low": { "model": "ollama/llama3.2:3b", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "unspecified-high": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/mimo-v2-pro-free"] },
+    "routing": { "model": "opencode/minimax-m2.5-free", "description": "For delegation and routing only - DO NOT write code", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "writing": { "model": "opencode/mimo-v2-pro-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] }
+  },
+  "background_task": {
+    "defaultConcurrency": 64,
+    "staleTimeoutMs": 300000,
+    "providerConcurrency": { "opencode": 80 },
+    "modelConcurrency": { "opencode/qwen3.6-plus-free": 8, "opencode/mimo-v2-pro-free": 32, "opencode/minimax-m2.5-free": 64, "opencode/kimi-k2.5-free": 32, "opencode/mimo-v2-omni-free": 16 }
+  },
+  "disabled_hooks": ["prometheus-md-only", "comment-checker", "context-window-monitor", "anthropic-context-window-limit-recovery", "preemptive-compaction"]
 }

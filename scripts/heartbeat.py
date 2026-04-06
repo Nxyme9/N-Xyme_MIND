@@ -165,6 +165,31 @@ def run_heartbeat():
             time.sleep(60)  # Wait a minute before retrying
 
 
+def clean_stale_sessions(max_age_days: int = 7) -> dict:
+    """Remove stale session files older than max_age_days."""
+    import glob
+    from datetime import timedelta
+
+    session_dir = Path(__file__).parent.parent / ".sisyphus" / "sessions"
+    if not session_dir.exists():
+        return {"cleaned": 0, "error": "Session directory not found"}
+
+    cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
+    cleaned = 0
+
+    for session_file in session_dir.glob("*.json"):
+        try:
+            mtime = datetime.fromtimestamp(session_file.stat().st_mtime, tz=timezone.utc)
+            if mtime < cutoff:
+                session_file.unlink()
+                cleaned += 1
+                logger.info(f"Cleaned stale session: {session_file.name}")
+        except Exception as e:
+            logger.warning(f"Failed to clean {session_file.name}: {e}")
+
+    logger.info(f"Cleaned {cleaned} stale sessions (older than {max_age_days} days)")
+    return {"cleaned": cleaned, "max_age_days": max_age_days}
+
 if __name__ == "__main__":
     # Ensure logs directory exists
     logs_dir = Path(__file__).parent.parent / "logs"

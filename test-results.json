@@ -1,0 +1,64 @@
+{
+  "timestamp": "2026-04-04T16:40:49.583667",
+  "test_summary": {
+    "total": 27,
+    "passed": 26,
+    "failed": 1,
+    "skipped": 0,
+    "errors": [
+      "[ 60%]",
+      "tests/test_integration.py::TestModelRouter::test_env_override - Assert..."
+    ]
+  },
+  "coverage": {
+    "tested_modules": [
+      "model_config",
+      "model_router"
+    ],
+    "untested_modules": [
+      "model_fallback",
+      "model_selector",
+      "prompt_cache"
+    ]
+  },
+  "benchmark_results": {
+    "latency_ms": 0.0017,
+    "throughput_rps": 0.0,
+    "cache_hit_rate": 0.0,
+    "iterations": 200,
+    "errors": []
+  },
+  "migration_status": {
+    "using_env_vars": [],
+    "using_config_files": [
+      "model-fallback.py",
+      "generate-report.py",
+      "model_config.py",
+      "benchmark-models.py"
+    ],
+    "needs_migration": [
+      "local-chain.py",
+      "local-router.py",
+      "model_keywords.py",
+      "e2e-test-helper.py",
+      "model-router.py",
+      "validate-agent-call.py",
+      "validate-config-driven.py",
+      "local-pipeline.py",
+      "model-selector.py",
+      "prompt-cache.py"
+    ]
+  },
+  "health_check": {
+    "status": "healthy",
+    "details": {
+      "blink": "healthy",
+      "pulse": "healthy"
+    }
+  },
+  "recommendations": [
+    "Fix 1 failing tests to ensure code quality",
+    "Add tests for untested modules: model_fallback, model_selector, prompt_cache",
+    "Improve cache hit rate by adding more semantic caching for similar prompts"
+  ]
+}

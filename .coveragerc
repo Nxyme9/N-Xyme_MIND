@@ -1,0 +1,20 @@
+[run]
+source = src
+omit = 
+    src/audio/*
+    src/video/*
+    src/ui/tui/*
+    src/dashboard/plugins/*
+    src/blocks/*
+    tests/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.
+    @abstractmethod
+precision = 1
+show_missing = true
+skip_covered = false

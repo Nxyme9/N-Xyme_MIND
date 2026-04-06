@@ -9,7 +9,7 @@ $Host.UI.RawUI.ForegroundColor = "Green"
 Clear-Host
 
 # Config
-$API_KEY = "h1_2qaF6NEK1XjNCNho1ToJvdmL5eRMJNEluKGOMBxg"
+$API_KEY = "${JARVIS_API_KEY}"
 $REFRESH_INTERVAL = 5  # seconds
 
 function Show-Header {

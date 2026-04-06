@@ -1,0 +1,25 @@
+{
+  "local_model": {
+    "tool_detection_accuracy": 100.0,
+    "avg_response_time_ms": 50.14733453281224,
+    "tool_parsing_success_rate": 60.0,
+    "end_to_end_time_ms": 0.0,
+    "total_tests": 15,
+    "passed_tests": 9
+  },
+  "cloud_model": {
+    "tool_detection_accuracy": 80.0,
+    "avg_response_time_ms": 100.1718848652672,
+    "tool_parsing_success_rate": 40.0,
+    "end_to_end_time_ms": 0.0,
+    "total_tests": 15,
+    "passed_tests": 6
+  },
+  "test_prompts": [
+    "Use search_tool with query 'test'",
+    "What is 2+2?",
+    "Search memory for 'authentication'",
+    "Tell me about quantum physics",
+    "Use web_search to find latest AI news"
+  ]
+}

@@ -1,0 +1,39 @@
+#!/bin/bash
+# Brain CLI - Python wrapper with shell integration
+# Usage: brain "message" [model]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLI="$SCRIPT_DIR/brain-cli.py"
+
+# If no arguments, run interactive mode
+if [ $# -eq 0 ]; then
+    exec python3 "$CLI" --interactive "$@"
+fi
+
+# Parse arguments
+if [ "$1" = "-i" ] || [ "$1" = "--interactive" ]; then
+    exec python3 "$CLI" --interactive "$@"
+elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
+    echo "Brain CLI - Tool calling via local Ollama"
+    echo ""
+    echo "Usage:"
+    echo "  brain \"message\"              # Single prompt (qwen2.5-coder:7b)"
+    echo "  brain \"message\" llama3.2:3b # Custom model"
+    echo "  brain -i                     # Interactive mode"
+    echo "  brain --help                 # This help"
+    echo ""
+    echo "Available models:"
+    echo "  - qwen2.5-coder:7b (default, best for tools)"
+    echo "  - llama3.2:3b (alternative)"
+    echo ""
+    echo "API: http://localhost:8100/brain/execute"
+    exit 0
+else
+    # Check if second arg is a model name
+    if [ -n "$2" ] && [[ "$2" == *":"* ]]; then
+        MODEL="$2"
+    else
+        MODEL="qwen2.5-coder:7b"
+    fi
+    exec python3 "$CLI" --model "$MODEL" "$1"
+fi

@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from typing import Optional
 
 
 BLOCK_KEYWORDS = [
@@ -129,6 +130,7 @@ def check_permission(tool_name: str, content: str = "") -> tuple[str, Optional[s
     """Check permission for a tool execution using the permission engine."""
     try:
         from packages.intelligence.permission_engine import get_permission_engine
+
         engine = get_permission_engine()
         return engine.check_permission("global", tool_name, content)
     except Exception:

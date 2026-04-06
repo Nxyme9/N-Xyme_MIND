@@ -10,25 +10,51 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from src.tools.state.db import StateDB
 
 try:
-    from packages.intelligence.db import SQLiteStore
+    from packages.intelligence.db import SQLiteStore  # type: ignore[import]
+
     HAS_STATE_DB = True
 except ImportError:
     HAS_STATE_DB = False
     SQLiteStore = None
 
+# Import StateDB from src for type hints
+try:
+    from src.tools.state.db import StateDB  # type: ignore[import]
+except ImportError:
+    StateDB = None
+
 logger = logging.getLogger(__name__)
 
 DEFAULT_AGENTS = [
-    "hephaestus", "explore", "oracle", "sisyphus", "prometheus",
-    "metis", "momus", "librarian", "atlas", "sisyphus-junior",
+    "hephaestus",
+    "explore",
+    "oracle",
+    "sisyphus",
+    "prometheus",
+    "metis",
+    "momus",
+    "librarian",
+    "atlas",
+    "sisyphus-junior",
 ]
 
 DEFAULT_TASK_TYPES = [
-    "implementation", "research", "review", "planning", "trivial_fix",
-    "bug_fix", "refactoring", "testing", "documentation", "architecture",
+    "implementation",
+    "research",
+    "review",
+    "planning",
+    "trivial_fix",
+    "bug_fix",
+    "refactoring",
+    "testing",
+    "documentation",
+    "architecture",
 ]
 
 PERFORMANCE_DECAY_THRESHOLD = 0.15
@@ -97,12 +123,16 @@ class SelectionResult:
 class AgentOptimizer:
     """Tracks agent performance per task type and auto-selects the best agent."""
 
-    def __init__(self, db: SQLiteStore | None = None, root_dir: Path | None = None):
+    def __init__(self, db=None, root_dir: Path | None = None):
         if db is not None:
             self._db = db
-        elif HAS_STATE_DB:
-            db_path = (root_dir or Path(__file__).parent.parent.parent) / ".sisyphus" / "state.db"
-            self._db = SQLiteStore(db_path)
+        elif HAS_STATE_DB and StateDB is not None:
+            db_path = (
+                (root_dir or Path(__file__).parent.parent.parent)
+                / ".sisyphus"
+                / "state.db"
+            )
+            self._db = StateDB(db_path)  # type: ignore[assignment]
         else:
             self._db = None
 
@@ -112,14 +142,18 @@ class AgentOptimizer:
         self._last_load_time: float = 0
         self._cache_ttl = 60
 
-    def select_agent(self, task_type: str, exclude: list[str] | None = None) -> SelectionResult:
+    def select_agent(
+        self, task_type: str, exclude: list[str] | None = None
+    ) -> SelectionResult:
         """Select the best agent for a given task type."""
         exclude = exclude or []
         scores = self._compute_scores(task_type, exclude)
 
         if not scores:
             return SelectionResult(
-                selected_agent="hephaestus" if task_type == "implementation" else "explore",
+                selected_agent="hephaestus"
+                if task_type == "implementation"
+                else "explore",
                 confidence=0.5,
                 alternatives=[],
                 reason="no historical data, using default",
@@ -128,7 +162,11 @@ class AgentOptimizer:
 
         best = max(scores, key=lambda s: s.score)
         alternatives = [
-            {"agent": s.agent_name, "score": round(s.score, 3), "success_rate": round(s.success_rate, 3)}
+            {
+                "agent": s.agent_name,
+                "score": round(s.score, 3),
+                "success_rate": round(s.success_rate, 3),
+            }
             for s in sorted(scores, key=lambda s: s.score, reverse=True)[1:5]
         ]
 
@@ -187,7 +225,9 @@ class AgentOptimizer:
         self._load_cache_if_needed()
         return dict(self._performance_cache)
 
-    def detect_decay(self, agent_name: str, task_type: str | None = None) -> list[dict[str, Any]]:
+    def detect_decay(
+        self, agent_name: str, task_type: str | None = None
+    ) -> list[dict[str, Any]]:
         """Detect performance decay for an agent."""
         if self._db is None:
             return []
@@ -196,9 +236,7 @@ class AgentOptimizer:
         agent_data = perf_data.get(agent_name, {})
         decays: list[dict[str, Any]] = []
 
-        task_types_to_check = (
-            [task_type] if task_type else list(agent_data.keys())
-        )
+        task_types_to_check = [task_type] if task_type else list(agent_data.keys())
 
         for tt in task_types_to_check:
             task_data = agent_data.get(tt, {})
@@ -267,7 +305,9 @@ class AgentOptimizer:
                 )
 
         if not recommendations:
-            recommendations.append("All agents performing within acceptable parameters.")
+            recommendations.append(
+                "All agents performing within acceptable parameters."
+            )
 
         return recommendations
 
@@ -298,7 +338,9 @@ class AgentOptimizer:
             success_rate = success / total
             last_updated_str = task_data.get("last_updated", "")
             recency_score = self._compute_recency_score(last_updated_str, now)
-            weighted_score = (success_rate * PERFORMANCE_WEIGHT) + (recency_score * RECENCY_WEIGHT)
+            weighted_score = (success_rate * PERFORMANCE_WEIGHT) + (
+                recency_score * RECENCY_WEIGHT
+            )
 
             decay_detected = False
             decay_amount = 0.0
@@ -306,18 +348,20 @@ class AgentOptimizer:
                 decay_detected = True
                 decay_amount = 0.5 - success_rate
 
-            scores.append(AgentScore(
-                agent_name=agent_name,
-                task_type=task_type,
-                score=weighted_score,
-                success_rate=success_rate,
-                total_tasks=total,
-                success_count=success,
-                failure_count=failure,
-                last_updated=last_updated_str,
-                decay_detected=decay_detected,
-                decay_amount=decay_amount,
-            ))
+            scores.append(
+                AgentScore(
+                    agent_name=agent_name,
+                    task_type=task_type,
+                    score=weighted_score,
+                    success_rate=success_rate,
+                    total_tasks=total,
+                    success_count=success,
+                    failure_count=failure,
+                    last_updated=last_updated_str,
+                    decay_detected=decay_detected,
+                    decay_amount=decay_amount,
+                )
+            )
 
         return scores
 
@@ -327,8 +371,12 @@ class AgentOptimizer:
             return 0.5
 
         try:
-            last_updated = datetime.fromisoformat(last_updated_str.replace("Z", "+00:00"))
-            age_hours = (datetime.now(timezone.utc) - last_updated).total_seconds() / 3600
+            last_updated = datetime.fromisoformat(
+                last_updated_str.replace("Z", "+00:00")
+            )
+            age_hours = (
+                datetime.now(timezone.utc) - last_updated
+            ).total_seconds() / 3600
             if age_hours <= 1:
                 return 1.0
             elif age_hours >= DECAY_WINDOW_HOURS:
@@ -344,7 +392,8 @@ class AgentOptimizer:
             return
 
         try:
-            self._performance_cache = self._db.get_all_agent_performance()
+            # type: ignore[union-attr]
+            self._performance_cache = self._db.get_all_agent_performance()  # type: ignore[union-attr]
             self._last_load_time = time.time()
         except Exception as e:
             logger.error(f"Failed to load performance cache: {e}")
@@ -362,13 +411,13 @@ class AgentOptimizer:
 
 
 def optimize_agent_selection(
-    task_type: str, db: StateDB | None = None, exclude: list[str] | None = None
+    task_type: str, db=None, exclude: list[str] | None = None
 ) -> SelectionResult:
     """Convenience function to select the best agent for a task type."""
     optimizer = AgentOptimizer(db=db)
     return optimizer.select_agent(task_type, exclude)
 
 
-def create_optimizer(db: SQLiteStore | None = None) -> AgentOptimizer:
+def create_optimizer(db=None) -> AgentOptimizer:
     """Create a new agent optimizer."""
     return AgentOptimizer(db=db)

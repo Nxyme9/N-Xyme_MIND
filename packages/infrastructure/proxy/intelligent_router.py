@@ -1,7 +1,11 @@
 """Unified Intelligent Router — Ties together all routing components."""
 
+import json
+import os
+import sys
 import time
 import uuid
+from pathlib import Path
 from typing import Dict, Optional
 
 from .api_key_pool import api_key_pool, APIKeyPool
@@ -39,51 +43,119 @@ class IntelligentRouter:
         if not session_id:
             session_id = str(uuid.uuid4())[:8]
 
-        # 1. Analyze request with router brain
-        analysis = self.brain.analyze_request(prompt, system_prompt, agent_type)
+        # ============================================================
+        # STEP 0: CHECK AGENT CONFIG PREFERENCE (Hybrid Approach)
+        # Respect opencode.json router_override.prefer as primary
+        # ============================================================
+        config_preferred_model = None
+        config_fallback_order = []
 
-        # 2. Get best API key
+        # Load config preferences for this agent
+        config_path = Path("opencode.json")
+        if config_path.exists():
+            try:
+                with open(config_path) as f:
+                    config = json.load(f)
+                    agent_config = config.get("agent", {}).get(agent_type, {})
+                    router_override = agent_config.get("router_override", {})
+                    config_preferred_model = router_override.get("prefer")
+                    config_fallback_order = router_override.get("fallback_order", [])
+            except Exception as e:
+                print(f"[Router] Config load error: {e}", file=sys.stderr)
+                pass  # Ignore config read errors
+
+        # If config preference is set, use it (skip brain analysis)
+        selected_model = None
+        selection_reason = ""
+        analysis = {"categories": [], "complexity": "unknown", "model_scores": {}}
+        preferred = []
+        avoided = []
+
+        if config_preferred_model:
+            # Use config preference directly
+            selected_model = config_preferred_model
+            selection_reason = "config_prefer"
+        else:
+            # 1. Analyze request with router brain
+            analysis = self.brain.analyze_request(prompt, system_prompt, agent_type)
+
+            # 2. Get best API key
+            provider = "opencode"
+            key = self.key_pool.get_best_key(provider)
+
+            # 3. Get best VPN IP (rotate per request)
+            ip = self.ip_pool.get_best_ip()
+
+            # 4. Select best model: BRAIN FIRST, then learned, then preferences as fallbacks
+            # Priority: analysis.best_model → learned_model → preferences (NOT override!)
+            selected_model = analysis.get("best_model")
+            selection_reason = "brain"
+
+            # Get agent preferences early (needed for learning check)
+            preferred = self.prefs.get_preferred_models(agent_type, session_id)
+            avoided = self.prefs.get_avoided_models(agent_type)
+
+            # Fallback 1: Learning engine (only if brain didn't pick one)
+            learned_model = self.learning.get_best_model_for(
+                ",".join(analysis["categories"]), analysis["complexity"]
+            )
+            if not selected_model and learned_model and learned_model not in avoided:
+                selected_model = learned_model
+                selection_reason = "learning"
+
+            # Fallback 2: Agent preferences (only if both brain and learning failed)
+            if not selected_model and preferred:
+                for model, score in sorted(
+                    analysis.get("model_scores", {}).items(), key=lambda x: -x[1]
+                ):
+                    if model in preferred and model not in avoided:
+                        selected_model = model
+                        selection_reason = "preferences"
+                        break
+
+            # Final safety: if still no model, use default
+            if not selected_model:
+                selected_model = "minimax-m2.5"
+                selection_reason = "default"
+
+            # Get key and ip for route
+            route = {
+                "model": selected_model,
+                "selection_reason": selection_reason,
+                "provider": provider,
+                "api_key": key.key[:20] + "..." if key else None,
+                "vpn_ip": f"{ip.host}:{ip.port}" if ip else None,
+                "analysis": analysis,
+                "selection_time_ms": round((time.time() - start) * 1000, 1),
+                "agent_type": agent_type,
+                "session_id": session_id,
+            }
+
+            # Record in dashboard
+            dashboard.record_request(
+                agent_type,
+                session_id,
+                selected_model,
+                provider,
+                route["vpn_ip"],
+                route["selection_time_ms"],
+                True,
+            )
+
+            # Record key usage
+            if key:
+                key_notifier.record_usage(key.key[:20], requests=1, tokens=len(prompt))
+
+            return route
+
+        # Config preference path - get key and ip for route
         provider = "opencode"
         key = self.key_pool.get_best_key(provider)
-
-        # 3. Get best VPN IP (rotate per request)
         ip = self.ip_pool.get_best_ip()
-
-        # 4. Select best model: BRAIN FIRST, then learned, then preferences as fallbacks
-        # Priority: analysis.best_model → learned_model → preferences (NOT override!)
-        selected_model = analysis.get("best_model")
-        selection_reason = "brain"
-
-        # Get agent preferences early (needed for learning check)
-        preferred = self.prefs.get_preferred_models(agent_type, session_id)
-        avoided = self.prefs.get_avoided_models(agent_type)
-
-        # Fallback 1: Learning engine (only if brain didn't pick one)
-        learned_model = self.learning.get_best_model_for(
-            ",".join(analysis["categories"]), analysis["complexity"]
-        )
-        if not selected_model and learned_model and learned_model not in avoided:
-            selected_model = learned_model
-            selection_reason = "learning"
-
-        # Fallback 2: Agent preferences (only if both brain and learning failed)
-        if not selected_model and preferred:
-            for model, score in sorted(
-                analysis.get("model_scores", {}).items(), key=lambda x: -x[1]
-            ):
-                if model in preferred and model not in avoided:
-                    selected_model = model
-                    selection_reason = "preferences"
-                    break
-
-        # Final safety: if still no model, use default
-        if not selected_model:
-            selected_model = "minimax-m2.5"
-            selection_reason = "default"
 
         route = {
             "model": selected_model,
-            "selection_reason": selection_reason,  # Track which layer won
+            "selection_reason": selection_reason,
             "provider": provider,
             "api_key": key.key[:20] + "..." if key else None,
             "vpn_ip": f"{ip.host}:{ip.port}" if ip else None,
