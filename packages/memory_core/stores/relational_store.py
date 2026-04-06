@@ -3,73 +3,189 @@
 import json
 import logging
 import sqlite3
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from packages.memory_core.stores.base import (
+    MemoryRecord,
+    RelationalStore as RelationalStoreABC,
+)
 
 logger = logging.getLogger(__name__)
 
 
-class RelationalStore:
+# Migration definitions
+MIGRATIONS = [
+    {
+        "version": 1,
+        "description": "Initial schema: memories table",
+        "sql": """
+            CREATE TABLE IF NOT EXISTS memories (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                kind TEXT NOT NULL DEFAULT 'episodic',
+                scope TEXT NOT NULL DEFAULT 'session',
+                tier TEXT NOT NULL DEFAULT 'short_term',
+                meta_json TEXT DEFAULT '{}',
+                created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                archived INTEGER DEFAULT 0
+            )
+        """,
+    },
+    {
+        "version": 2,
+        "description": "Add memory_embeddings table",
+        "sql": """
+            CREATE TABLE IF NOT EXISTS memory_embeddings (
+                memory_id TEXT PRIMARY KEY,
+                embedding BLOB NOT NULL,
+                FOREIGN KEY (memory_id) REFERENCES memories(id)
+            )
+        """,
+    },
+    {
+        "version": 3,
+        "description": "Add indexes for performance",
+        "sql": """
+            CREATE INDEX IF NOT EXISTS idx_memories_kind ON memories(kind);
+            CREATE INDEX IF NOT EXISTS idx_memories_scope ON memories(scope);
+            CREATE INDEX IF NOT EXISTS idx_memories_tier ON memories(tier);
+            CREATE INDEX IF NOT EXISTS idx_memories_created_at ON memories(created_at);
+            CREATE INDEX IF NOT EXISTS idx_memories_archived ON memories(archived);
+        """,
+    },
+]
+
+
+class RelationalStore(RelationalStoreABC):
     """SQLite-based relational memory store."""
 
     def __init__(self, db_path: str = "context/memory/mind_from_mind.db"):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self._ensure_tables()
+        conn = self._ensure_migrations_table()
+        self._run_pending_migrations(conn)
+        conn.close()
+
+    def _ensure_migrations_table(self):
+        """Create the migrations tracking table if it doesn't exist."""
+        conn = sqlite3.connect(str(self.db_path))
+        try:
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS schema_migrations (
+                    version INTEGER PRIMARY KEY,
+                    applied_at TEXT NOT NULL,
+                    description TEXT
+                )
+            """)
+            conn.commit()
+            return conn  # Return connection for reuse
+        except:
+            conn.close()
+            raise
+
+    def _get_applied_migrations(self, conn) -> set[int]:
+        """Get the set of already applied migration versions."""
+        cursor = conn.execute("SELECT version FROM schema_migrations")
+        return {row[0] for row in cursor.fetchall()}
+
+    def _record_migration(self, conn, version: int, description: str):
+        """Record a migration as applied."""
+        conn.execute(
+            "INSERT INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)",
+            (version, datetime.now().isoformat(), description),
+        )
+
+    def _run_pending_migrations(self, conn):
+        """Run any pending migrations that haven't been applied yet."""
+        applied = self._get_applied_migrations(conn)
+        for migration in MIGRATIONS:
+            if migration["version"] not in applied:
+                conn.executescript(migration["sql"])
+                conn.execute(
+                    "INSERT INTO schema_migrations (version, applied_at, description) VALUES (?, ?, ?)",
+                    (
+                        migration["version"],
+                        datetime.now().isoformat(),
+                        migration["description"],
+                    ),
+                )
+                conn.commit()
+                logger.info(
+                    f"Applied migration v{migration['version']}: {migration['description']}"
+                )
 
     def _ensure_tables(self):
+        """Legacy method - tables are now created via migrations."""
+        pass
+
+    def store(self, record: MemoryRecord) -> str:
+        """Store a memory record and return its ID."""
         conn = sqlite3.connect(str(self.db_path))
         try:
             conn.execute(
-                """CREATE TABLE IF NOT EXISTS memories (id TEXT PRIMARY KEY, content TEXT, kind TEXT, scope TEXT, tier TEXT, meta_json TEXT, created_at TEXT, updated_at TEXT, archived INTEGER DEFAULT 0)"""
-            )
-            conn.execute(
-                """CREATE TABLE IF NOT EXISTS memory_embeddings (memory_id TEXT PRIMARY KEY, model TEXT, dim INTEGER, vec BLOB)"""
+                "INSERT OR REPLACE INTO memories (id, content, kind, scope, tier, meta_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
+                (
+                    record.id,
+                    record.content,
+                    record.kind,
+                    record.scope,
+                    record.tier,
+                    json.dumps(record.metadata),
+                ),
             )
             conn.commit()
+            return record.id
         finally:
             conn.close()
 
-    def search(self, query: str, limit: int = 10) -> List[Dict]:
+    def get(self, id: str) -> MemoryRecord | None:
+        """Get a memory record by ID."""
         conn = sqlite3.connect(str(self.db_path))
         try:
             cursor = conn.execute(
-                "SELECT id, content, kind, scope, meta_json FROM memories WHERE content LIKE ? AND archived = 0 LIMIT ?",
+                "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE id = ?",
+                (id,),
+            )
+            row = cursor.fetchone()
+            if row:
+                return MemoryRecord(
+                    id=row[0],
+                    content=row[1],
+                    kind=row[2],
+                    scope=row[3],
+                    tier=row[4],
+                    metadata=json.loads(row[5]) if row[5] else {},
+                )
+            return None
+        finally:
+            conn.close()
+
+    def search(self, query: str, limit: int = 10) -> List[MemoryRecord]:
+        """Search for memory records."""
+        conn = sqlite3.connect(str(self.db_path))
+        try:
+            cursor = conn.execute(
+                "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE content LIKE ? AND archived = 0 LIMIT ?",
                 (f"%{query}%", limit),
             )
             return [
-                {
-                    "id": row[0],
-                    "content": row[1],
-                    "kind": row[2],
-                    "scope": row[3],
-                    "metadata": row[4],
-                }
+                MemoryRecord(
+                    id=row[0],
+                    content=row[1],
+                    kind=row[2],
+                    scope=row[3],
+                    tier=row[4],
+                    metadata=json.loads(row[5]) if row[5] else {},
+                )
                 for row in cursor.fetchall()
             ]
         finally:
             conn.close()
 
-    def store(
-        self,
-        id: str,
-        content: str,
-        kind: str = "episodic",
-        scope: str = "session",
-        **kwargs,
-    ) -> str:
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            conn.execute(
-                "INSERT OR REPLACE INTO memories (id, content, kind, scope, meta_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
-                (id, content, kind, scope, json.dumps(kwargs.get("metadata", {}))),
-            )
-            conn.commit()
-            return id
-        finally:
-            conn.close()
-
     def delete(self, id: str) -> bool:
+        """Delete a memory record by ID."""
         conn = sqlite3.connect(str(self.db_path))
         try:
             cursor = conn.execute(
@@ -80,27 +196,8 @@ class RelationalStore:
         finally:
             conn.close()
 
-    def get(self, id: str) -> Optional[Dict]:
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            cursor = conn.execute(
-                "SELECT id, content, kind, scope, meta_json FROM memories WHERE id = ?",
-                (id,),
-            )
-            row = cursor.fetchone()
-            if row:
-                return {
-                    "id": row[0],
-                    "content": row[1],
-                    "kind": row[2],
-                    "scope": row[3],
-                    "metadata": row[4],
-                }
-            return None
-        finally:
-            conn.close()
-
     def stats(self) -> Dict[str, Any]:
+        """Get statistics about the store."""
         conn = sqlite3.connect(str(self.db_path))
         try:
             cursor = conn.execute(

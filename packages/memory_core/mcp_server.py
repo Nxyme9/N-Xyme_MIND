@@ -35,6 +35,7 @@ except ImportError:
 # Delegation interceptor for automated learning (OPTIONAL - server survives if missing)
 try:
     from src.tools.middleware.delegation_interceptor import DelegationInterceptor
+
     _delegation_interceptor = DelegationInterceptor()
     _middleware_list = [_delegation_interceptor]
 except Exception as e:
@@ -68,7 +69,6 @@ logger = logging.getLogger("unified-memory-mcp")
 # ---------------------------------------------------------------------------
 
 _pe: Optional["PriorityEngine"] = None
-_pm: Optional[object] = None  # PreferenceModel
 _event_bus: Optional[LearningEventBus] = None
 
 
@@ -84,7 +84,7 @@ def _get_pe() -> "PriorityEngine":
     """Get or create PriorityEngine singleton."""
     global _pe
     if _pe is None:
-        from .priority_engine import PriorityEngine
+        from .cognitive.priority import PriorityEngine
 
         db_path = str(
             Path(__file__).parent.parent.parent
@@ -94,22 +94,6 @@ def _get_pe() -> "PriorityEngine":
         )
         _pe = PriorityEngine(db_path)
     return _pe
-
-
-def _get_pm():
-    """Get or create PreferenceModel singleton."""
-    global _pm
-    if _pm is None:
-        from .preference_model import PreferenceModel
-
-        db_path = str(
-            Path(__file__).parent.parent.parent
-            / "context"
-            / "memory"
-            / "file_registry.db"
-        )
-        _pm = PreferenceModel(db_path)
-    return _pm
 
 
 # ---------------------------------------------------------------------------

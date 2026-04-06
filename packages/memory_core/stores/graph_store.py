@@ -15,15 +15,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from packages.memory_core.stores.base import GraphStore
+
 logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Knowledge Graph (Simple)
+# Knowledge Graph (implements GraphStore ABC)
 # ---------------------------------------------------------------------------
 
 
-class KnowledgeGraph:
+class KnowledgeGraph(GraphStore):
     """Simple JSON-based knowledge graph."""
 
     def __init__(self, storage_file: str = "data/knowledge_graph.json"):
@@ -45,13 +47,15 @@ class KnowledgeGraph:
             encoding="utf-8",
         )
 
-    def add_node(self, node_id: str, node_type: str, properties: dict = None):
-        self._nodes[node_id] = {"type": node_type, "properties": properties or {}}
+    def add_node(self, id: str, node_type: str, properties: dict = None) -> None:
+        """Add a node to the graph (ABC implementation)."""
+        self._nodes[id] = {"type": node_type, "properties": properties or {}}
         self._save()
 
     def add_edge(
-        self, source: str, target: str, relation: str, properties: dict = None
-    ):
+        self, source: str, target: str, relation: str, properties: dict | None = None
+    ) -> None:
+        """Add an edge between two nodes (ABC implementation)."""
         self._edges.append(
             {
                 "source": source,
@@ -62,7 +66,42 @@ class KnowledgeGraph:
         )
         self._save()
 
+    def get_node(self, id: str) -> dict | None:
+        """Get a node by ID (ABC implementation)."""
+        return self._nodes.get(id)
+
+    def traverse(self, start_id: str, relation: str, depth: int) -> list[str]:
+        """Traverse the graph from a starting node (ABC implementation)."""
+        visited: set[str] = set()
+        queue = deque([(start_id, 0)])
+        results = []
+
+        while queue:
+            node_id, current_depth = queue.popleft()
+            if node_id in visited or current_depth > depth:
+                continue
+            visited.add(node_id)
+
+            if current_depth > 0:
+                results.append(node_id)
+
+            for edge in self._edges:
+                if edge["source"] == node_id and edge["relation"] == relation:
+                    if edge["target"] not in visited:
+                        queue.append((edge["target"], current_depth + 1))
+
+        return results
+
+    def stats(self) -> dict[str, Any]:
+        """Get statistics about the graph store (ABC implementation)."""
+        return {"nodes": len(self._nodes), "edges": len(self._edges)}
+
+    # ---------------------------------------------------------------------------
+    # Additional Methods (non-ABC)
+    # ---------------------------------------------------------------------------
+
     def query(self, node_id: str) -> Dict:
+        """Query a node and its edges."""
         node = self._nodes.get(node_id, {})
         edges = [
             e for e in self._edges if e["source"] == node_id or e["target"] == node_id
@@ -70,6 +109,7 @@ class KnowledgeGraph:
         return {"node": node, "edges": edges}
 
     def search(self, query: str) -> List[Dict]:
+        """Search for nodes matching query."""
         results = []
         for nid, node in self._nodes.items():
             if (
@@ -80,6 +120,7 @@ class KnowledgeGraph:
         return results
 
     def get_stats(self) -> Dict:
+        """Get statistics (non-ABC method for compatibility)."""
         return {"nodes": len(self._nodes), "edges": len(self._edges)}
 
 
@@ -183,6 +224,22 @@ class OrthogonalGraph:
             self._adjacency[edge.source_id].append(
                 (edge.target_id, edge.relation_type, edge.weight)
             )
+        # Persist edge to SQLite
+        conn = sqlite3.connect(str(self.db_path))
+        try:
+            conn.execute(
+                """INSERT OR REPLACE INTO graph_edges (source_id, target_id, relation_type, weight, metadata) VALUES (?, ?, ?, ?, ?)""",
+                (
+                    edge.source_id,
+                    edge.target_id,
+                    edge.relation_type.value,
+                    edge.weight,
+                    json.dumps(edge.metadata),
+                ),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
     def get_neighbors(
         self,
@@ -280,4 +337,98 @@ __all__ = [
     "GraphPath",
     "GraphType",
     "RelationType",
+    "Neo4jGraphStore",
 ]
+
+
+# ---------------------------------------------------------------------------
+# Neo4j Backend (Optional)
+# ---------------------------------------------------------------------------
+
+
+class Neo4jGraphStore(GraphStore):
+    """Optional Neo4j backend for production deployments.
+
+    Usage:
+        store = Neo4jGraphStore("bolt://localhost:7687", "neo4j", "password")
+    """
+
+    def __init__(self, uri: str, user: str, password: str, database: str = "neo4j"):
+        try:
+            from neo4j import GraphDatabase
+
+            self.driver = GraphDatabase.driver(uri, auth=(user, password))
+            self.database = database
+            # Verify connection
+            with self.driver.session(database=database) as session:
+                session.run("RETURN 1")
+        except ImportError:
+            raise ImportError("neo4j package required: pip install neo4j")
+        except Exception as e:
+            raise ConnectionError(f"Failed to connect to Neo4j: {e}")
+
+    def add_node(self, id: str, node_type: str, properties: dict | None = None) -> None:
+        props = properties or {}
+        props["id"] = id
+        with self.driver.session(database=self.database) as session:
+            session.run(
+                f"MERGE (n:{node_type} {{id: $id}}) SET n += $props", id=id, props=props
+            )
+
+    def add_edge(
+        self, source: str, target: str, relation: str, properties: dict | None = None
+    ) -> None:
+        props = properties or {}
+        with self.driver.session(database=self.database) as session:
+            session.run(
+                """
+                MATCH (s {id: $source}), (t {id: $target})
+                MERGE (s)-[r:RELATES {type: $relation}]->(t)
+                SET r += $props
+                """,
+                source=source,
+                target=target,
+                relation=relation,
+                props=props,
+            )
+
+    def get_node(self, id: str) -> dict | None:
+        with self.driver.session(database=self.database) as session:
+            result = session.run("MATCH (n {id: $id}) RETURN n", id=id)
+            record = result.single()
+            if record:
+                node = dict(record["n"])
+                return node
+        return None
+
+    def traverse(self, start_id: str, relation: str, depth: int = 1) -> list[str]:
+        with self.driver.session(database=self.database) as session:
+            result = session.run(
+                """
+                MATCH path = (start {id: $start_id})-[r:RELATES*1..$depth]->(end)
+                WHERE $relation = '' OR r.type = $relation
+                RETURN DISTINCT end.id as id
+                """,
+                start_id=start_id,
+                relation=relation,
+                depth=depth,
+            )
+            return [record["id"] for record in result]
+
+    def stats(self) -> dict[str, Any]:
+        with self.driver.session(database=self.database) as session:
+            node_count = session.run("MATCH (n) RETURN count(n) as count").single()[
+                "count"
+            ]
+            edge_count = session.run(
+                "MATCH ()-[r]->() RETURN count(r) as count"
+            ).single()["count"]
+            return {"nodes": node_count, "edges": edge_count, "backend": "neo4j"}
+
+    def close(self):
+        """Close the Neo4j driver connection."""
+        if self.driver:
+            self.driver.close()
+
+    def __del__(self):
+        self.close()

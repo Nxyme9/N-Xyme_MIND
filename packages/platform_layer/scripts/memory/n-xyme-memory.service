@@ -1,0 +1,39 @@
+[Unit]
+Description=N-Xyme Memory Daemon - Self-Aware PC Memory System
+After=network.target ollama.service
+Wants=ollama.service
+
+[Service]
+Type=simple
+User=nxyme
+Group=nxyme
+WorkingDirectory=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND
+ExecStart=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv/bin/python3 -m src.memory.daemon
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=n-xyme-memory
+
+# Environment
+Environment="PYTHONPATH=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/src:/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/athena/src"
+Environment="ROOT=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+Environment="NX_MIND_ROOT=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+Environment="VIRTUAL_ENV=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv"
+Environment="PATH=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv/bin:/usr/local/bin:/usr/bin"
+Environment="OLLAMA_MODELS=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.ollama/models"
+
+# Resource limits
+MemoryMax=4G
+CPUQuota=200%
+
+# Security
+NoNewPrivileges=true
+ProtectSystem=strict
+ReadWritePaths=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/context
+ReadWritePaths=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.sisyphus
+ReadWritePaths=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/logs
+ReadWritePaths=/mnt
+
+[Install]
+WantedBy=multi-user.target

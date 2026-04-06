@@ -83,18 +83,30 @@ def _hash_context(context: dict[str, Any]) -> str:
 
 
 class QLearningEngine:
-    """Tabular Q-Learning for optimal action selection."""
+    """Tabular Q-Learning for optimal action selection with EWC regularization."""
 
     def __init__(
         self,
         alpha: float = DEFAULT_ALPHA,
         gamma: float = DEFAULT_GAMMA,
         db_path: str | None = None,
+        ewc_lambda: float = 0.1,
     ):
         self.alpha = alpha
         self.gamma = gamma
+        self.ewc_lambda = ewc_lambda
         self._q_table = QTable()
         self._db_path = db_path
+
+        # EWC integration (optional - graceful if import fails)
+        self._ewc = None
+        try:
+            from ..meta.ewc import EWCEngine
+
+            self._ewc = EWCEngine()
+        except ImportError:
+            pass
+
         self._load_from_db()
 
     def _load_from_db(self) -> None:
@@ -157,8 +169,17 @@ class QLearningEngine:
         action: ActionType,
         reward: float,
         next_state: QState | None = None,
+        task_id: str | None = None,
     ) -> None:
-        """Update Q-value using TD learning."""
+        """Update Q-value using TD learning with EWC regularization.
+
+        Args:
+            state: Current state
+            action: Action taken
+            reward: Reward received
+            next_state: Next state (for TD target)
+            task_id: Optional task ID for EWC Fisher update
+        """
         current_q = self._q_table.get(state, action)
 
         if next_state:
@@ -168,7 +189,21 @@ class QLearningEngine:
             target = reward
 
         td_error = target - current_q
+
+        # EWC regularization: penalize changes to important Q-values
+        ewc_penalty = 0.0
+        if self._ewc and task_id:
+            # Compute penalty based on current Q-value
+            ewc_penalty = self._ewc.compute_penalty({"q_value": current_q})
+            # Apply EWC regularization to TD update
+            td_error = td_error - self.ewc_lambda * ewc_penalty
+
         self._q_table.update(state, action, self.alpha * td_error)
+
+        # Update Fisher information after task completion
+        if self._ewc and task_id:
+            self._ewc.update_after_task({"q_value": current_q}, [{"reward": reward}])
+
         self._save_to_db()
 
     def get_q_values(self, state: QState) -> dict[str, float]:

@@ -37,6 +37,7 @@ def _resolve_watch_drives() -> list[str]:
     ]
     return [d for d in candidates if d and os.path.isdir(d)]
 
+
 # Default configuration with proper types
 DEFAULT_CONFIG: dict[str, Any] = {
     "log_level": "INFO",
@@ -293,13 +294,14 @@ class MemoryDaemon:
                 if not self._running:
                     break
                 time.sleep(1)
+
     def _learning_cycle_loop(self) -> None:
         """Background learning cycle loop."""
         import logging
         from . import learning_config
-        from .priority_engine import PriorityEngine
-        from .knowledge_graph import KnowledgeGraph
-        from .enhancements import archive_old_memories
+        from .cognitive.priority import PriorityEngine
+        from .stores.graph_store import KnowledgeGraph
+        from .cognitive.retention import archive_old_memories
 
         logger.info("Learning cycle loop started")
 
@@ -320,6 +322,7 @@ class MemoryDaemon:
                 # 0. Track budget for this cycle
                 try:
                     from packages.infrastructure.cost.tracker import get_budget_tracker
+
                     tracker = get_budget_tracker()
                     tracker.record_continuation("learning_cycle")
                     status = tracker.get_status("learning_cycle")
@@ -338,7 +341,9 @@ class MemoryDaemon:
                 # 2. Check knowledge graph for merges
                 try:
                     kg = KnowledgeGraph()
-                    merges = kg.suggest_merges(threshold=config.get("consolidation_threshold", 0.95))
+                    merges = kg.suggest_merges(
+                        threshold=config.get("consolidation_threshold", 0.95)
+                    )
                     if merges:
                         logger.info(f"Found {len(merges)} entity merge suggestions")
                     else:
@@ -353,7 +358,7 @@ class MemoryDaemon:
                         archived = archive_old_memories(
                             db_path=config.get("db_path"),
                             days=days,
-                            min_importance=config.get("min_confidence", 0.8)
+                            min_importance=config.get("min_confidence", 0.8),
                         )
                         logger.info(f"Archived {archived} old memories")
                 except Exception as e:
@@ -361,7 +366,11 @@ class MemoryDaemon:
                 # 4. Run self-healing check
                 try:
                     from .self_healer import SelfHealer
-                    from src.health.health_schema import HealthScore, MetricType, SystemHealth
+                    from src.health.health_schema import (
+                        HealthScore,
+                        MetricType,
+                        SystemHealth,
+                    )
                     from src.health.health_composite import CompositeHealthScorer
                     from src.health.auto_recovery import AutoRecovery
 
@@ -376,14 +385,18 @@ class MemoryDaemon:
                     scorer = CompositeHealthScorer()
                     recovery = AutoRecovery()
                     recovery.register_default_handlers()
+
                     # Helper function to measure Ollama response time
                     def measure_ollama_health() -> tuple[float, float]:
                         """Measure Ollama response time and error rate."""
                         import urllib.request
                         import json
+
                         start = time.time()
                         try:
-                            req = urllib.request.Request("http://localhost:11434/api/tags")
+                            req = urllib.request.Request(
+                                "http://localhost:11434/api/tags"
+                            )
                             with urllib.request.urlopen(req, timeout=5) as resp:
                                 data = json.loads(resp.read().decode())
                                 elapsed_ms = (time.time() - start) * 1000
@@ -397,6 +410,7 @@ class MemoryDaemon:
                     def measure_memory_db_health() -> tuple[float, float]:
                         """Measure Memory DB accessibility and size."""
                         import sqlite3
+
                         db_path = PROJECT_ROOT / "context/memory/memory.db"
                         try:
                             if db_path.exists():
@@ -431,13 +445,17 @@ class MemoryDaemon:
                         """Measure MCP Server process responsiveness."""
                         try:
                             import psutil
+
                             # Check if mcp_server process is running
-                            for proc in psutil.process_iter(['name', 'cmdline']):
+                            for proc in psutil.process_iter(["name", "cmdline"]):
                                 try:
-                                    cmdline = proc.info.get('cmdline', [])
-                                    if cmdline and 'mcp_server' in ' '.join(cmdline):
+                                    cmdline = proc.info.get("cmdline", [])
+                                    if cmdline and "mcp_server" in " ".join(cmdline):
                                         # Process found - check if responsive
-                                        return 80.0, 0.0  # Process exists = reasonably healthy
+                                        return (
+                                            80.0,
+                                            0.0,
+                                        )  # Process exists = reasonably healthy
                                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                                     pass
                             return 20.0, 80.0  # No process found
@@ -451,31 +469,53 @@ class MemoryDaemon:
                     mcp_response, mcp_error = measure_mcp_server_health()
 
                     # Record real metrics
-                    scorer.record_metric("ollama", MetricType.RESPONSE_TIME, ollama_response)
+                    scorer.record_metric(
+                        "ollama", MetricType.RESPONSE_TIME, ollama_response
+                    )
                     scorer.record_metric("ollama", MetricType.ERROR_RATE, ollama_error)
-                    scorer.record_metric("memory_db", MetricType.RESPONSE_TIME, memory_response)
-                    scorer.record_metric("memory_db", MetricType.ERROR_RATE, memory_error)
-                    scorer.record_metric("memory_db", MetricType.RESOURCE, memory_response)
-                    scorer.record_metric("knowledge_graph", MetricType.RESPONSE_TIME, kg_response)
-                    scorer.record_metric("knowledge_graph", MetricType.ERROR_RATE, kg_error)
-                    scorer.record_metric("knowledge_graph", MetricType.RESOURCE, kg_response)
+                    scorer.record_metric(
+                        "memory_db", MetricType.RESPONSE_TIME, memory_response
+                    )
+                    scorer.record_metric(
+                        "memory_db", MetricType.ERROR_RATE, memory_error
+                    )
+                    scorer.record_metric(
+                        "memory_db", MetricType.RESOURCE, memory_response
+                    )
+                    scorer.record_metric(
+                        "knowledge_graph", MetricType.RESPONSE_TIME, kg_response
+                    )
+                    scorer.record_metric(
+                        "knowledge_graph", MetricType.ERROR_RATE, kg_error
+                    )
+                    scorer.record_metric(
+                        "knowledge_graph", MetricType.RESOURCE, kg_response
+                    )
                     scorer.record_metric("mcp_server", MetricType.QUALITY, mcp_response)
                     scorer.record_metric("mcp_server", MetricType.ERROR_RATE, mcp_error)
                     system_health = scorer.calculate_system_health()
                     recovery_results = recovery.check_and_recover(system_health)
                     if recovery_results:
                         for comp, state in recovery_results.items():
-                            logger.info(f"Recovery for '{comp}': {state.attempts} attempts, recovered={state.recovered}")
+                            logger.info(
+                                f"Recovery for '{comp}': {state.attempts} attempts, recovered={state.recovered}"
+                            )
                 except Exception as e:
                     logger.error(f"Error in self-healing check: {e}")
 
                 # 5. Run sleep cycle (JOURNAL → CONSOLIDATE → RECALL)
                 try:
                     from .core.sleep_cycle import SleepCycle
-                    db_path = str(Path(__file__).parent.parent.parent / "context/memory/sleep_cycle.db")
+
+                    db_path = str(
+                        Path(__file__).parent.parent.parent
+                        / "context/memory/sleep_cycle.db"
+                    )
                     sc = SleepCycle(db_path=db_path)
                     result = sc.run_cycle()
-                    logger.info(f"Sleep cycle completed: {len(result.phases_completed)} phases")
+                    logger.info(
+                        f"Sleep cycle completed: {len(result.phases_completed)} phases"
+                    )
                     if result.stats:
                         for phase, stats in result.stats.items():
                             logger.info(f"  {phase}: {stats}")
@@ -483,9 +523,14 @@ class MemoryDaemon:
                     # Re-index sleep cycle results back to memory router
                     try:
                         from .router import get_router
+
                         router = get_router()
-                        if hasattr(router, 'reindex'):
-                            router.reindex(result.consolidated_memories if hasattr(result, 'consolidated_memories') else [])
+                        if hasattr(router, "reindex"):
+                            router.reindex(
+                                result.consolidated_memories
+                                if hasattr(result, "consolidated_memories")
+                                else []
+                            )
                             logger.info("Sleep cycle results re-indexed")
                     except Exception as e:
                         logger.debug(f"Sleep re-index skipped: {e}")
@@ -495,7 +540,6 @@ class MemoryDaemon:
 
             except Exception as e:
                 logger.error(f"Learning cycle error: {e}")
-
 
             # Sleep until next cycle (check stop event every minute)
             for _ in range(cycle_minutes):
@@ -535,6 +579,7 @@ class MemoryDaemon:
                     self.stop()
                     # Re-exec the daemon process
                     import sys
+
                     os.execv(sys.executable, [sys.executable] + sys.argv)
                     return  # Never reached after execv
 
@@ -544,6 +589,7 @@ class MemoryDaemon:
                 self._memory_stop_event.wait(self.MEMORY_CHECK_INTERVAL)
 
         logger.info("Memory monitor stopped")
+
     def start(self) -> bool:
         """Start the daemon.
 
@@ -562,9 +608,10 @@ class MemoryDaemon:
 
             # Initialize components
             self._health_monitor = HealthMonitor(self.config)
-            # Use the real PriorityEngine from priority_engine module
+            # Use the real PriorityEngine from cognitive.priority module
             try:
-                from .priority_engine import PriorityEngine as RealPriorityEngine
+                from .cognitive.priority import PriorityEngine as RealPriorityEngine
+
                 db_path = self.config.get("db_path", "context/memory/file_registry.db")
                 self._priority_engine = RealPriorityEngine(db_path)
                 logger.info("Real PriorityEngine initialized")
@@ -618,6 +665,7 @@ class MemoryDaemon:
             # Start learning cycle thread if enabled
             try:
                 from . import learning_config
+
                 if learning_config.get_config("enabled"):
                     self._learning_stop_event.clear()
                     self._learning_thread = threading.Thread(
@@ -680,11 +728,11 @@ class MemoryDaemon:
                 logger.error(f"Error stopping scan scheduler: {e}")
 
             # Signal memory monitor to stop
-            if hasattr(self, '_memory_stop_event'):
+            if hasattr(self, "_memory_stop_event"):
                 self._memory_stop_event.set()
 
             # Signal learning thread to stop
-            if hasattr(self, '_learning_stop_event'):
+            if hasattr(self, "_learning_stop_event"):
                 self._learning_stop_event.set()
             # Wait for threads to finish
             for thread in self._threads:

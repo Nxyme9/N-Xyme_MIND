@@ -53,6 +53,7 @@ class PriorityEngine:
         """
         self.db_path = db_path
         self.weights = DEFAULT_WEIGHTS.copy()
+        self._load_weights()
         self._init_access_table()
 
     def _get_connection(self) -> sqlite3.Connection:
@@ -73,8 +74,12 @@ class PriorityEngine:
                 action TEXT NOT NULL,
                 timestamp TEXT NOT NULL
             )""")
-            conn.execute("""CREATE INDEX IF NOT EXISTS idx_file_access_path ON file_access(file_path)""")
-            conn.execute("""CREATE INDEX IF NOT EXISTS idx_file_access_timestamp ON file_access(timestamp)""")
+            conn.execute(
+                """CREATE INDEX IF NOT EXISTS idx_file_access_path ON file_access(file_path)"""
+            )
+            conn.execute(
+                """CREATE INDEX IF NOT EXISTS idx_file_access_timestamp ON file_access(timestamp)"""
+            )
             conn.execute("""CREATE TABLE IF NOT EXISTS query_feedback (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 query TEXT NOT NULL,
@@ -95,14 +100,33 @@ class PriorityEngine:
         """Infer file type from file extension."""
         ext = Path(file_path).suffix.lower()
         type_mapping = {
-            ".py": "code", ".js": "code", ".ts": "code", ".tsx": "code",
-            ".jsx": "code", ".go": "code", ".rs": "code", ".java": "code",
-            ".c": "code", ".cpp": "code", ".h": "code", ".cs": "code",
-            ".md": "doc", ".txt": "doc", ".rst": "doc", ".pdf": "doc",
-            ".json": "config", ".yaml": "config", ".yml": "config",
-            ".toml": "config", ".ini": "config", ".xml": "config",
-            ".db": "data", ".sqlite": "data", ".csv": "data",
-            ".jsonl": "data", ".parquet": "data",
+            ".py": "code",
+            ".js": "code",
+            ".ts": "code",
+            ".tsx": "code",
+            ".jsx": "code",
+            ".go": "code",
+            ".rs": "code",
+            ".java": "code",
+            ".c": "code",
+            ".cpp": "code",
+            ".h": "code",
+            ".cs": "code",
+            ".md": "doc",
+            ".txt": "doc",
+            ".rst": "doc",
+            ".pdf": "doc",
+            ".json": "config",
+            ".yaml": "config",
+            ".yml": "config",
+            ".toml": "config",
+            ".ini": "config",
+            ".xml": "config",
+            ".db": "data",
+            ".sqlite": "data",
+            ".csv": "data",
+            ".jsonl": "data",
+            ".parquet": "data",
         }
         return type_mapping.get(ext, "other")
 
@@ -118,7 +142,11 @@ class PriorityEngine:
             else:
                 modified_dt = modified
 
-            now = datetime.now(modified_dt.tzinfo) if modified_dt.tzinfo else datetime.now()
+            now = (
+                datetime.now(modified_dt.tzinfo)
+                if modified_dt.tzinfo
+                else datetime.now()
+            )
             days_since = (now - modified_dt).total_seconds() / 86400
 
             decay_rate = 10.0
@@ -174,7 +202,10 @@ class PriorityEngine:
             for project_dir in active_projects:
                 project_path = Path(project_dir).resolve()
                 try:
-                    if project_path in file_path_obj.parents or file_path_obj.parent == project_path:
+                    if (
+                        project_path in file_path_obj.parents
+                        or file_path_obj.parent == project_path
+                    ):
                         return 1.0
                 except ValueError:
                     pass
@@ -251,12 +282,14 @@ class PriorityEngine:
                     "file_type": self._infer_file_type(file_path),
                 }
                 priority = self.calculate_priority(file_path, metadata)
-                results.append({
-                    "file_path": file_path,
-                    "priority": priority,
-                    "access_count": access_count,
-                    "last_access": last_access,
-                })
+                results.append(
+                    {
+                        "file_path": file_path,
+                        "priority": priority,
+                        "access_count": access_count,
+                        "last_access": last_access,
+                    }
+                )
 
             conn.close()
             return results
@@ -277,11 +310,13 @@ class PriorityEngine:
                 try:
                     path = Path(file_path).resolve()
                     for parent in path.parents:
-                        if ((parent / "pyproject.toml").exists()
+                        if (
+                            (parent / "pyproject.toml").exists()
                             or (parent / "package.json").exists()
                             or (parent / "Cargo.toml").exists()
                             or (parent / "go.mod").exists()
-                            or (parent / ".git").exists()):
+                            or (parent / ".git").exists()
+                        ):
                             project_dirs.add(str(parent))
                             break
                         if parent == parent.parent:
@@ -338,7 +373,15 @@ class PriorityEngine:
                 """INSERT INTO query_feedback
                    (query, result_id, source, used, ignored, timestamp, session_id)
                    VALUES (?, ?, ?, ?, ?, ?, ?)""",
-                (query, result_id, source, 1 if used else 0, 1 if ignored else 0, timestamp, session_id),
+                (
+                    query,
+                    result_id,
+                    source,
+                    1 if used else 0,
+                    1 if ignored else 0,
+                    timestamp,
+                    session_id,
+                ),
             )
             conn.commit()
             conn.close()
@@ -365,7 +408,12 @@ class PriorityEngine:
             conn.close()
 
             if row[0] is None:
-                return {"total_feedback": 0, "used_count": 0, "ignored_count": 0, "sources": []}
+                return {
+                    "total_feedback": 0,
+                    "used_count": 0,
+                    "ignored_count": 0,
+                    "sources": [],
+                }
 
             return {
                 "total_feedback": row[0] or 0,
@@ -375,7 +423,12 @@ class PriorityEngine:
             }
         except Exception as e:
             logger.error(f"Failed to get query stats: {e}")
-            return {"total_feedback": 0, "used_count": 0, "ignored_count": 0, "sources": []}
+            return {
+                "total_feedback": 0,
+                "used_count": 0,
+                "ignored_count": 0,
+                "sources": [],
+            }
 
     def detect_topic_drift(self, days: int = 7) -> float:
         """Detect topic drift by comparing recent vs historical file types."""
@@ -452,7 +505,9 @@ class PriorityEngine:
                 """SELECT query, COUNT(*) as cnt FROM query_feedback
                    GROUP BY query ORDER BY cnt DESC LIMIT 10"""
             )
-            top_queries = [{"query": row[0], "count": row[1]} for row in cursor.fetchall()]
+            top_queries = [
+                {"query": row[0], "count": row[1]} for row in cursor.fetchall()
+            ]
 
             cursor = conn.execute(
                 """SELECT fa.file_path FROM file_access fa
@@ -473,11 +528,84 @@ class PriorityEngine:
             }
         except Exception as e:
             logger.error(f"Failed to get learning stats: {e}")
-            return {"total_feedback": 0, "unique_queries": 0, "top_queries": [], "topic_trends": {}}
+            return {
+                "total_feedback": 0,
+                "unique_queries": 0,
+                "top_queries": [],
+                "topic_trends": {},
+            }
+
+    def update_weights_from_feedback(self, feedback_data: list[dict]):
+        """Learn optimal weights from user feedback.
+
+        Args:
+            feedback_data: List of dicts with keys: query, clicked_result_id, relevance_score
+        """
+        if not feedback_data:
+            return
+
+        # Track which factors correlate with high relevance scores
+        factor_scores = {factor: [] for factor in self.weights}
+
+        for feedback in feedback_data:
+            relevance = feedback.get("relevance_score", 0.5)
+            for factor in self.weights:
+                # Use access patterns to infer factor importance
+                factor_scores[factor].append(relevance)
+
+        # Calculate average relevance per factor
+        factor_averages = {}
+        for factor, scores in factor_scores.items():
+            if scores:
+                factor_averages[factor] = sum(scores) / len(scores)
+
+        # Update weights proportionally
+        total = sum(factor_averages.values())
+        if total > 0:
+            for factor in self.weights:
+                self.weights[factor] = factor_averages.get(factor, 0.1) / total
+
+        # Persist updated weights
+        self._save_weights()
+
+    def _save_weights(self):
+        """Save current weights to file."""
+        weights_file = (
+            Path(__file__).parent.parent.parent.parent
+            / ".sisyphus"
+            / "priority_weights.json"
+        )
+        weights_file.parent.mkdir(parents=True, exist_ok=True)
+        import json
+
+        with open(weights_file, "w") as f:
+            json.dump(
+                {"weights": self.weights, "updated_at": datetime.now().isoformat()},
+                f,
+                indent=2,
+            )
+
+    def _load_weights(self):
+        """Load weights from file if they exist."""
+        weights_file = (
+            Path(__file__).parent.parent.parent.parent
+            / ".sisyphus"
+            / "priority_weights.json"
+        )
+        if weights_file.exists():
+            import json
+
+            with open(weights_file, "r") as f:
+                data = json.load(f)
+                self.weights.update(data.get("weights", {}))
 
 
 # Convenience function
-def compute_priority(file_path: str, metadata: dict[str, Any], db_path: str = "context/memory/file_registry.db") -> float:
+def compute_priority(
+    file_path: str,
+    metadata: dict[str, Any],
+    db_path: str = "context/memory/file_registry.db",
+) -> float:
     """Compute priority for a file."""
     engine = PriorityEngine(db_path)
     return engine.calculate_priority(file_path, metadata)

@@ -13,9 +13,11 @@ class KeywordRetriever:
 
     def __init__(self, db_path: Optional[str] = None):
         from pathlib import Path
+
         project_root = Path(__file__).resolve().parents[3]
-        self.db_path = db_path or str(project_root / "context" / "memory" / "mind_from_mind.db")
-        self.db_path = db_path
+        self.db_path = db_path or str(
+            project_root / "context" / "memory" / "mind_from_mind.db"
+        )
 
     def search(
         self, query: str, top_k: int = 10, tier: Optional[str] = None
@@ -46,7 +48,7 @@ class KeywordRetriever:
             # Build FTS5 query - escape special characters
             # Replace spaces with AND for multi-word queries
             fts_query = " ".join(f'"{term}"' for term in query.split())
-            
+
             # Use parameterized queries to prevent SQL injection
             if tier:
                 cursor.execute(

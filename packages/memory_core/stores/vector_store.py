@@ -11,7 +11,7 @@ Combines:
 - drive_embedder.py: Drive-specific embedding
 
 Provides:
-- VectorStore: Core vector storage with add/search/delete
+- VectorIndex: Core vector storage with add/search/delete (implements VectorStore ABC)
 - EmbeddingEngine: Generate embeddings via Ollama/ST/hash
 - SimilaritySearch: Cosine/L2/dot product similarity
 - auto_embed_on_save: Auto-embed memories
@@ -31,6 +31,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+from packages.memory_core.stores.base import SearchResult, VectorStore as VectorStoreABC
+
 logger = logging.getLogger(__name__)
 
 # Check availability
@@ -45,33 +47,6 @@ except ImportError:
 OLLAMA_URL = "http://localhost:11434"
 OLLAMA_MODEL = "nomic-embed-text"
 EMBED_DIM = 768
-
-
-# ---------------------------------------------------------------------------
-# Data Types
-# ---------------------------------------------------------------------------
-
-
-@dataclass
-class SearchResult:
-    """Single search result with score and metadata."""
-
-    index: int
-    score: float
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    vector: Optional[List[float]] = field(default=None, repr=False)
-
-
-@dataclass
-class IndexStats:
-    """Statistics for a vector index."""
-
-    total_vectors: int
-    dimension: int
-    metric: str
-    created_at: float
-    last_updated: float
-    memory_bytes: int = 0
 
 
 # ---------------------------------------------------------------------------
@@ -159,11 +134,61 @@ class SimilaritySearch:
 
 
 # ---------------------------------------------------------------------------
-# Vector Index
+# Data Types
 # ---------------------------------------------------------------------------
 
 
-class VectorIndex:
+@dataclass
+class IndexStats:
+    """Statistics for a vector index."""
+
+    total_vectors: int
+    dimension: int
+    metric: str
+    created_at: float
+    last_updated: float
+    memory_bytes: int = 0
+
+
+# ---------------------------------------------------------------------------
+# RRF Fusion Utility
+# ---------------------------------------------------------------------------
+
+
+def rrf_fusion(
+    vector_results: list, keyword_results: list, k: int = 60, top_k: int = 10
+) -> list:
+    """
+    Reciprocal Rank Fusion of two result lists.
+
+    Args:
+        vector_results: Results from vector similarity search
+        keyword_results: Results from keyword/BM25 search
+        k: RRF constant (default 60)
+        top_k: Number of results to return
+
+    Returns:
+        Fused and ranked results
+    """
+    scores: dict[str, float] = {}
+
+    for rank, result in enumerate(vector_results, 1):
+        rid = result.id if hasattr(result, "id") else str(result.get("id", ""))
+        scores[rid] = scores.get(rid, 0) + 1.0 / (k + rank)
+
+    for rank, result in enumerate(keyword_results, 1):
+        rid = result.id if hasattr(result, "id") else str(result.get("id", ""))
+        scores[rid] = scores.get(rid, 0) + 1.0 / (k + rank)
+
+    return sorted(scores.items(), key=lambda x: x[1], reverse=True)[:top_k]
+
+
+# ---------------------------------------------------------------------------
+# Vector Index (implements VectorStore ABC)
+# ---------------------------------------------------------------------------
+
+
+class VectorIndex(VectorStoreABC):
     """FAISS-style vector index with pure Python implementation."""
 
     def __init__(self, metric: str = "cosine", name: str = "default"):
@@ -171,6 +196,7 @@ class VectorIndex:
         self.metric = metric
         self._vectors: List[List[float]] = []
         self._metadata: List[Dict[str, Any]] = []
+        self._ids: List[str] = []
         self._dimension: Optional[int] = None
         self._created_at: float = time.time()
         self._last_updated: float = self._created_at
@@ -188,9 +214,10 @@ class VectorIndex:
     def is_empty(self) -> bool:
         return self.size == 0
 
-    def add(
+    def add_vector(
         self, vector: List[float], metadata: Optional[Dict[str, Any]] = None
     ) -> int:
+        """Add a raw vector to the index (internal method)."""
         dim = len(vector)
         if self._dimension is None:
             self._dimension = dim
@@ -212,13 +239,14 @@ class VectorIndex:
             metadata_list = [{}] * len(vectors)
         indices = []
         for vec, meta in zip(vectors, metadata_list):
-            idx = self.add(vec, meta)
+            idx = self.add_vector(vec, meta)
             indices.append(idx)
         return indices
 
-    def search(
+    def search_by_vector(
         self, query: List[float], top_k: int = 10, filter_fn: Optional[callable] = None
     ) -> List[SearchResult]:
+        """Search by raw vector (internal method)."""
         if self.is_empty:
             return []
         if len(query) != self._dimension:
@@ -235,17 +263,19 @@ class VectorIndex:
                 continue
             results.append(
                 SearchResult(
-                    index=idx,
+                    id=str(idx),
+                    content=meta.get("content", ""),
                     score=score,
                     metadata=meta,
-                    vector=self._vectors[idx] if len(results) < top_k else None,
+                    source="semantic",
                 )
             )
             if len(results) >= top_k:
                 break
         return results
 
-    def delete(self, index: int) -> bool:
+    def delete_by_index(self, index: int) -> bool:
+        """Delete by index (internal method)."""
         if index < 0 or index >= self.size:
             return False
         self._vectors.pop(index)
@@ -279,8 +309,140 @@ class VectorIndex:
     def clear(self) -> None:
         self._vectors.clear()
         self._metadata.clear()
+        self._ids.clear()
         self._dimension = None
         self._last_updated = time.time()
+
+    # ---------------------------------------------------------------------------
+    # VectorStore ABC Implementation
+    # ---------------------------------------------------------------------------
+
+    def add(self, id: str, content: str, vector: list[float]) -> None:
+        """Add a vector to the store (ABC implementation)."""
+        self._ids.append(id)
+        self.add_vector(vector, {"id": id, "content": content})
+
+    def search(self, query: str, top_k: int) -> list[SearchResult]:
+        """Search for similar vectors (ABC implementation)."""
+        query_vec = embed_text(query)
+        raw_results = self._search_engine.search(query_vec, self._vectors, top_k=top_k)
+        results = []
+        for idx, score in raw_results:
+            meta = self._metadata[idx]
+            results.append(
+                SearchResult(
+                    id=self._ids[idx] if idx < len(self._ids) else str(idx),
+                    content=meta.get("content", ""),
+                    score=score,
+                    metadata=meta,
+                    source="semantic",
+                )
+            )
+        return results
+
+    def hybrid_search(
+        self, query: str, top_k: int = 10, keyword_retriever=None
+    ) -> list:
+        """
+        Combines vector similarity + keyword BM25 using RRF fusion.
+
+        Args:
+            query: Search query string
+            top_k: Number of results to return
+            keyword_retriever: Optional KeywordRetriever instance for BM25 search
+
+        Returns:
+            List of SearchResult objects with fused scores
+        """
+        from packages.memory_core.stores.base import SearchResult
+
+        # 1. Get vector results
+        vector_results = self.search(query, top_k * 2)
+
+        # 2. Get keyword results (if retriever provided)
+        keyword_results = []
+        if keyword_retriever:
+            try:
+                keyword_results = keyword_retriever.search(query, top_k * 2)
+            except Exception:
+                keyword_results = []
+
+        # 3. RRF fusion with k=60
+        k = 60
+        scores: dict[str, tuple[float, dict]] = {}  # id -> (score, metadata)
+
+        # Score vector results
+        for rank, result in enumerate(vector_results, 1):
+            score = 1.0 / (k + rank)
+            if hasattr(result, "id"):
+                rid = result.id
+                content = getattr(result, "content", "")
+                metadata = getattr(result, "metadata", {})
+            else:
+                rid = str(result.get("id", ""))
+                content = result.get("content", "")
+                metadata = result.get("metadata", {})
+
+            if rid in scores:
+                scores[rid] = (scores[rid][0] + score, metadata)
+            else:
+                scores[rid] = (score, {"content": content, **metadata})
+
+        # Score keyword results
+        for rank, result in enumerate(keyword_results, 1):
+            score = 1.0 / (k + rank)
+            if hasattr(result, "id"):
+                rid = result.id
+                content = getattr(result, "content", "")
+                metadata = getattr(result, "metadata", {})
+            else:
+                rid = str(result.get("id", ""))
+                content = result.get("content", "")
+                metadata = result.get("metadata", {})
+
+            if rid in scores:
+                scores[rid] = (scores[rid][0] + score, metadata)
+            else:
+                scores[rid] = (score, {"content": content, **metadata})
+
+        # Sort by fused score and return top_k
+        sorted_results = sorted(scores.items(), key=lambda x: x[1][0], reverse=True)[
+            :top_k
+        ]
+
+        return [
+            SearchResult(
+                id=rid,
+                content=data[1].get("content", ""),
+                score=data[0],
+                metadata=data[1],
+                source="hybrid",
+            )
+            for rid, data in sorted_results
+        ]
+
+    def delete(self, id: str) -> bool:
+        """Delete a vector by ID (ABC implementation)."""
+        try:
+            idx = self._ids.index(id)
+            self._vectors.pop(idx)
+            self._metadata.pop(idx)
+            self._ids.pop(idx)
+            self._last_updated = time.time()
+            return True
+        except ValueError:
+            return False
+
+    def stats(self) -> dict[str, Any]:
+        """Get statistics about the store (ABC implementation)."""
+        return {
+            "total_vectors": self.size,
+            "dimension": self._dimension or 0,
+            "metric": self.metric,
+            "created_at": self._created_at,
+            "last_updated": self._last_updated,
+            "memory_bytes": sum(len(v) * 8 for v in self._vectors),
+        }
 
     def save(self, path: str) -> None:
         data = {
@@ -708,6 +870,7 @@ __all__ = [
     "SimilaritySearch",
     "EmbeddingEngine",
     "VectorStore",
+    "rrf_fusion",
     "embed_text",
     "batch_embed",
     "similarity",
