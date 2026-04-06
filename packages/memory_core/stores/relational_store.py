@@ -65,8 +65,27 @@ class RelationalStore(RelationalStoreABC):
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         conn = self._ensure_migrations_table()
+        self._set_wal_mode(conn)
         self._run_pending_migrations(conn)
+        self._run_integrity_check(conn)
         conn.close()
+
+    def _set_wal_mode(self, conn: sqlite3.Connection) -> None:
+        """Enable WAL journal mode for better concurrency."""
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.commit()
+
+    def _run_integrity_check(self, conn: sqlite3.Connection) -> None:
+        """Run integrity check on database, log warning if fails."""
+        try:
+            cursor = conn.execute("PRAGMA integrity_check")
+            result = cursor.fetchone()
+            if result and result[0] != "ok":
+                logger.warning(f"SQLite integrity check failed: {result[0]}")
+            else:
+                logger.debug("SQLite integrity check passed")
+        except Exception as e:
+            logger.warning(f"Failed to run integrity check: {e}")
 
     def _ensure_migrations_table(self):
         """Create the migrations tracking table if it doesn't exist."""
@@ -205,6 +224,68 @@ class RelationalStore(RelationalStoreABC):
             )
             row = cursor.fetchone()
             return {"total_memories": row[0] or 0, "memory_types": row[1] or 0}
+        finally:
+            conn.close()
+
+    def checkpoint(self) -> bool:
+        """Run WAL checkpoint to flush WAL to database.
+
+        Returns:
+            True if checkpoint succeeded.
+        """
+        conn = sqlite3.connect(str(self.db_path))
+        try:
+            cursor = conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            result = cursor.fetchone()
+            # Result is (busy, log, checkpointed)
+            return result is not None and result[0] == 0
+        except Exception as e:
+            logger.error(f"WAL checkpoint failed: {e}")
+            return False
+        finally:
+            conn.close()
+
+    def backup(self, backup_path: str) -> bool:
+        """Create a backup of the database.
+
+        Args:
+            backup_path: Path to the backup file.
+
+        Returns:
+            True if backup succeeded.
+        """
+        backup_db = Path(backup_path)
+        backup_db.parent.mkdir(parents=True, exist_ok=True)
+
+        source = sqlite3.connect(str(self.db_path))
+        target = sqlite3.connect(str(backup_db))
+        try:
+            source.backup(target)
+            logger.info(f"Database backed up to {backup_path}")
+            return True
+        except Exception as e:
+            logger.error(f"Database backup failed: {e}")
+            return False
+        finally:
+            source.close()
+            target.close()
+
+    def integrity_check(self) -> tuple[bool, str]:
+        """Run integrity check on the database.
+
+        Returns:
+            Tuple of (success: bool, message: str)
+        """
+        conn = sqlite3.connect(str(self.db_path))
+        try:
+            cursor = conn.execute("PRAGMA integrity_check")
+            result = cursor.fetchone()
+            if result and result[0] == "ok":
+                return (True, "Database integrity OK")
+            else:
+                return (False, result[0] if result else "Unknown error")
+        except Exception as e:
+            return (False, str(e))
         finally:
             conn.close()
 

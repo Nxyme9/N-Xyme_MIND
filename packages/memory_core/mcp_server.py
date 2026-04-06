@@ -265,6 +265,121 @@ def find_context(task: str, context_type: str = "all") -> dict:
 
 
 # ---------------------------------------------------------------------------
+# TOOL: memory_search
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool(tags={"memory", "search"})
+def memory_search(query: str, top_k: int = 10) -> dict:
+    """Search memory using the MemoryRouter.
+
+    Args:
+        query: The search query string.
+        top_k: Maximum number of results to return (default 10).
+
+    Returns:
+        dict with 'results' (list of matches) and 'meta' (query info).
+    """
+    try:
+        router = _get_router()
+        from .router import UnifiedMemoryQuery
+
+        uq = UnifiedMemoryQuery(
+            query=query,
+            max_results_per_source=top_k,
+            use_semantic=True,
+        )
+        results = router.search(uq)
+
+        return {
+            "results": [
+                {
+                    "source": r.source,
+                    "content": str(r.content)[:500],
+                    "score": r.relevance_score,
+                }
+                for r in results.results
+            ],
+            "meta": {
+                "query": query,
+                "top_k": top_k,
+                "total": results.total_results,
+                "sources_queried": results.sources_queried,
+                "query_time_ms": results.query_time_ms,
+            },
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# TOOL: memory_write
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool(tags={"memory", "write"})
+def memory_write(content: str, kind: str = "episodic", scope: str = "global") -> dict:
+    """Write memory using MemoryManager.
+
+    Args:
+        content: The memory content to store.
+        kind: Type of memory (episodic, semantic, etc.). Default: episodic.
+        scope: Scope of memory (global, session, etc.). Default: global.
+
+    Returns:
+        dict with success status and memory_id.
+    """
+    try:
+        import hashlib
+
+        from .memory_manager import get_memory_manager
+
+        # Generate memory ID from content hash
+        memory_id = hashlib.sha256(content.encode()).hexdigest()[:16]
+
+        mm = get_memory_manager()
+        result = mm.on_memory_write(memory_id=memory_id, content=content, kind=kind)
+
+        return {
+            "success": result.success,
+            "memory_id": result.memory_id,
+            "action": result.action,
+            "metadata": result.metadata,
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ---------------------------------------------------------------------------
+# TOOL: memory_stats
+# ---------------------------------------------------------------------------
+
+
+@mcp.tool(tags={"memory", "stats"})
+def memory_stats() -> dict:
+    """Get comprehensive memory statistics.
+
+    Returns:
+        dict with store stats, forgetting stats, trust stats, priority stats.
+    """
+    try:
+        from .memory_manager import get_memory_manager
+
+        mm = get_memory_manager()
+        stats = mm.get_stats()
+
+        return {
+            "store": stats.get("store", {}),
+            "forgetting": stats.get("forgetting", {}),
+            "reconsolidation": stats.get("reconsolidation", {}),
+            "trust": stats.get("trust", {}),
+            "priority": stats.get("priority", {}),
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
 

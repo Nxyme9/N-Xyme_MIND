@@ -1,21 +1,16 @@
-"""Routing module for learning-engine.
+"""Learning engine routing package."""
 
-Exports:
-- optimizer: Routing weight optimizer
-- ab_testing: A/B testing framework
-- counterfactual: Counterfactual learning engine
-"""
-
+# Existing routing modules
 from .optimizer import (
-    AgentWeights,
-    RoutingRecommendation,
     RoutingWeightOptimizer,
+    RoutingRecommendation,
+    AgentWeights,
     get_routing_optimizer,
 )
 
 from .ab_testing import (
-    ABTest,
     ABTestingFramework,
+    ABTest,
     TestStatus,
     TestVariant,
     get_ab_testing,
@@ -26,19 +21,25 @@ from .counterfactual import (
     CounterfactualResult,
 )
 
+# New adaptive router with Q-Learning feedback loop
+from .adaptive_router import AdaptiveRouter, LearningStats
+
 __all__ = [
     # optimizer
-    "AgentWeights",
-    "RoutingRecommendation",
     "RoutingWeightOptimizer",
+    "RoutingRecommendation",
+    "AgentWeights",
     "get_routing_optimizer",
     # ab_testing
-    "ABTest",
     "ABTestingFramework",
+    "ABTest",
     "TestStatus",
     "TestVariant",
     "get_ab_testing",
     # counterfactual
     "CounterfactualEngine",
     "CounterfactualResult",
+    # adaptive_router
+    "AdaptiveRouter",
+    "LearningStats",
 ]

@@ -127,5 +127,145 @@ def get_recommendations(task_description: str) -> Dict[str, Any]:
         return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
 
 
+@mcp.tool()
+def learning_stats() -> Dict[str, Any]:
+    """Get Q-Learning statistics, agent performance, and routing weights.
+
+    Returns:
+        Dict with learning stats, agent performance, and routing weights
+    """
+    try:
+        from packages.learning_engine.outcome_logger import OutcomeLogger
+
+        logger = OutcomeLogger()
+        agent_stats = logger.get_all_agent_stats()
+
+        # Get Q-Learning stats if available
+        q_learning_stats = {}
+        try:
+            from packages.learning_engine.routing.adaptive_router import (
+                AdaptiveRouter,
+            )
+
+            # Create temporary router to get stats
+            temp_router = AdaptiveRouter()
+            q_learning_stats = temp_router.get_learning_stats()
+        except Exception:
+            pass
+
+        return {
+            "status": "success",
+            "agent_performance": agent_stats,
+            "q_learning": q_learning_stats,
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
+
+@mcp.tool()
+def log_outcome(
+    task_id: str,
+    task_description: str,
+    task_type: str,
+    agent: str,
+    level: int,
+    success: bool,
+    latency_ms: float,
+    tokens_used: int = 0,
+) -> Dict[str, Any]:
+    """Log a delegation outcome using OutcomeLogger.
+
+    Args:
+        task_id: Unique identifier for the task
+        task_description: Description of the task
+        task_type: Type of task (implementation, research, review, fix)
+        agent: Agent that handled the task
+        level: Complexity level (L1-L5)
+        success: Whether the task succeeded
+        latency_ms: Execution latency in milliseconds
+        tokens_used: Number of tokens used (default 0)
+
+    Returns:
+        Dict with status and logged outcome
+    """
+    try:
+        from packages.learning_engine.outcome_logger import (
+            DelegationOutcome,
+            OutcomeLogger,
+        )
+
+        outcome = DelegationOutcome(
+            task_id=task_id,
+            task_description=task_description,
+            task_type=task_type,
+            agent=agent,
+            level=level,
+            success=success,
+            latency_ms=latency_ms,
+            tokens_used=tokens_used,
+        )
+
+        logger = OutcomeLogger()
+        outcome_id = logger.log(outcome)
+
+        return {
+            "status": "success",
+            "outcome_id": outcome_id,
+            "logged": {
+                "task_id": task_id,
+                "task_type": task_type,
+                "agent": agent,
+                "level": level,
+                "success": success,
+            },
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
+
+@mcp.tool()
+def get_outcomes(
+    agent: Optional[str] = None,
+    task_type: Optional[str] = None,
+    limit: int = 100,
+) -> Dict[str, Any]:
+    """Retrieve delegation outcomes with optional filters.
+
+    Args:
+        agent: Filter by agent name (optional)
+        task_type: Filter by task type (optional)
+        limit: Maximum number of outcomes to return (default 100)
+
+    Returns:
+        Dict with list of outcomes
+    """
+    try:
+        from packages.learning_engine.outcome_logger import OutcomeLogger
+
+        logger = OutcomeLogger()
+        outcomes = logger.get_outcomes(agent=agent, task_type=task_type, limit=limit)
+
+        return {
+            "status": "success",
+            "count": len(outcomes),
+            "outcomes": [
+                {
+                    "task_id": o.task_id,
+                    "task_description": o.task_description,
+                    "task_type": o.task_type,
+                    "agent": o.agent,
+                    "level": o.level,
+                    "success": o.success,
+                    "latency_ms": o.latency_ms,
+                    "tokens_used": o.tokens_used,
+                    "timestamp": o.timestamp,
+                }
+                for o in outcomes
+            ],
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}
+
+
 if __name__ == "__main__":
     mcp.run()

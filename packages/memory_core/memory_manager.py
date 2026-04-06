@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import threading
 from dataclasses import dataclass, field
 from typing import Any, List, Optional
 from datetime import datetime
@@ -45,6 +46,7 @@ class MemoryManager:
             db_path: Path to the memory SQLite database.
         """
         self.db_path = db_path
+        self._lock = threading.Lock()
         self.store = RelationalStore(db_path)
 
         # Initialize cognitive engines
@@ -64,37 +66,38 @@ class MemoryManager:
         Returns:
             MemoryOperationResult with operation outcome.
         """
-        try:
-            # Record access in forgetting engine
-            self.forgetting.record_access(memory_id)
+        with self._lock:
+            try:
+                # Record access in forgetting engine
+                self.forgetting.record_access(memory_id)
 
-            # Update access frequency for priority (use file_path style)
-            # Memory ID as path for consistency
-            self.priority.update_access(memory_id, action="read")
+                # Update access frequency for priority (use file_path style)
+                # Memory ID as path for consistency
+                self.priority.update_access(memory_id, action="read")
 
-            # Initialize or update trust on access (boost trust slightly)
-            existing_trust = self.trust.get_trust_score(memory_id)
-            if existing_trust is None:
-                self.trust.initialize_trust(memory_id)
-            # Access doesn't automatically boost trust - that's for verification
+                # Initialize or update trust on access (boost trust slightly)
+                existing_trust = self.trust.get_trust_score(memory_id)
+                if existing_trust is None:
+                    self.trust.initialize_trust(memory_id)
+                # Access doesn't automatically boost trust - that's for verification
 
-            # Check decay score for potential archiving
-            decay_result = self.forgetting.apply_decay_actions()
+                # Check decay score for potential archiving
+                decay_result = self.forgetting.apply_decay_actions()
 
-            return MemoryOperationResult(
-                success=True,
-                memory_id=memory_id,
-                action="accessed",
-                metadata={"decay_actions": decay_result},
-            )
-        except Exception as e:
-            logger.error(f"Error in on_memory_access({memory_id}): {e}")
-            return MemoryOperationResult(
-                success=False,
-                memory_id=memory_id,
-                action="accessed",
-                metadata={"error": str(e)},
-            )
+                return MemoryOperationResult(
+                    success=True,
+                    memory_id=memory_id,
+                    action="accessed",
+                    metadata={"decay_actions": decay_result},
+                )
+            except Exception as e:
+                logger.error(f"Error in on_memory_access({memory_id}): {e}")
+                return MemoryOperationResult(
+                    success=False,
+                    memory_id=memory_id,
+                    action="accessed",
+                    metadata={"error": str(e)},
+                )
 
     def on_memory_write(
         self, memory_id: str, content: str, kind: str = "episodic"
@@ -109,54 +112,55 @@ class MemoryManager:
         Returns:
             MemoryOperationResult with operation outcome.
         """
-        try:
-            # Get existing memories for conflict detection
-            existing = self.store.search("", limit=100)
-            existing_memories = [
-                (m.id, m.content, m.metadata.get("created_at", ""))
-                for m in existing
-                if m.id != memory_id
-            ]
+        with self._lock:
+            try:
+                # Get existing memories for conflict detection
+                existing = self.store.search("", limit=100)
+                existing_memories = [
+                    (m.id, m.content, m.metadata.get("created_at", ""))
+                    for m in existing
+                    if m.id != memory_id
+                ]
 
-            # Check for conflicts with existing memories
-            conflicts = self.reconsolidation.detect_conflicts(
-                memory_id, content, existing_memories
-            )
+                # Check for conflicts with existing memories
+                conflicts = self.reconsolidation.detect_conflicts(
+                    memory_id, content, existing_memories
+                )
 
-            if conflicts:
-                for conflict in conflicts:
-                    self.reconsolidation.resolve_conflict(conflict, "keep_new")
+                if conflicts:
+                    for conflict in conflicts:
+                        self.reconsolidation.resolve_conflict(conflict, "keep_new")
 
-            # Set initial priority
-            self.priority.update_access(memory_id, action="create")
+                # Set initial priority
+                self.priority.update_access(memory_id, action="create")
 
-            # Set initial trust (new memories start neutral)
-            self.trust.initialize_trust(memory_id)
+                # Set initial trust (new memories start neutral)
+                self.trust.initialize_trust(memory_id)
 
-            return MemoryOperationResult(
-                success=True,
-                memory_id=memory_id,
-                action="created",
-                metadata={
-                    "conflicts_detected": len(conflicts),
-                    "conflict_details": [
-                        {
-                            "id": c.id,
-                            "type": c.conflict_type,
-                            "score": c.similarity_score,
-                        }
-                        for c in conflicts
-                    ],
-                },
-            )
-        except Exception as e:
-            logger.error(f"Error in on_memory_write({memory_id}): {e}")
-            return MemoryOperationResult(
-                success=False,
-                memory_id=memory_id,
-                action="created",
-                metadata={"error": str(e)},
-            )
+                return MemoryOperationResult(
+                    success=True,
+                    memory_id=memory_id,
+                    action="created",
+                    metadata={
+                        "conflicts_detected": len(conflicts),
+                        "conflict_details": [
+                            {
+                                "id": c.id,
+                                "type": c.conflict_type,
+                                "score": c.similarity_score,
+                            }
+                            for c in conflicts
+                        ],
+                    },
+                )
+            except Exception as e:
+                logger.error(f"Error in on_memory_write({memory_id}): {e}")
+                return MemoryOperationResult(
+                    success=False,
+                    memory_id=memory_id,
+                    action="created",
+                    metadata={"error": str(e)},
+                )
 
     def on_memory_update(
         self, memory_id: str, new_content: str
@@ -170,47 +174,51 @@ class MemoryManager:
         Returns:
             MemoryOperationResult with operation outcome.
         """
-        try:
-            # Get existing memories for conflict detection
-            existing = self.store.search("", limit=100)
-            existing_memories = [
-                (m.id, m.content, m.metadata.get("created_at", ""))
-                for m in existing
-                if m.id != memory_id
-            ]
+        with self._lock:
+            try:
+                # Get existing memories for conflict detection
+                existing = self.store.search("", limit=100)
+                existing_memories = [
+                    (m.id, m.content, m.metadata.get("created_at", ""))
+                    for m in existing
+                    if m.id != memory_id
+                ]
 
-            # Check for conflicts
-            conflicts = self.reconsolidation.detect_conflicts(
-                memory_id, new_content, existing_memories
-            )
+                # Check for conflicts
+                conflicts = self.reconsolidation.detect_conflicts(
+                    memory_id, new_content, existing_memories
+                )
 
-            if conflicts:
-                for conflict in conflicts:
-                    self.reconsolidation.resolve_conflict(conflict, "keep_new")
+                if conflicts:
+                    for conflict in conflicts:
+                        self.reconsolidation.resolve_conflict(conflict, "keep_new")
 
-            # Reset trust (needs re-verification after update)
-            existing_trust = self.trust.get_trust_score(memory_id)
-            if existing_trust:
-                # Decrement verification count to signal needs re-verification
-                existing_trust.verification_count = 0
-                self.trust._save_trust_score(existing_trust)
-            else:
-                self.trust.initialize_trust(memory_id)
+                # Reset trust (needs re-verification after update)
+                existing_trust = self.trust.get_trust_score(memory_id)
+                if existing_trust:
+                    # Decrement verification count to signal needs re-verification
+                    existing_trust.verification_count = 0
+                    self.trust._save_trust_score(existing_trust)
+                else:
+                    self.trust.initialize_trust(memory_id)
 
-            return MemoryOperationResult(
-                success=True,
-                memory_id=memory_id,
-                action="updated",
-                metadata={"conflicts_detected": len(conflicts), "trust_reset": True},
-            )
-        except Exception as e:
-            logger.error(f"Error in on_memory_update({memory_id}): {e}")
-            return MemoryOperationResult(
-                success=False,
-                memory_id=memory_id,
-                action="updated",
-                metadata={"error": str(e)},
-            )
+                return MemoryOperationResult(
+                    success=True,
+                    memory_id=memory_id,
+                    action="updated",
+                    metadata={
+                        "conflicts_detected": len(conflicts),
+                        "trust_reset": True,
+                    },
+                )
+            except Exception as e:
+                logger.error(f"Error in on_memory_update({memory_id}): {e}")
+                return MemoryOperationResult(
+                    success=False,
+                    memory_id=memory_id,
+                    action="updated",
+                    metadata={"error": str(e)},
+                )
 
     def on_memory_delete(self, memory_id: str) -> MemoryOperationResult:
         """Called when memory is deleted - clean up cognitive tracking.
@@ -221,21 +229,22 @@ class MemoryManager:
         Returns:
             MemoryOperationResult with operation outcome.
         """
-        try:
-            # Delete from store
-            deleted = self.store.delete(memory_id)
+        with self._lock:
+            try:
+                # Delete from store
+                deleted = self.store.delete(memory_id)
 
-            return MemoryOperationResult(
-                success=deleted, memory_id=memory_id, action="deleted", metadata={}
-            )
-        except Exception as e:
-            logger.error(f"Error in on_memory_delete({memory_id}): {e}")
-            return MemoryOperationResult(
-                success=False,
-                memory_id=memory_id,
-                action="deleted",
-                metadata={"error": str(e)},
-            )
+                return MemoryOperationResult(
+                    success=deleted, memory_id=memory_id, action="deleted", metadata={}
+                )
+            except Exception as e:
+                logger.error(f"Error in on_memory_delete({memory_id}): {e}")
+                return MemoryOperationResult(
+                    success=False,
+                    memory_id=memory_id,
+                    action="deleted",
+                    metadata={"error": str(e)},
+                )
 
     def run_consolidation_cycle(self) -> dict[str, Any]:
         """Run a full consolidation cycle - forgetting, trust decay, priority recalculation.

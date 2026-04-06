@@ -1,5 +1,34 @@
+"""Memory Router — Query routing to optimal retrievers based on query analysis.
+
+Implements:
+- Query type detection (semantic vs keyword vs hybrid vs filtered)
+- Retriever selection based on query characteristics
+- Integration with TEMPRRetriever for hybrid search
+- Integration with QLearningEngine for routing decisions
+"""
+
+import logging
+import time
 from dataclasses import dataclass, field
-from typing import List, Any
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+
+# Query type classification
+class QueryType(Enum):
+    SEMANTIC = "semantic"  # Natural language, 3+ words
+    KEYWORD = "keyword"  # Short, specific terms
+    HYBRID = "hybrid"  # Mixed characteristics
+    FILTERED = "filtered"  # Has filters dict
+
+
+# Retriever action types for Q-learning routing
+class RetrieverAction(Enum):
+    TEMPR = "tempr"  # Hybrid semantic+keyword
+    KEYWORD = "keyword"  # FTS5 keyword search
+    SEMANTIC = "semantic"  # Vector semantic search
 
 
 @dataclass
@@ -26,9 +55,284 @@ class SearchResults:
 
 
 class MemoryRouter:
-    def __init__(self):
-        pass
+    """Routes queries to optimal retrievers based on query analysis."""
+
+    def __init__(self, q_learning_db_path: Optional[str] = None):
+        """Initialize router with retriever instances.
+
+        Args:
+            q_learning_db_path: Optional path to Q-learning DB for routing decisions
+        """
+        self._tempr_retriever: Optional[Any] = None
+        self._keyword_retriever: Optional[Any] = None
+        self._semantic_retriever: Optional[Any] = None
+        self._q_learning = None
+        self._q_learning_db_path = q_learning_db_path
+
+    def _get_tempr_retriever(self):
+        """Lazy-load TEMPR retriever."""
+        if self._tempr_retriever is None:
+            from .retrievers.fusion import TEMPRRetriever
+
+            self._tempr_retriever = TEMPRRetriever()
+        return self._tempr_retriever
+
+    def _get_keyword_retriever(self):
+        """Lazy-load keyword retriever."""
+        if self._keyword_retriever is None:
+            from .retrievers.keyword import KeywordRetriever
+
+            self._keyword_retriever = KeywordRetriever()
+        return self._keyword_retriever
+
+    def _get_semantic_retriever(self):
+        """Lazy-load semantic retriever."""
+        if self._semantic_retriever is None:
+            from .retrievers.semantic import SemanticRetriever
+
+            self._semantic_retriever = SemanticRetriever()
+        return self._semantic_retriever
+
+    def _get_q_learning(self):
+        """Lazy-load Q-learning engine."""
+        if self._q_learning is None:
+            try:
+                from packages.learning_engine.rl.q_learning import (
+                    QLearningEngine,
+                    QState,
+                )
+
+                self._q_learning = QLearningEngine(db_path=self._q_learning_db_path)
+                self._q_state_class = QState
+            except ImportError as e:
+                logger.warning(f"Q-learning not available: {e}")
+                self._q_learning = None
+        return self._q_learning
+
+    def _classify_query(self, query: UnifiedMemoryQuery) -> QueryType:
+        """Classify query type based on characteristics.
+
+        Args:
+            query: The unified memory query
+
+        Returns:
+            QueryType classification
+        """
+        q = query.query.strip()
+
+        # Check for filters first
+        if query.filters and len(query.filters) > 0:
+            return QueryType.FILTERED
+
+        # Keyword: short query (1-2 words), possibly specific terms
+        word_count = len(q.split())
+        if word_count <= 2:
+            # Short queries are typically keyword searches
+            # But check if it looks like natural language
+            if len(q) < 20 and not any(c in q for c in "aeiou"):
+                return QueryType.KEYWORD
+            return QueryType.KEYWORD
+
+        # Semantic: natural language, 3+ words
+        if word_count >= 3:
+            # Contains question words or natural language patterns
+            if any(
+                q.lower().startswith(w)
+                for w in ["how", "what", "why", "when", "where", "explain", "find"]
+            ):
+                return QueryType.SEMANTIC
+            return QueryType.SEMANTIC
+
+        # Default to semantic for ambiguous cases
+        return QueryType.SEMANTIC
+
+    def _select_retriever_actions(
+        self, query_type: QueryType, query: UnifiedMemoryQuery
+    ) -> List[RetrieverAction]:
+        """Select available retriever actions based on query type.
+
+        Args:
+            query_type: Classified query type
+            query: The unified memory query
+
+        Returns:
+            List of viable retriever actions
+        """
+        if query_type == QueryType.KEYWORD:
+            return [RetrieverAction.KEYWORD, RetrieverAction.TEMPR]
+        elif query_type == QueryType.FILTERED:
+            return [RetrieverAction.TEMPR, RetrieverAction.KEYWORD]
+        elif query_type == QueryType.SEMANTIC:
+            return [RetrieverAction.TEMPR, RetrieverAction.SEMANTIC]
+        else:  # HYBRID or default
+            return [
+                RetrieverAction.TEMPR,
+                RetrieverAction.KEYWORD,
+                RetrieverAction.SEMANTIC,
+            ]
+
+    def _route_with_q_learning(
+        self, query: UnifiedMemoryQuery, available_actions: List[RetrieverAction]
+    ) -> RetrieverAction:
+        """Use Q-learning to select optimal retriever.
+
+        Args:
+            query: The unified memory query
+            available_actions: List of viable retriever actions
+
+        Returns:
+            Selected retriever action
+        """
+        ql = self._get_q_learning()
+        if ql is None:
+            # Default to TEMPR if Q-learning unavailable
+            return RetrieverAction.TEMPR
+
+        try:
+            # Create state from query characteristics
+            context = {
+                "query_type": self._classify_query(query).value,
+                "query_length": len(query.query),
+                "has_filters": bool(query.filters),
+                "use_semantic": query.use_semantic,
+            }
+            state = self._q_state_class.from_context(query.query[:50], context)
+
+            # Select action using epsilon-greedy
+            selected = ql.select_action(
+                state=state,
+                available_actions=[RetrieverAction(a.value) for a in available_actions],
+                epsilon=0.1,  # 10% exploration
+            )
+            return RetrieverAction(selected.value)
+        except Exception as e:
+            logger.warning(f"Q-learning routing failed: {e}, defaulting to TEMPR")
+            return RetrieverAction.TEMPR
+
+    def _execute_search(
+        self, retriever_action: RetrieverAction, query: UnifiedMemoryQuery
+    ) -> List[dict]:
+        """Execute search using specified retriever.
+
+        Args:
+            retriever_action: Selected retriever action
+            query: The unified memory query
+
+        Returns:
+            List of search result dicts
+        """
+        top_k = query.max_results_per_source
+        tier = query.filters.get("tier") if query.filters else None
+
+        try:
+            if retriever_action == RetrieverAction.TEMPR:
+                retriever = self._get_tempr_retriever()
+                return retriever.search(query.query, top_k=top_k, tier=tier)
+
+            elif retriever_action == RetrieverAction.KEYWORD:
+                retriever = self._get_keyword_retriever()
+                return retriever.search(query.query, top_k=top_k, tier=tier)
+
+            elif retriever_action == RetrieverAction.SEMANTIC:
+                retriever = self._get_semantic_retriever()
+                return retriever.search(query.query, top_k=top_k, tier=tier)
+
+        except Exception as e:
+            logger.error(f"Retriever {retriever_action.value} failed: {e}")
+            return []
 
     def search(self, query: UnifiedMemoryQuery) -> SearchResults:
-        # Stub - returns empty results
-        return SearchResults(results=[], total_results=0, sources_queried=["stub"])
+        """Route and execute search based on query analysis.
+
+        Args:
+            query: The unified memory query
+
+        Returns:
+            SearchResults with actual data from selected retriever
+        """
+        start_time = time.time()
+
+        # Step 1: Classify query type
+        query_type = self._classify_query(query)
+        logger.info(f"Query classified as: {query_type.value}")
+
+        # Step 2: Get available retriever actions
+        available_actions = self._select_retriever_actions(query_type, query)
+
+        # Step 3: Route to optimal retriever (with fallback chain)
+        selected_action = None
+        results: List[dict] = []  # Initialize to avoid unbound variable
+
+        for action in available_actions:
+            try:
+                # Try Q-learning route if multiple options
+                if selected_action is None and len(available_actions) > 1:
+                    selected_action = self._route_with_q_learning(
+                        query, available_actions
+                    )
+                elif selected_action is None:
+                    selected_action = action
+
+                # Execute search
+                results = self._execute_search(selected_action, query)
+
+                if results and len(results) > 0:
+                    break  # Success
+
+                # Empty results - try next retriever
+                logger.info(
+                    f"Retriever {selected_action.value} returned empty, trying next"
+                )
+                selected_action = action  # Use current action for next retry
+                continue
+
+            except Exception as e:
+                logger.warning(f"Retriever {action.value} failed: {e}")
+                selected_action = None
+                continue
+
+        # If all retrievers failed, return empty results
+        if not results or len(results) == 0:
+            elapsed_ms = (time.time() - start_time) * 1000
+            return SearchResults(
+                results=[],
+                total_results=0,
+                sources_queried=["all-failed"],
+                query_time_ms=elapsed_ms,
+            )
+
+        # Convert dict results to MemoryResult objects
+        memory_results = []
+        for r in results:
+            memory_results.append(
+                MemoryResult(
+                    source=r.get(
+                        "source",
+                        selected_action.value if selected_action else "unknown",
+                    ),
+                    content=r.get("content", ""),
+                    relevance_score=r.get("score", 0.0),
+                )
+            )
+
+        elapsed_ms = (time.time() - start_time) * 1000
+        sources = [selected_action.value] if selected_action else ["tempr"]
+
+        return SearchResults(
+            results=memory_results,
+            total_results=len(memory_results),
+            sources_queried=sources,
+            query_time_ms=elapsed_ms,
+        )
+
+
+# Preserve backward compatibility - default instance
+_default_router: Optional[MemoryRouter] = None
+
+
+def get_default_router() -> MemoryRouter:
+    """Get or create default router instance."""
+    global _default_router
+    if _default_router is None:
+        _default_router = MemoryRouter()
+    return _default_router
