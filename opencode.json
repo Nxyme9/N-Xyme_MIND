@@ -5,6 +5,13 @@
   "instructions": [
     "AGENTS.md"
   ],
+  "command": {
+    "brain": {
+      "template": "Execute brain CLI: $ARGUMENTS. Use scripts/brain-cli.py or scripts/brain",
+      "description": "Execute brain CLI tool calling",
+      "agent": "sisyphus"
+    }
+  },
   "plugin": [
     "oh-my-openagent@latest"
   ],
@@ -42,7 +49,11 @@
   },
   "agent": {
     "sisyphus": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "opencode/qwen3.6-plus-free",
+      "router_override": {
+        "prefer": "opencode/qwen3.6-plus-free",
+        "fallback_order": ["opencode/mimo-v2-pro-free", "opencode/minimax-m2.5-free"]
+      },
       "permission": {
         "edit": "allow",
         "bash": {
@@ -54,6 +65,11 @@
     },
     "hephaestus": {
       "model": "opencode/minimax-m2.5-free",
+      "router_override": {
+        "prefer": "opencode/minimax-m2.5-free",
+        "fallback_to_cloud": true,
+        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+      },
       "permission": {
         "edit": "allow",
         "bash": {
@@ -64,7 +80,11 @@
       }
     },
     "prometheus": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "opencode/mimo-v2-pro-free",
+      "router_override": {
+        "prefer": "opencode/mimo-v2-pro-free",
+        "fallback_order": ["opencode/minimax-m2.5-free"]
+      },
       "permission": {
         "edit": "allow",
         "bash": {
@@ -76,6 +96,10 @@
     },
     "atlas": {
       "model": "opencode/minimax-m2.5-free",
+      "router_override": {
+        "prefer": "opencode/minimax-m2.5-free",
+        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+      },
       "permission": {
         "edit": "allow",
         "bash": {
@@ -86,7 +110,12 @@
       }
     },
     "oracle": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "opencode/mimo-v2-pro-free",
+      "router_override": {
+        "prefer": "opencode/mimo-v2-pro-free",
+        "skip_local": true,
+        "fallback_order": ["opencode/kimi-k2.5-free"]
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -95,7 +124,12 @@
       }
     },
     "momus": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "opencode/kimi-k2.5-free",
+      "router_override": {
+        "prefer": "opencode/kimi-k2.5-free",
+        "skip_local": true,
+        "fallback_order": ["opencode/mimo-v2-pro-free"]
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -104,7 +138,12 @@
       }
     },
     "metis": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "opencode/mimo-v2-pro-free",
+      "router_override": {
+        "prefer": "opencode/mimo-v2-pro-free",
+        "skip_local": true,
+        "fallback_order": ["opencode/minimax-m2.5-free"]
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -114,6 +153,11 @@
     },
     "explore": {
       "model": "opencode/minimax-m2.5-free",
+      "router_override": {
+        "prefer": "opencode/minimax-m2.5-free",
+        "fallback_to_cloud": true,
+        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -125,6 +169,11 @@
     },
     "librarian": {
       "model": "opencode/minimax-m2.5-free",
+      "router_override": {
+        "prefer": "opencode/minimax-m2.5-free",
+        "skip_local": true,
+        "fallback_order": ["opencode/mimo-v2-pro-free"]
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -133,7 +182,12 @@
       }
     },
     "sisyphus-junior": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "ollama/llama3.2:3b",
+      "router_override": {
+        "prefer": "ollama/llama3.2:3b",
+        "fallback_to_cloud": true,
+        "fallback_order": ["opencode/minimax-m2.5-free"]
+      },
       "permission": {
         "bash": {
           "*": "allow",
@@ -144,6 +198,10 @@
     },
     "multimodal-looker": {
       "model": "opencode/mimo-v2-omni-free",
+      "router_override": {
+        "prefer": "opencode/mimo-v2-omni-free",
+        "skip_local": true
+      },
       "permission": {
         "edit": "deny",
         "bash": {
@@ -266,12 +324,12 @@
     "intelligent-router": {
       "type": "local",
       "command": [
-        "./venvs/athena/bin/python",
+        "python3",
         "-m",
-        "packages.infrastructure.proxy.mcp_server"
+        "intelligent_router_mcp"
       ],
       "environment": {
-        "PYTHONPATH": "packages:src/infrastructure:."
+        "PYTHONPATH": "packages:."
       }
     },
     "learning-engine": {
@@ -306,6 +364,55 @@
       "environment": {
         "PYTHONPATH": "."
       }
+    },
+    "brain": {
+      "type": "local",
+      "command": [
+        "python3",
+        "-m",
+        "scripts.brain_mcp"
+      ]
+    },
+    "sqlite": {
+      "type": "local",
+      "command": [
+        "python3",
+        "-m",
+        "sqlite_mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "packages/sqlite-mcp"
+      }
+    },
+    "playwright": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp"
+      ]
+    },
+    "quality-gates": {
+      "type": "local",
+      "command": [
+        "python3",
+        "-m",
+        "quality_gates_mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "packages/quality-gates-mcp"
+      }
+    },
+    "telegram": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@benjapieres/mcp-telegram-listener"
+      ],
+      "environment": {
+        "TELEGRAM_BOT_TOKEN": "8397949824:AAEkYzjVwIVUQAfTiFL2UcsGVC4Dgr7lXDw"
+      }
     }
   },
   "provider": {
@@ -325,6 +432,20 @@
           "name": "MiniMax M2.5 (Free)",
           "limit": {
             "context": 128000,
+            "output": 8192
+          }
+        },
+        "qwen/qwen3-coder:free": {
+          "name": "Qwen 3 Coder (Free)",
+          "limit": {
+            "context": 262144,
+            "output": 8192
+          }
+        },
+        "deepseek/deepseek-r1:free": {
+          "name": "DeepSeek R1 (Free)",
+          "limit": {
+            "context": 131072,
             "output": 8192
           }
         }
@@ -353,6 +474,13 @@
     "opencode": {
       "options": {},
       "models": {
+        "qwen3.6-plus-free": {
+          "name": "Qwen 3.6 Plus (Free)",
+          "limit": {
+            "context": 1000000,
+            "output": 8192
+          }
+        },
         "mimo-v2-pro-free": {
           "name": "Mimo v2 Pro (Free)",
           "limit": {
