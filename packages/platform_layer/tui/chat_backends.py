@@ -15,7 +15,7 @@ from typing import Any, Optional
 # Memory Core imports
 try:
     from packages.memory_core import search as memory_search, stats as memory_stats
-    from packages.memory_core import recall_session
+    from packages.memory_core import recall_session, store as memory_store
     from packages.memory_core.retrievers import TEMPRRetriever
 
     MEMORY_CORE_AVAILABLE = True
@@ -239,6 +239,19 @@ class ChatBackend:
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    async def write_memory(
+        self, content: str, kind: str = "episodic", scope: str = "global"
+    ) -> dict:
+        """Write a memory to the memory system."""
+        if not MEMORY_CORE_AVAILABLE:
+            return {"status": "unavailable", "error": "Memory core not available"}
+
+        try:
+            result = memory_store(content, kind=kind, scope=scope)
+            return {"status": "ok", "result": result}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
     # ─── Routing Stats ─────────────────────────────────────────────────────
 
     async def get_routing_stats(self) -> dict:
@@ -249,6 +262,39 @@ class ChatBackend:
         try:
             status_info = learning_status()
             return {"status": "ok", "stats": status_info}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    async def sqlite_query(self, query: str, limit: int = 20) -> dict:
+        """Query routing/outcomes SQLite database."""
+        import os
+
+        db_path = ".sisyphus/outcomes.db"
+
+        if not os.path.exists(db_path):
+            return {"status": "error", "error": f"Database not found: {db_path}"}
+
+        try:
+            conn = sqlite3.connect(db_path)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+
+            # Safety: only allow SELECT queries
+            query_stripped = query.strip().upper()
+            if not query_stripped.startswith("SELECT"):
+                conn.close()
+                return {"status": "error", "error": "Only SELECT queries allowed"}
+
+            cursor.execute(query)
+            rows = cursor.fetchall()
+
+            # Convert to list of dicts
+            results = []
+            for row in rows[:limit]:
+                results.append({k: row[k] for k in row.keys()})
+
+            conn.close()
+            return {"status": "ok", "results": results, "count": len(results)}
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -666,10 +712,11 @@ class ChatBackend:
             "memory_search": lambda **kwargs: self.get_memory_results(
                 kwargs.get("query", ""), kwargs.get("limit", 5)
             ),
-            "memory_write": lambda **kwargs: {
-                "status": "ok",
-                "note": "Memory write not implemented in chat",
-            },
+            "memory_write": lambda **kwargs: self.write_memory(
+                kwargs.get("content", ""),
+                kwargs.get("kind", "episodic"),
+                kwargs.get("scope", "global"),
+            ),
             "route_task": lambda **kwargs: self.get_routing_stats(),
             "get_health": lambda **kwargs: self.get_health_summary(
                 kwargs.get("level", "l0")
@@ -679,6 +726,13 @@ class ChatBackend:
             ),
             "get_active_context": lambda **kwargs: self.get_active_context(),
             "get_user_context": lambda **kwargs: self.get_user_context(),
+            "sqlite_query": lambda **kwargs: self.sqlite_query(
+                kwargs.get("query", "SELECT * FROM outcomes LIMIT 5"),
+                kwargs.get("limit", 20),
+            ),
+            "get_outcomes": lambda **kwargs: self.get_outcomes(
+                kwargs.get("agent"), kwargs.get("limit", 20)
+            ),
         }
 
         # Initialize conversation with user query

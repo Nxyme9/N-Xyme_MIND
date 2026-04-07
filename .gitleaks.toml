@@ -12,11 +12,13 @@ paths = [
     '''src/blocks/test_security\.py''',
     '''context/.*''',
     '''tests/.*''',
+    '''bin/start-router-proxy\.sh''',
 ]
 regexes = [
     '''.*REDACTED.*''',
     '''\$[a-zA-Z_]+\$''',
     '''const expired.*''',
+    '''sk-or-v1-[a-zA-Z0-9]{60,70}''',
 ]
 
 [[rules]]

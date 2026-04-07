@@ -506,21 +506,45 @@ class MCPToolLoader:
         },
         # SQLite
         "sqlite_query": {
-            "description": "Execute a SELECT query (read-only). "
-            + "Use for: querying data from SQLite databases, reading records, or analytics. "
-            + "NOT for: INSERT/UPDATE/DELETE operations, schema changes, or non-SQL databases.",
+            "description": "Execute a SELECT query (read-only) on the routing outcomes database. "
+            + "Use for: querying delegation outcomes, agent performance stats, or routing analytics. "
+            + "NOT for: INSERT/UPDATE/DELETE operations or schema changes.",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "sql": {"type": "string", "description": "SQL query to execute"},
-                    "db_path": {
+                    "query": {
                         "type": "string",
-                        "description": "Path to SQLite database",
+                        "description": "SQL SELECT query to execute",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum rows to return",
+                        "default": 20,
                     },
                 },
-                "required": ["sql"],
+                "required": ["query"],
             },
             "server": "sqlite",
+        },
+        "get_outcomes": {
+            "description": "Get delegation outcomes from the learning engine. "
+            + "Use for: viewing task delegation history, agent performance, or routing stats. "
+            + "NOT for: executing tasks, file operations, or direct SQL queries.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "agent": {
+                        "type": "string",
+                        "description": "Filter by agent name (optional)",
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Maximum outcomes to return",
+                        "default": 20,
+                    },
+                },
+            },
+            "server": "learning-engine",
         },
     }
 
