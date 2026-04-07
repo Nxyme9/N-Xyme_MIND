@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Chat Backend - Bridge between AI Chat and all N-Xyme MIND backend systems."""
 
+# pyright: reportMissingImports=false
+# pyright: reportPossiblyUnboundVariable=false
+# pyright: reportArgumentType=false
+
 import asyncio
 import json
 import sqlite3
@@ -108,6 +112,47 @@ INTENTS = {
         "recent",
         "what were we",
         "last time",
+    ],
+    "git": [
+        "git status",
+        "git log",
+        "git diff",
+        "git branch",
+        "show changes",
+        "show commits",
+        "what changed",
+        "recent commits",
+        "untracked files",
+        "stashed",
+        "status of my repo",
+        "commit history",
+    ],
+    "health": [
+        "health check",
+        "system status",
+        "is working",
+        "what's wrong",
+        "diagnose",
+        "run a health",
+    ],
+    "file": [
+        "read",
+        "show",
+        "cat",
+        "list directory",
+        "ls ",
+        "dir ",
+        "browse",
+        "open",
+        "display",
+        "contents of",
+    ],
+    "alias": [
+        "do status",
+        "do log",
+        "do health",
+        "do memory",
+        "do routing",
     ],
 }
 
@@ -284,6 +329,38 @@ class ChatBackend:
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    async def athena_search(self, query: str, limit: int = 5) -> dict:
+        """Search Athena knowledge base via memory search."""
+        # Use the existing memory search instead
+        return await self.get_memory_results(query, limit)
+
+    async def get_active_context(self) -> dict:
+        """Get current active context."""
+        try:
+            # Read directly from memory bank
+            ctx_path = Path(
+                "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.context/memory_bank/activeContext.md"
+            )
+            if ctx_path.exists():
+                content = ctx_path.read_text()[:2000]
+                return {"status": "ok", "context": content}
+            return {"status": "not_found", "error": "activeContext.md not found"}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    async def get_user_context(self) -> dict:
+        """Get user context/preferences."""
+        try:
+            user_path = Path(
+                "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.context/memory_bank/userContext.md"
+            )
+            if user_path.exists():
+                content = user_path.read_text()[:2000]
+                return {"status": "ok", "user": content}
+            return {"status": "not_found", "error": "userContext.md not found"}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
     async def check_service(self, service: str) -> dict:
         """Check if a specific service is running."""
         try:
@@ -429,6 +506,258 @@ class ChatBackend:
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    # ─── LLM Integration with Tools ─────────────────────────────────────────────
+
+    async def get_llm_response_with_tools(
+        self,
+        messages: list[dict],
+        tools: list[dict] = None,
+        model: str = "qwen2.5-coder:7b",
+        temperature: float = 0.3,
+    ) -> dict:
+        """Get response from LLM with tool calling support.
+
+        Args:
+            messages: Chat history including previous tool results
+            tools: Tool definitions in OpenAI function format
+            model: Model to use
+            temperature: Lower temp = more deterministic tool selection
+
+        Returns:
+            dict with "content" and/or "tool_calls" keys
+        """
+        if not LOCAL_LLM_AVAILABLE:
+            return {"status": "unavailable", "error": "Local LLM not available"}
+
+        try:
+            llm = LocalLLM(model=model)
+
+            # Use the chat_with_tools method which handles tool calling API
+            response = llm.chat_with_tools(
+                messages=messages,
+                tools=tools or [],
+                temperature=temperature,
+            )
+
+            # Parse response based on type
+            if response.type == "tool_calls":
+                tool_calls = []
+                for tc in response.tool_calls:
+                    tool_calls.append(
+                        {
+                            "id": getattr(tc, "id", f"call_{tc.name}"),
+                            "name": tc.name,
+                            "arguments": tc.arguments,
+                        }
+                    )
+                return {
+                    "status": "ok",
+                    "tool_calls": tool_calls,
+                }
+            elif response.type == "text":
+                return {
+                    "status": "ok",
+                    "content": response.content or "",
+                }
+            else:
+                return {
+                    "status": "ok",
+                    "content": str(response),
+                }
+
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    async def execute_with_tools(
+        self,
+        query: str,
+        max_iterations: int = 3,
+        model: str = "llama3.2:3b",
+    ) -> dict:
+        """Execute query using tool calling with the LLM.
+
+        This method implements a tool loop where:
+        1. Send query + tools to LLM
+        2. LLM may call tools (git, read_file, etc.)
+        3. Execute tool calls and send results back
+        4. Repeat until LLM returns final answer
+
+        Args:
+            query: User query
+            max_iterations: Max tool call iterations (prevents infinite loops)
+            model: Model to use
+
+        Returns:
+            dict with final response or error
+        """
+        # Import MCPToolLoader to get tool definitions
+        try:
+            from packages.local_llm.mcp_tool_loader import MCPToolLoader
+        except ImportError:
+            return {"status": "error", "error": "MCPToolLoader not available"}
+
+        # Get tools in OpenAI format
+        loader = MCPToolLoader()
+        tools = loader.get_tools_openai_format()
+
+        if not tools:
+            # Fall back to no-tool mode if no tools available
+            return await self.get_llm_response(
+                [{"role": "user", "content": query}],
+                model=model,
+            )
+
+        # Map OpenAI tool names to ChatBackend methods
+        # These are the tools the LLM can actually call
+        # Default values for tools when LLM doesn't provide them
+        repo_path_default = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+
+        def resolve_path(path: str) -> str:
+            """Resolve path relative to workspace, with fallbacks."""
+            # Reject obviously invalid paths - more comprehensive
+            path_str = str(path) if path else ""
+            invalid_patterns = (
+                "{",
+                "}",
+                "/path",
+                "none",
+                "null",
+                "your",
+                "type",
+                "object",
+                "array",
+                "[]",
+                "<",
+            )
+            if not path or any(p in path_str.lower() for p in invalid_patterns):
+                return repo_path_default
+
+            # Use the path if it's a valid absolute path starting with /home
+            if path_str.startswith("/"):
+                if path_str.startswith("/home"):
+                    return path_str
+                return repo_path_default + path_str
+            # Relative path - prepend workspace
+            return f"{repo_path_default}/{path_str}"
+
+        # Stronger system prompt for tool calling
+        system_msg = (
+            "You are N-Xyme MIND AI assistant. "
+            "IMPORTANT: When calling tools, use the DEFAULT values if the user doesn't specify. "
+            "For repo_path, use: /home/nxyme/N-Xyme_CODE/N-Xyme_MIND "
+            "For path, use relative paths like 'README.md' or 'docs/' "
+            "Do NOT use placeholder values like /path/to/repo or JSON schema types. "
+            "After getting tool results, respond with plain text only, NO more tools."
+        )
+
+        TOOL_HANDLERS = {
+            "git_status": lambda **kwargs: self.git_operation("status"),
+            "git_log": lambda **kwargs: self.git_operation(
+                "log", kwargs.get("max_count", 10)
+            ),
+            "git_diff": lambda **kwargs: self.git_operation("diff"),
+            "git_branch": lambda **kwargs: self.git_operation("branch"),
+            "read_file": lambda **kwargs: self.read_file(
+                resolve_path(kwargs.get("path", "")), kwargs.get("lines", 50)
+            ),
+            "list_directory": lambda **kwargs: self.list_directory(
+                resolve_path(kwargs.get("path", "."))
+            ),
+            "memory_search": lambda **kwargs: self.get_memory_results(
+                kwargs.get("query", ""), kwargs.get("limit", 5)
+            ),
+            "memory_write": lambda **kwargs: {
+                "status": "ok",
+                "note": "Memory write not implemented in chat",
+            },
+            "route_task": lambda **kwargs: self.get_routing_stats(),
+            "get_health": lambda **kwargs: self.get_health_summary(
+                kwargs.get("level", "l0")
+            ),
+            "athena_smart_search": lambda **kwargs: self.athena_search(
+                kwargs.get("query", ""), kwargs.get("limit", 5)
+            ),
+            "get_active_context": lambda **kwargs: self.get_active_context(),
+            "get_user_context": lambda **kwargs: self.get_user_context(),
+        }
+
+        # Initialize conversation with user query
+        messages = [
+            {
+                "role": "system",
+                "content": system_msg,
+            },
+            {"role": "user", "content": query},
+        ]
+
+        for iteration in range(max_iterations):
+            # Get LLM response with current messages
+            response = await self.get_llm_response_with_tools(
+                messages=messages,
+                tools=tools,
+                model=model,
+            )
+
+            if response.get("status") != "ok":
+                return response
+
+            # Check if LLM wants to call tools
+            tool_calls = response.get("tool_calls")
+            if not tool_calls:
+                # No tools called - this is the final response
+                return {
+                    "status": "ok",
+                    "content": response.get("content", "No response"),
+                    "iterations": iteration + 1,
+                }
+
+            # Execute each tool call and add results to messages
+            for tc in tool_calls:
+                tool_name = tc.get("name", "")
+                args = tc.get("arguments", {})
+
+                # Execute the tool
+                if tool_name in TOOL_HANDLERS:
+                    try:
+                        result = await TOOL_HANDLERS[tool_name](**args)
+                    except Exception as e:
+                        result = {"status": "error", "error": str(e)}
+                else:
+                    result = {"status": "error", "error": f"Unknown tool: {tool_name}"}
+
+                # Add assistant message with tool call first (required for tool result)
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {
+                                "id": tc.get("id", f"call_{tool_name}"),
+                                "type": "function",
+                                "function": {
+                                    "name": tool_name,
+                                    "arguments": json.dumps(args),
+                                },
+                            }
+                        ],
+                    }
+                )
+
+                # Then add tool result message
+                messages.append(
+                    {
+                        "role": "tool",
+                        "tool_call_id": tc.get("id", f"call_{tool_name}"),
+                        "content": json.dumps(result),
+                    }
+                )
+
+        # Max iterations reached
+        return {
+            "status": "max_iterations",
+            "content": f"Maximum {max_iterations} tool call iterations reached. Add more context if needed.",
+        }
+
     # ─── Context Building ─────────────────────────────────────────────────
 
     async def build_context(self, query: str, intents: list[str]) -> dict:
@@ -487,6 +816,75 @@ class ChatBackend:
             else:
                 context_parts.append(f"## Logs Error")
                 context_parts.append(logs_result.get("error", "Unknown error"))
+
+        # Git operations (if relevant)
+        if "git" in intents:
+            query_lower = query.lower()
+            if "status" in query_lower or "changes" in query_lower:
+                git_result = await self.git_operation("status")
+                context_parts.append("## Git Status")
+                context_parts.append(git_result.get("output", "No changes")[:500])
+            elif "log" in query_lower or "commits" in query_lower:
+                git_result = await self.git_operation("log")
+                context_parts.append("## Git Log (Recent Commits)")
+                context_parts.append(git_result.get("output", "No commits")[:500])
+            elif "diff" in query_lower:
+                git_result = await self.git_operation("diff")
+                context_parts.append("## Git Diff")
+                context_parts.append(git_result.get("output", "No changes")[:500])
+            elif "branch" in query_lower:
+                git_result = await self.git_operation("branch")
+                context_parts.append("## Git Branches")
+                context_parts.append(git_result.get("output", "No branches")[:500])
+            else:
+                # Default: show status
+                git_result = await self.git_operation("status")
+                context_parts.append("## Git Status")
+                context_parts.append(git_result.get("output", "Error")[:500])
+
+        # File operations (if relevant)
+        if "file" in intents:
+            query_lower = query.lower()
+            # Extract potential path from query
+            import re
+
+            path_match = re.search(
+                r"(?:read|show|cat|list)\s+(?:file\s+)?([^\s]+)", query_lower
+            )
+            if path_match:
+                file_path = path_match.group(1)
+                file_result = await self.read_file(file_path)
+                if file_result.get("status") == "ok":
+                    context_parts.append(
+                        f"## File: {file_result.get('path', file_path)}"
+                    )
+                    context_parts.append(f"```\n{file_result.get('content', '')}\n```")
+                else:
+                    context_parts.append("## File Error")
+                    context_parts.append(file_result.get("error", "Unknown"))
+            elif "list" in query_lower or "dir" in query_lower or "ls" in query_lower:
+                # List current directory
+                dir_result = await self.list_directory(".")
+                if dir_result.get("status") == "ok":
+                    context_parts.append("## Directory Listing")
+                    context_parts.append("\n".join(dir_result.get("items", [])))
+
+        # Alias execution (if relevant)
+        if "alias" in intents:
+            query_lower = query.lower()
+            # Check for known aliases
+            for alias_name in self._init_aliases().keys():
+                if f"do {alias_name}" in query_lower:
+                    alias_result = await self.execute_alias(alias_name)
+                    if alias_result.get("status") == "ok":
+                        context_parts.append(f"## Alias: {alias_name}")
+                        context_parts.append(
+                            alias_result.get("output", "Success")[:500]
+                        )
+                    else:
+                        context_parts.append(f"## Alias Error")
+                        context_parts.append(alias_result.get("error", "Unknown"))
+                    break
 
         return {
             "context": "\n\n".join(context_parts) if context_parts else "",
@@ -565,6 +963,272 @@ class ChatBackend:
     def get_history(self, limit: int = 10) -> list[dict]:
         """Get recent command history."""
         return self._command_history[-limit:]
+
+    # ─── MCP Tool Execution ────────────────────────────────────────────────────
+
+    async def execute_mcp_tool(self, tool_name: str, arguments: dict = None) -> dict:
+        """Execute an MCP tool by name with arguments."""
+        # Available MCP tools we can call from chat
+        MCP_TOOL_MAP = {
+            "search_memory": {
+                "module": "packages.memory_core.mcp_server",
+                "function": "search_memories",
+                "params": {"query": str, "limit": int},
+            },
+            "get_routing_stats": {
+                "module": "packages.learning_engine",
+                "function": "status",
+                "params": {},
+            },
+            "route_task": {
+                "module": "packages.learning_engine",
+                "function": "route_task",
+                "params": {"task_description": str, "level": int},
+            },
+            "list_sessions": {
+                "module": "packages.memory_core.mcp_server",
+                "function": "list_sessions",
+                "params": {"limit": int},
+            },
+            "get_health": {
+                "module": "packages.learning_engine.mcp_server",
+                "function": "get_health",
+                "params": {},
+            },
+        }
+
+        if tool_name not in MCP_TOOL_MAP:
+            return {"status": "error", "error": f"Unknown tool: {tool_name}"}
+
+        tool_info = MCP_TOOL_MAP[tool_name]
+        arguments = arguments or {}
+
+        try:
+            # Dynamic import
+            import importlib
+
+            module = importlib.import_module(tool_info["module"])
+            func = getattr(module, tool_info["function"])
+
+            # Execute
+            if asyncio.iscoroutinefunction(func):
+                result = await func(**arguments)
+            else:
+                result = func(**arguments)
+
+            return {"status": "ok", "result": result, "tool": tool_name}
+        except Exception as e:
+            return {"status": "error", "error": str(e), "tool": tool_name}
+
+    async def list_available_tools(self) -> dict:
+        """List available MCP tools for chat."""
+        tools = [
+            {"name": "search_memory", "description": "Search Athena memory"},
+            {"name": "get_routing_stats", "description": "Get routing/learning stats"},
+            {"name": "route_task", "description": "Route a task to optimal agent"},
+            {"name": "list_sessions", "description": "List recent sessions"},
+            {"name": "get_health", "description": "Get learning engine health"},
+        ]
+        return {"status": "ok", "tools": tools}
+
+    # ─── Suggestions ───────────────────────────────────────────────────────────
+
+    def get_suggestions(self, query: str = "") -> list[str]:
+        """Get quick-reply suggestions based on query context."""
+        query_lower = query.lower()
+
+        # Base suggestions (always shown)
+        base = [
+            "What's broken?",
+            "Show memory stats",
+            "Show routing performance",
+            "Run health check",
+        ]
+
+        # Context-aware suggestions
+        if any(w in query_lower for w in ["memory", "search", "remember"]):
+            return [
+                "Search memory for recent work",
+                "What did we do last session?",
+                "Show all memories",
+            ] + base
+        elif any(w in query_lower for w in ["routing", "agent", "delegate"]):
+            return [
+                "Show agent success rates",
+                "What routes are working?",
+                "Show routing weights",
+            ] + base
+        elif any(w in query_lower for w in ["health", "status", "broken"]):
+            return [
+                "Run full health check",
+                "Check all services",
+                "Show system status",
+            ] + base
+        elif any(w in query_lower for w in ["log", "error", "trace"]):
+            return [
+                "Show recent errors",
+                "Check journalctl",
+                "Tail session log",
+            ] + base
+
+        return base
+
+    # ─── Multi-turn Conversation Memory ────────────────────────────────────────
+
+    def add_conversation_turn(self, role: str, content: str) -> None:
+        """Add a turn to the in-memory conversation."""
+        if not hasattr(self, "_conversation"):
+            self._conversation: list[dict] = []
+
+        self._conversation.append(
+            {
+                "role": role,
+                "content": content,
+            }
+        )
+
+        # Keep last 10 turns
+        if len(self._conversation) > 10:
+            self._conversation = self._conversation[-10:]
+
+    def get_conversation_context(self) -> str:
+        """Get formatted conversation history for LLM context."""
+        if not hasattr(self, "_conversation") or not self._conversation:
+            return ""
+
+        formatted = []
+        for turn in self._conversation[-5:]:  # Last 5 turns
+            formatted.append(f"{turn['role']}: {turn['content'][:100]}")
+        return "\n".join(formatted)
+
+    def clear_conversation(self) -> None:
+        """Clear conversation history."""
+        if hasattr(self, "_conversation"):
+            self._conversation = []
+
+    # ─── Git Operations ─────────────────────────────────────────────────────────
+
+    async def git_operation(self, operation: str, *args) -> dict:
+        """Execute git operations via chat."""
+        git_path = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+
+        git_commands = {
+            "status": ["git", "status", "--short"],
+            "log": ["git", "log", "-n", "10", "--oneline", "--format=%h %s %ad"],
+            "diff": ["git", "diff", "--stat"],
+            "branch": ["git", "branch", "-v"],
+            "stash": ["git", "stash", "list"],
+            "untracked": ["git", "status", "--porcelain", "-uall"],
+        }
+
+        cmd = git_commands.get(operation.lower())
+        if not cmd:
+            return {"status": "error", "error": f"Unknown git operation: {operation}"}
+
+        # Add any extra args
+        if args:
+            cmd.extend(args)
+
+        try:
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30,
+                cwd=git_path,
+            )
+            return {
+                "status": "ok" if result.returncode == 0 else "error",
+                "operation": operation,
+                "output": result.stdout[:3000] if result.stdout else "",
+                "error": result.stderr[:500] if result.stderr else None,
+            }
+        except subprocess.TimeoutExpired:
+            return {"status": "error", "error": "Git command timed out"}
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    # ─── File Operations ────────────────────────────────────────────────────────
+
+    async def read_file(self, path: str, lines: int = 50) -> dict:
+        """Read a file via chat."""
+        try:
+            file_path = Path(path)
+            if not file_path.exists():
+                return {"status": "error", "error": f"File not found: {path}"}
+
+            # Security: only allow reading within project
+            project_root = Path("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND")
+            resolved = file_path.resolve()
+            if not str(resolved).startswith(str(project_root)):
+                return {"status": "error", "error": "Access denied: outside project"}
+
+            content = resolved.read_text()
+            lines_list = content.split("\n")
+
+            return {
+                "status": "ok",
+                "path": str(resolved),
+                "lines": len(lines_list),
+                "content": "\n".join(lines_list[-lines:]),
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    async def list_directory(self, path: str = ".") -> dict:
+        """List directory contents."""
+        try:
+            dir_path = Path(path)
+            if not dir_path.exists():
+                return {"status": "error", "error": f"Directory not found: {path}"}
+
+            project_root = Path("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND")
+            resolved = dir_path.resolve()
+            if not str(resolved).startswith(str(project_root)):
+                return {"status": "error", "error": "Access denied: outside project"}
+
+            items = []
+            for item in sorted(resolved.iterdir())[:50]:  # Limit to 50
+                items.append(f"{item.name}/" if item.is_dir() else item.name)
+
+            return {
+                "status": "ok",
+                "path": str(resolved),
+                "items": items,
+                "count": len(items),
+            }
+        except Exception as e:
+            return {"status": "error", "error": str(e)}
+
+    # ─── Custom Command Aliases ────────────────────────────────────────────────
+
+    def _init_aliases(self) -> dict:
+        """Initialize default command aliases."""
+        return {
+            "status": "git status",
+            "log": "git log",
+            "health": "bash bin/health-l0-blink.sh",
+            "memory": "show memory stats",
+            "routing": "show routing performance",
+            "untracked": "git untracked",
+            "branches": "git branch",
+        }
+
+    async def execute_alias(self, alias: str) -> dict:
+        """Execute a command alias."""
+        aliases = self._init_aliases()
+
+        command = aliases.get(alias.lower())
+        if not command:
+            return {"status": "error", "error": f"Unknown alias: {alias}"}
+
+        # Check if it's a git command
+        if command.startswith("git "):
+            op = command[4:].strip()
+            return await self.git_operation(op)
+
+        # Otherwise execute as command
+        return await self.execute_command(command)
 
 
 # ─── Convenience Functions ─────────────────────────────────────────────────
