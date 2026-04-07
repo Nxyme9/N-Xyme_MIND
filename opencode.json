@@ -52,7 +52,10 @@
       "model": "opencode/qwen3.6-plus-free",
       "router_override": {
         "prefer": "opencode/qwen3.6-plus-free",
-        "fallback_order": ["opencode/mimo-v2-pro-free", "opencode/minimax-m2.5-free"]
+        "fallback_order": [
+          "opencode/mimo-v2-pro-free",
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "permission": {
         "edit": "allow",
@@ -68,7 +71,9 @@
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
         "fallback_to_cloud": true,
-        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+        "fallback_order": [
+          "ollama/qwen2.5-coder:7b"
+        ]
       },
       "permission": {
         "edit": "allow",
@@ -83,7 +88,9 @@
       "model": "opencode/mimo-v2-pro-free",
       "router_override": {
         "prefer": "opencode/mimo-v2-pro-free",
-        "fallback_order": ["opencode/minimax-m2.5-free"]
+        "fallback_order": [
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "permission": {
         "edit": "allow",
@@ -98,7 +105,9 @@
       "model": "opencode/minimax-m2.5-free",
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
-        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+        "fallback_order": [
+          "ollama/qwen2.5-coder:7b"
+        ]
       },
       "permission": {
         "edit": "allow",
@@ -114,7 +123,9 @@
       "router_override": {
         "prefer": "opencode/mimo-v2-pro-free",
         "skip_local": true,
-        "fallback_order": ["opencode/kimi-k2.5-free"]
+        "fallback_order": [
+          "opencode/kimi-k2.5-free"
+        ]
       },
       "permission": {
         "edit": "deny",
@@ -128,7 +139,9 @@
       "router_override": {
         "prefer": "opencode/kimi-k2.5-free",
         "skip_local": true,
-        "fallback_order": ["opencode/mimo-v2-pro-free"]
+        "fallback_order": [
+          "opencode/mimo-v2-pro-free"
+        ]
       },
       "permission": {
         "edit": "deny",
@@ -142,7 +155,9 @@
       "router_override": {
         "prefer": "opencode/mimo-v2-pro-free",
         "skip_local": true,
-        "fallback_order": ["opencode/minimax-m2.5-free"]
+        "fallback_order": [
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "permission": {
         "edit": "deny",
@@ -156,7 +171,9 @@
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
         "fallback_to_cloud": true,
-        "fallback_order": ["ollama/qwen2.5-coder:7b"]
+        "fallback_order": [
+          "ollama/qwen2.5-coder:7b"
+        ]
       },
       "permission": {
         "edit": "deny",
@@ -172,7 +189,9 @@
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
         "skip_local": true,
-        "fallback_order": ["opencode/mimo-v2-pro-free"]
+        "fallback_order": [
+          "opencode/mimo-v2-pro-free"
+        ]
       },
       "permission": {
         "edit": "deny",
@@ -186,7 +205,9 @@
       "router_override": {
         "prefer": "ollama/llama3.2:3b",
         "fallback_to_cloud": true,
-        "fallback_order": ["opencode/minimax-m2.5-free"]
+        "fallback_order": [
+          "opencode/minimax-m2.5-free"
+        ]
       },
       "permission": {
         "bash": {
@@ -290,7 +311,7 @@
         "@benjapieres/mcp-telegram-listener"
       ],
       "environment": {
-        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
+        "TELEGRAM_BOT_TOKEN": "8397949824:AAEkYzjVwIVUQAfTiFL2UcsGVC4Dgr7lXDw"
       }
     }
   },
