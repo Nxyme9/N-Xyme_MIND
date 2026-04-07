@@ -221,61 +221,12 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ]
     },
-    "memory": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-memory"
-      ]
-    },
     "context7": {
       "type": "local",
       "command": [
         "npx",
         "-y",
         "@upstash/context7-mcp@latest"
-      ]
-    },
-    "filesystem": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "mcp-server-filesystem",
-        "."
-      ]
-    },
-    "fetch": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "mcp-fetch-server"
-      ]
-    },
-    "git": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "mcp-git"
-      ]
-    },
-    "athena-context": {
-      "type": "local",
-      "command": [
-        "./packages/athena-context-mcp/venv/bin/python",
-        "-m",
-        "athena_context_mcp"
-      ]
-    },
-    "trigger-guardian": {
-      "type": "local",
-      "command": [
-        "./packages/trigger-guardian-mcp/.venv/bin/python",
-        "-m",
-        "trigger_guardian_mcp"
       ]
     },
     "nx-mind": {
@@ -285,29 +236,6 @@
         "-m",
         "nx_mind_mcp"
       ]
-    },
-    "athena": {
-      "type": "local",
-      "command": [
-        "./venvs/athena/bin/python",
-        "-m",
-        "athena.mcp_server"
-      ],
-      "environment": {
-        "PYTHONPATH": "./athena/src:."
-      }
-    },
-    "github": {
-      "type": "local",
-      "command": [
-        "./bin/github-mcp-server",
-        "stdio",
-        "--toolsets",
-        "all"
-      ],
-      "environment": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
     },
     "unified-memory": {
       "type": "local",
@@ -319,17 +247,6 @@
       "environment": {
         "PYTHONPATH": ".:src/infrastructure",
         "ROOT": "."
-      }
-    },
-    "intelligent-router": {
-      "type": "local",
-      "command": [
-        "python3",
-        "packages/infrastructure/proxy/simple_mcp_server.py"
-      ],
-      "environment": {
-        "PYTHONPATH": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND:/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/packages",
-        "PATH": "/usr/bin:/bin"
       }
     },
     "learning-engine": {
@@ -354,44 +271,6 @@
         "PYTHONPATH": "."
       }
     },
-    "orchestration": {
-      "type": "local",
-      "command": [
-        "./venvs/athena/bin/python",
-        "-m",
-        "packages.orchestration.mcp_server"
-      ],
-      "environment": {
-        "PYTHONPATH": "."
-      }
-    },
-    "brain": {
-      "type": "local",
-      "command": [
-        "python3",
-        "-m",
-        "scripts.brain_mcp"
-      ]
-    },
-    "sqlite": {
-      "type": "local",
-      "command": [
-        "python3",
-        "-m",
-        "sqlite_mcp"
-      ],
-      "environment": {
-        "PYTHONPATH": "packages/sqlite-mcp"
-      }
-    },
-    "playwright": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@playwright/mcp"
-      ]
-    },
     "quality-gates": {
       "type": "local",
       "command": [
@@ -411,7 +290,7 @@
         "@benjapieres/mcp-telegram-listener"
       ],
       "environment": {
-        "TELEGRAM_BOT_TOKEN": "8397949824:AAEkYzjVwIVUQAfTiFL2UcsGVC4Dgr7lXDw"
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
       }
     }
   },
