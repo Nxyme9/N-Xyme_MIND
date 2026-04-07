@@ -55,6 +55,9 @@ mcp = FastMCP(
         "- set_context: Set project context\n"
         "- sync_to_memory: Sync state to memory MCP\n"
         "- get_project_manifest: Get project metadata\n"
+        "- spine_probe: Run GoldenSpine health check\n"
+        "- spine_run: Execute inference via GoldenSpine\n"
+        "- spine_status: Get GoldenSpine status\n"
     ),
 )
 
@@ -281,4 +284,106 @@ __all__ = [
     "set_context",
     "sync_to_memory",
     "get_project_manifest",
+    # Golden Spine tools
+    "spine_probe",
+    "spine_run",
+    "spine_status",
 ]
+
+
+# =============================================================================
+# Golden Spine Integration
+# =============================================================================
+
+_spine_instance: Optional[Any] = None
+
+
+def _get_spine():
+    """Get or create GoldenSpine instance."""
+    global _spine_instance
+    if _spine_instance is None:
+        try:
+            from packages.infrastructure.spine.spine import GoldenSpine
+
+            _spine_instance = GoldenSpine()
+        except ImportError as e:
+            logger.warning(f"GoldenSpine not available: {e}")
+            return None
+    return _spine_instance
+
+
+@mcp.tool()
+def spine_probe() -> dict[str, Any]:
+    """Run GoldenSpine health check across all 3 layers.
+
+    Returns:
+        Dict with process, model, and responsive layer health results.
+    """
+    try:
+        spine = _get_spine()
+        if spine is None:
+            return {"error": "GoldenSpine not available", "healthy": False}
+
+        report = spine.probe()
+        return {
+            "healthy": report.overall_healthy,
+            "process": {
+                "healthy": report.process.healthy,
+                "message": report.process.message,
+            },
+            "model": {"healthy": report.model.healthy, "message": report.model.message},
+            "responsive": {
+                "healthy": report.responsive.healthy,
+                "message": report.responsive.message,
+            },
+        }
+    except Exception as e:
+        logger.error(f"Error running spine probe: {e}")
+        return {"error": str(e), "healthy": False}
+
+
+@mcp.tool()
+def spine_run(prompt: str, model: Optional[str] = None) -> dict[str, Any]:
+    """Execute inference via GoldenSpine with resilience pipeline.
+
+    Args:
+        prompt: The prompt to send to the model
+        model: Optional model override (uses config default if not set)
+
+    Returns:
+        Dict with run_id, model, success, latency_ms, and error if any.
+    """
+    try:
+        spine = _get_spine()
+        if spine is None:
+            return {"error": "GoldenSpine not available", "success": False}
+
+        result = spine.run(prompt=prompt, model=model)
+        return {
+            "run_id": result.run_id,
+            "model": result.model,
+            "success": result.success,
+            "latency_ms": result.latency_ms,
+            "error": result.error,
+        }
+    except Exception as e:
+        logger.error(f"Error running spine inference: {e}")
+        return {"error": str(e), "success": False}
+
+
+@mcp.tool()
+def spine_status() -> dict[str, Any]:
+    """Get current GoldenSpine status.
+
+    Returns:
+        Dict with running state, run count, health, fallback status, and run stats.
+    """
+    try:
+        spine = _get_spine()
+        if spine is None:
+            return {"error": "GoldenSpine not available", "running": False}
+
+        return spine.status()
+    except Exception as e:
+        logger.error(f"Error getting spine status: {e}")
+        return {"error": str(e), "running": False}
