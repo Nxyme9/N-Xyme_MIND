@@ -1,7 +1,11 @@
 """Central dispatch for triggers.json — routes events to handlers."""
 
 import json
-from src.infrastructure.metrics_store import MetricsStore
+
+try:
+    from src.infrastructure.metrics_store import MetricsStore
+except ImportError:
+    MetricsStore = None  # Optional dependency
 import re
 import sys
 import logging
@@ -10,7 +14,10 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from src.security.security_llm import get_security
+try:
+    from src.security.security_llm import get_security
+except ImportError:
+    get_security = None  # Optional dependency
 
 logger = logging.getLogger(__name__)
 CATALYST_DIR = Path(__file__).parent.parent
@@ -231,7 +238,9 @@ class TriggerRouter:
 
         return result
 
-    def _handle_rate_limit_event(self, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def _handle_rate_limit_event(
+        self, event: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
         event_type = event.get("type", "")
         result = None
 
@@ -260,7 +269,9 @@ class TriggerRouter:
             for trigger in triggers:
                 if trigger.get("id") == trigger_id:
                     if self._is_on_cooldown(trigger_id):
-                        logger.info(f"TriggerRouter: {trigger_id} on cooldown, skipping")
+                        logger.info(
+                            f"TriggerRouter: {trigger_id} on cooldown, skipping"
+                        )
                         return None
                     result = self._execute_trigger(trigger, event)
                     self._record_history(trigger, event, result)
@@ -278,7 +289,11 @@ class TriggerRouter:
         for trigger in source_triggers:
             trigger_type = trigger.get("type", "")
             trigger_severity = trigger.get("severity", "")
-            if trigger_type and trigger_type == event_type and trigger_severity == severity:
+            if (
+                trigger_type
+                and trigger_type == event_type
+                and trigger_severity == severity
+            ):
                 return trigger
         # Second pass: match by severity only (backward compat)
         for trigger in source_triggers:
@@ -338,7 +353,9 @@ class TriggerRouter:
                     success = self._pm2_restart(target)
                     result["success"] = success
                     result["message"] = (
-                        f"Service restart: {target}" if success else "Service restart failed"
+                        f"Service restart: {target}"
+                        if success
+                        else "Service restart failed"
                     )
                 else:
                     result["message"] = "No target specified"
@@ -370,11 +387,15 @@ class TriggerRouter:
                 if action_name == "rotate_vpn":
                     success = _rotate_vpn(provider)
                     result["success"] = success
-                    result["message"] = f"VPN rotation {'succeeded' if success else 'failed'}"
+                    result["message"] = (
+                        f"VPN rotation {'succeeded' if success else 'failed'}"
+                    )
                 elif action_name == "rotate_api_key":
                     success = _rotate_api_key(provider)
                     result["success"] = success
-                    result["message"] = f"API key rotation {'succeeded' if success else 'failed'}"
+                    result["message"] = (
+                        f"API key rotation {'succeeded' if success else 'failed'}"
+                    )
                 else:
                     result["message"] = f"Unknown script action: {action_name}"
 
@@ -405,7 +426,9 @@ class TriggerRouter:
             if result.get("success") and trigger.get("severity") == "critical":
                 self._verify_fix(trigger.get("id", ""), action_name)
             cooldown = trigger.get("cooldown_seconds", 60)
-            logger.info(f"TriggerRouter: Executed {action_name} (cooldown: {cooldown}s)")
+            logger.info(
+                f"TriggerRouter: Executed {action_name} (cooldown: {cooldown}s)"
+            )
 
         except Exception as e:
             result["success"] = False
@@ -454,7 +477,9 @@ class TriggerRouter:
     def _handle_graphiti_event(self, action_config, event, result):
         method = action_config.get("method", "")
         if method == "restart":
-            subprocess.run(["pm2", "restart", "graphiti-mcp"], capture_output=True, timeout=30)
+            subprocess.run(
+                ["pm2", "restart", "graphiti-mcp"], capture_output=True, timeout=30
+            )
             result["success"] = True
             result["message"] = "Restarted graphiti-mcp"
 
@@ -480,7 +505,9 @@ class TriggerRouter:
                 timeout=300,
             )
             result["success"] = r.returncode == 0
-            result["message"] = f"Pulled {model}" if result["success"] else r.stderr[:200]
+            result["message"] = (
+                f"Pulled {model}" if result["success"] else r.stderr[:200]
+            )
 
     def _handle_system_event(self, action_config, event, result):
         try:
@@ -513,21 +540,26 @@ class TriggerRouter:
                     "escalation_maxed",
                     f"{trigger_id} failed 3x, manual intervention needed",
                 )
-                logger.warning(f"TriggerRouter: {trigger_id} escalated to max level, alerting user")
+                logger.warning(
+                    f"TriggerRouter: {trigger_id} escalated to max level, alerting user"
+                )
                 return
-            self.metrics_store.record_metric("escalation", f"escalation_{trigger_id}", level + 1)
-            logger.info(f"TriggerRouter: Re-check scheduled for {trigger_id} (level {level + 1})")
+            self.metrics_store.record_metric(
+                "escalation", f"escalation_{trigger_id}", level + 1
+            )
+            logger.info(
+                f"TriggerRouter: Re-check scheduled for {trigger_id} (level {level + 1})"
+            )
 
         t = threading.Thread(target=check, daemon=True)
         t.start()
-
 
     def _handle_velocity_event(self, action_config, event, result):
         """Record task timing for velocity tracking."""
         method = action_config.get("method", "")
         task_name = event.get("data", {}).get("task_name", event.get("type", "unknown"))
         category = event.get("data", {}).get("category", "general")
-        
+
         if method == "start":
             task_id = f"task-{int(time.time())}"
             self.metrics_store.record_task_start(task_id, task_name, category=category)
@@ -536,72 +568,99 @@ class TriggerRouter:
         elif method == "complete":
             # Find most recent in-progress task
             import sqlite3
+
             conn = sqlite3.connect(self.metrics_store.db_path)
-            row = conn.execute("SELECT task_id FROM task_velocity WHERE status='in_progress' ORDER BY started_at DESC LIMIT 1").fetchone()
+            row = conn.execute(
+                "SELECT task_id FROM task_velocity WHERE status='in_progress' ORDER BY started_at DESC LIMIT 1"
+            ).fetchone()
             if row:
                 self.metrics_store.record_task_complete(row[0])
                 v = self.metrics_store.get_velocity(7)
                 result["success"] = True
-                result["message"] = f"Task completed. Velocity: {v['tasks_per_hour']}/hr" if v else "Task completed"
+                result["message"] = (
+                    f"Task completed. Velocity: {v['tasks_per_hour']}/hr"
+                    if v
+                    else "Task completed"
+                )
             else:
                 result["message"] = "No in-progress task found"
             conn.close()
-
 
     def _handle_consciousness_event(self, action_config, event, result):
         """Reality check: verify claims with real tests, not syntax."""
         method = action_config.get("method", "")
         claim = event.get("data", {}).get("claim", "unknown claim")
         component = event.get("data", {}).get("component", "all")
-        
+
         if method == "verify":
             # Run REAL functionality tests via subprocess
             import subprocess
+
             try:
                 r = subprocess.run(
-                    [sys.executable, "scripts/verify-claim.py", claim, "--component", component],
-                    capture_output=True, text=True, timeout=60,
-                    cwd=str(CATALYST_DIR)
+                    [
+                        sys.executable,
+                        "scripts/verify-claim.py",
+                        claim,
+                        "--component",
+                        component,
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=60,
+                    cwd=str(CATALYST_DIR),
                 )
                 if r.returncode == 0:
                     result["success"] = True
                     result["message"] = f"CLAIM VERIFIED: {claim}"
                     # Log to metrics
-                    self.metrics_store.record_metric("consciousness", "claim_verified", 1)
+                    self.metrics_store.record_metric(
+                        "consciousness", "claim_verified", 1
+                    )
                 else:
                     result["success"] = False
                     result["message"] = f"CLAIM REJECTED: {claim} - {r.stdout[-200:]}"
-                    self.metrics_store.record_metric("consciousness", "claim_rejected", 1)
+                    self.metrics_store.record_metric(
+                        "consciousness", "claim_rejected", 1
+                    )
                     # Fire rejection trigger
-                    self.process_event({
-                        "source": "consciousness",
-                        "type": "reality_check_failed",
-                        "severity": "critical",
-                        "data": {"claim": claim, "component": component, "output": r.stdout[-500:]}
-                    })
+                    self.process_event(
+                        {
+                            "source": "consciousness",
+                            "type": "reality_check_failed",
+                            "severity": "critical",
+                            "data": {
+                                "claim": claim,
+                                "component": component,
+                                "output": r.stdout[-500:],
+                            },
+                        }
+                    )
             except subprocess.TimeoutExpired:
                 result["success"] = False
                 result["message"] = f"CLAIM TIMEOUT: {claim} - verification took >60s"
-        
+
         elif method == "log_pass":
             result["success"] = True
             result["message"] = f"Verified: {claim}"
-        
+
         elif method == "reject":
             result["success"] = True
             result["message"] = f"REJECTED: {claim}"
-
 
     def _handle_memory_event(self, action_config, event, result):
         """Distill noisy episodes into meaningful knowledge."""
         method = action_config.get("method", "")
         if method == "distill":
             import subprocess
+
             try:
                 r = subprocess.run(
                     [sys.executable, "scripts/distill-memory.py"],
-                    capture_output=True, text=True, timeout=120,
-                    cwd=str(CATALYST_DIR)
+                    capture_output=True,
+                    text=True,
+                    timeout=120,
+                    cwd=str(CATALYST_DIR),
                 )
                 result["success"] = r.returncode == 0
                 result["message"] = r.stdout[-300:] if r.stdout else r.stderr[-300:]
