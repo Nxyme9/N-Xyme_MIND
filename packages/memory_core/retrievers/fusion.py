@@ -279,13 +279,17 @@ class TEMPRRetriever:
 
         # Run retrievers in parallel (sequential for now, can be async later)
         retriever_results = []
+
+        # Ensure top_k is an integer (defensive fix for type errors)
+        top_k_int = int(top_k) if top_k else 10
+
         for strategy in strategies:
             try:
                 if strategy == "semantic":
-                    results = semantic.search(query, top_k * 2, tier)
+                    results = semantic.search(query, top_k_int * 2, tier)
                     retriever_results.append(results)
                 elif strategy == "keyword":
-                    results = keyword.search(query, top_k * 2, tier)
+                    results = keyword.search(query, top_k_int * 2, tier)
                     retriever_results.append(results)
             except Exception as e:
                 logger.warning(f"TEMPR retriever: {strategy} strategy failed: {e}")

@@ -249,6 +249,16 @@ class MCPToolLoader:
             },
             "server": "git",
         },
+        "git_branch": {
+            "description": "Shows Git branches. "
+            + "Use for: listing branches, seeing current branch, comparing branches. "
+            + "NOT for: creating branches, deleting branches, or network operations.",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+            },
+            "server": "git",
+        },
         # GitHub tools
         "github_search_repositories": {
             "description": "Find GitHub repositories by name, description, or topics. "
@@ -426,6 +436,23 @@ class MCPToolLoader:
                     "tokens_used": {"type": "integer", "description": "Tokens used"},
                 },
                 "required": ["task", "agent", "success"],
+            },
+            "server": "learning-engine",
+        },
+        # Health check tool
+        "get_health": {
+            "description": "Get health summary of the N-Xyme MIND system. "
+            + "Use for: checking system status, diagnosing issues, or verifying services are running. "
+            + "NOT for: executing tasks, file operations, or detailed diagnostics.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "level": {
+                        "type": "string",
+                        "description": "Health check level: l0 (basic), l1 (services), l2 (deep)",
+                        "default": "l0",
+                    },
+                },
             },
             "server": "learning-engine",
         },
