@@ -24,6 +24,14 @@ from .counterfactual import (
 # New adaptive router with Q-Learning feedback loop
 from .adaptive_router import AdaptiveRouter, LearningStats
 
+# Strategy selector (Phase 3.1 - Contextual Bandits)
+from ..meta.strategy_selector import (
+    StrategySelector,
+    StrategyRouter,
+    StrategyType,
+    SelectorStats,
+)
+
 __all__ = [
     # optimizer
     "RoutingWeightOptimizer",
@@ -42,4 +50,9 @@ __all__ = [
     # adaptive_router
     "AdaptiveRouter",
     "LearningStats",
+    # strategy_selector
+    "StrategySelector",
+    "StrategyRouter",
+    "StrategyType",
+    "SelectorStats",
 ]

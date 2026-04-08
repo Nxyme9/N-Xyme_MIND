@@ -129,7 +129,7 @@ class RelationalStore(RelationalStoreABC):
             """)
             conn.commit()
             return conn  # Return connection for reuse
-        except:
+        except sqlite3.Error:
             conn.close()
             raise
 

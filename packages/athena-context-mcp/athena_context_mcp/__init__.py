@@ -46,9 +46,14 @@ mcp = FastMCP(
         "- get_product_context: Product/identity context (soul)\n"
         "- get_user_context: User context\n"
         "- get_constraints: Behavioral constraints\n"
+        "- get_user_profile: Immutable user identity (210 lines)\n"
+        "- get_style_context: Personalized style from usage patterns\n"
+        "- get_archive_context: Relevant past session context\n"
         "- get_bmad_agents: List available BMAD agents\n"
         "- get_bmad_workflows: List BMAD workflows by phase\n"
         "- inject_context: Write context for prompt injection\n"
+        "- search_unified: Semantic search across memory\n"
+        "- query_unified_memory: Cross-source memory search\n"
     ),
 )
 
@@ -370,12 +375,126 @@ def get_constraints() -> dict:
     Reads constraints.md which defines limits and rules.
     
     Returns:
-        dict with constraints and metadata
+        dict with constraints content and metadata
     """
     result = read_memory_bank_file("constraints.md")
     result["tool"] = "get_constraints"
     result["timestamp"] = datetime.now().isoformat()
     return result
+
+
+# ---------------------------------------------------------------------------
+# TOOL: get_user_profile (NEW)
+# ---------------------------------------------------------------------------
+
+@mcp.tool(tags={"read", "context", "user", "profile"})
+def get_user_profile() -> dict:
+    """
+    Returns immutable user profile from memory bank.
+    Reads user_profile.md which contains full identity, psychological profile,
+    timeline, and immutable instructions.
+    
+    Returns:
+        dict with user profile content and metadata
+    """
+    result = read_memory_bank_file("user_profile.md")
+    result["tool"] = "get_user_profile"
+    result["timestamp"] = datetime.now().isoformat()
+    return result
+
+
+# ---------------------------------------------------------------------------
+# TOOL: get_style_context (NEW)
+# ---------------------------------------------------------------------------
+
+@mcp.tool(tags={"read", "context", "style", "personalization"})
+def get_style_context() -> dict:
+    """
+    Returns personalized style context from usage pattern learning.
+    Reads from style_learner.py to get user preferences, communication style,
+    and behavioral patterns.
+    
+    Returns:
+        dict with personalized style context
+    """
+    try:
+        from athena_context_mcp.style_learner import get_learner
+        learner = get_learner()
+        style = learner.get_style_context()
+        
+        return {
+            "tool": "get_style_context",
+            "exists": True,
+            "content": style,
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "tool": "get_style_context",
+            "exists": False,
+            "content": "",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
+
+
+# ---------------------------------------------------------------------------
+# TOOL: get_archive_context (NEW)
+# ---------------------------------------------------------------------------
+
+@mcp.tool(tags={"read", "context", "archive", "history"})
+def get_archive_context(
+    query: str = "",
+    max_sessions: int = 3
+) -> dict:
+    """
+    Returns relevant context from past session archives.
+    Uses archive_scanner.py to find related sessions and build context.
+    
+    Args:
+        query: Current task/question to find related sessions
+        max_sessions: Maximum number of sessions to include (default 3)
+    
+    Returns:
+        dict with relevant archive context
+    """
+    try:
+        from athena_context_mcp.archive_scanner import get_scanner
+        
+        scanner = get_scanner()
+        
+        if not query:
+            # No query - just get recent sessions
+            result = scanner.scan_archives(limit=max_sessions)
+            return {
+                "tool": "get_archive_context",
+                "query": query,
+                "content": f"Recent sessions: {result.get('sessions', [])}",
+                "sessions_found": result.get("total", 0),
+                "timestamp": datetime.now().isoformat()
+            }
+        
+        # Build context from related sessions
+        summary = scanner.build_context_summary(
+            queries=[query],
+            max_sessions_per_query=max_sessions
+        )
+        
+        return {
+            "tool": "get_archive_context",
+            "query": query,
+            "content": summary.get("combined_summary", ""),
+            "sessions_found": summary.get("total_sessions", 0),
+            "timestamp": datetime.now().isoformat()
+        }
+    except Exception as e:
+        return {
+            "tool": "get_archive_context",
+            "query": query,
+            "content": "",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat()
+        }
 
 
 # ---------------------------------------------------------------------------
@@ -579,6 +698,52 @@ def inject_context(
             context_block.append(constraints["content"])
             context_block.append("")
             available_contexts.append("constraints")
+    
+    # NEW: Include user_profile.md for user context (rich identity data)
+    if context_type in ["all", "user"]:
+        user_profile = read_memory_bank_file("user_profile.md")
+        if user_profile["exists"]:
+            context_block.append("## User Profile (Immutable Identity)")
+            # Truncate to avoid context overflow - keep first 100 lines
+            profile_content = user_profile["content"]
+            lines = profile_content.split("\n")
+            if len(lines) > 100:
+                profile_content = "\n".join(lines[:100]) + "\n... [truncated]"
+            context_block.append(profile_content)
+            context_block.append("")
+            available_contexts.append("user_profile")
+    
+    # NEW: Include learned style context for personalization
+    if context_type in ["all", "user"]:
+        try:
+            from athena_context_mcp.style_learner import get_learner
+            learner = get_learner()
+            style = learner.get_style_context()
+            if style:
+                context_block.append("## Personalized Style (Learned)")
+                context_block.append(f"- Communication: {style.get('communication_style', 'unknown')}")
+                context_block.append(f"- Directness: {style.get('communication_directness', 'unknown')}")
+                context_block.append(f"- Preferred agents: {style.get('preferred_agents', [])}")
+                context_block.append(f"- Peak hours: {style.get('peak_hours', [])}")
+                context_block.append("")
+                available_contexts.append("style")
+        except Exception:
+            pass  # Style learner not available
+    
+    # NEW: Include archive context for session continuity
+    if context_type in ["all"]:
+        try:
+            from athena_context_mcp.archive_scanner import get_scanner
+            scanner = get_scanner()
+            recent = scanner.scan_archives(limit=3)
+            if recent.get("sessions"):
+                context_block.append("## Recent Sessions")
+                for sess in recent["sessions"][:3]:
+                    context_block.append(f"- {sess.get('session_id', 'unknown')}: {sess.get('summary', 'No summary')}")
+                context_block.append("")
+                available_contexts.append("archive")
+        except Exception:
+            pass  # Archive scanner not available
     
     result = {
         "tool": "inject_context",

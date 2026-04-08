@@ -351,3 +351,16 @@ def get_prompt_template_library() -> PromptTemplateLibrary:
     if _template_library is None:
         _template_library = PromptTemplateLibrary()
     return _template_library
+
+
+def get_template(template_id: str) -> Optional[PromptTemplate]:
+    """Get a template by ID (convenience function).
+    
+    Args:
+        template_id: The template ID to retrieve.
+    
+    Returns:
+        PromptTemplate if found, None otherwise.
+    """
+    library = get_prompt_template_library()
+    return library.get_template(template_id)

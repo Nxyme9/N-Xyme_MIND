@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Testing API...</h1>
+    <pre id="output">Loading...</pre>
+    <script>
+    async function test() {
+        try {
+            const res = await fetch('/api/health');
+            const data = await res.json();
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        } catch (e) {
+            document.getElementById('output').textContent = 'Error: ' + e.message;
+        }
+    }
+    test();
+    </script>
+</body>
+</html>

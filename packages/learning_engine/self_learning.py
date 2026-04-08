@@ -164,7 +164,7 @@ class SelfLearner:
         adaptation = learner.adapt("code_review")
     """
 
-    def __init__(self, db_path: str | None = None) -> None:
+    def __init__(self, db_path: str | None = None, flush_interval: float = 5.0) -> None:
         self._db_path = db_path or ":memory:"
         self._local = threading.local()
         self._shared_conn: sqlite3.Connection | None = None  # For :memory: databases
@@ -172,16 +172,17 @@ class SelfLearner:
         self._patterns: dict[str, ExtractedPattern] = {}
         self._adaptations: list[Adaptation] = []
         self._lock = threading.Lock()
+
+        # Batch write buffers
+        self._pending_outcomes: list[LearningOutcome] = []
+        self._pending_patterns: dict[str, ExtractedPattern] = {}
+        self._flush_interval = flush_interval
+        self._flush_thread: threading.Thread | None = None
+        self._shutdown = threading.Event()
+
         self._init_db()
         self._load_from_db()
-        self._db_path = db_path or ":memory:"
-        self._local = threading.local()
-        self._outcomes: list[LearningOutcome] = []
-        self._patterns: dict[str, ExtractedPattern] = {}
-        self._adaptations: list[Adaptation] = []
-        self._lock = threading.Lock()
-        self._init_db()
-        self._load_from_db()
+        self._start_flush_thread()
 
     # ------------------------------------------------------------------
     # Database
@@ -240,15 +241,6 @@ class SelfLearner:
             conn.row_factory = sqlite3.Row
             conn.execute("PRAGMA journal_mode=WAL")
             conn.execute("PRAGMA busy_timeout=5000")
-            self._local.conn = conn
-        return self._local.conn
-        """Get thread-local connection."""
-        if not hasattr(self._local, "conn") or self._local.conn is None:
-            conn = sqlite3.connect(self._db_path, timeout=30)
-            conn.row_factory = sqlite3.Row
-            if self._db_path != ":memory:":
-                conn.execute("PRAGMA journal_mode=WAL")
-                conn.execute("PRAGMA busy_timeout=5000")
             self._local.conn = conn
         return self._local.conn
 
@@ -380,6 +372,120 @@ class SelfLearner:
             )
 
     # ------------------------------------------------------------------
+    # Batch write system
+    # ------------------------------------------------------------------
+
+    def _start_flush_thread(self) -> None:
+        """Start background thread for periodic flush."""
+        self._shutdown.clear()
+        self._flush_thread = threading.Thread(
+            target=self._flush_loop,
+            daemon=True,
+            name="SelfLearner-Flush",
+        )
+        self._flush_thread.start()
+        logger.debug("Started flush thread (interval=%.1fs)", self._flush_interval)
+
+    def _flush_loop(self) -> None:
+        """Background loop that flushes pending writes."""
+        while not self._shutdown.wait(self._flush_interval):
+            self.flush()
+
+    def flush(self) -> None:
+        """Flush pending outcomes and patterns to database in a single transaction."""
+        with self._lock:
+            if not self._pending_outcomes and not self._pending_patterns:
+                return
+            pending_outcomes = self._pending_outcomes
+            pending_patterns = self._pending_patterns
+            self._pending_outcomes = []
+            self._pending_patterns = {}
+
+        if not pending_outcomes and not pending_patterns:
+            return
+
+        try:
+            with self._connect() as conn:
+                with conn:  # Single transaction
+                    # Batch insert outcomes
+                    if pending_outcomes:
+                        conn.executemany(
+                            """
+                            INSERT INTO outcomes
+                                (task_id, action, success, reward, latency_ms, cost,
+                                 context_json, timestamp)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                            """,
+                            [
+                                (
+                                    o.task_id,
+                                    o.action,
+                                    int(o.success),
+                                    o.reward,
+                                    o.latency_ms,
+                                    o.cost,
+                                    json.dumps(o.context),
+                                    o.timestamp,
+                                )
+                                for o in pending_outcomes
+                            ],
+                        )
+                    # Batch upsert patterns
+                    if pending_patterns:
+                        conn.executemany(
+                            """
+                            INSERT INTO patterns
+                                (pattern_id, task, action, success_count, failure_count,
+                                 avg_reward, avg_latency_ms, avg_cost,
+                                 context_signatures_json, first_seen, last_seen)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                            ON CONFLICT(pattern_id) DO UPDATE SET
+                                success_count=excluded.success_count,
+                                failure_count=excluded.failure_count,
+                                avg_reward=excluded.avg_reward,
+                                avg_latency_ms=excluded.avg_latency_ms,
+                                avg_cost=excluded.avg_cost,
+                                context_signatures_json=excluded.context_signatures_json,
+                                last_seen=excluded.last_seen
+                            """,
+                            [
+                                (
+                                    p.pattern_id,
+                                    p.task,
+                                    p.action,
+                                    p.success_count,
+                                    p.failure_count,
+                                    p.avg_reward,
+                                    p.avg_latency_ms,
+                                    p.avg_cost,
+                                    json.dumps(p.context_signatures),
+                                    p.first_seen,
+                                    p.last_seen,
+                                )
+                                for p in pending_patterns.values()
+                            ],
+                        )
+            logger.debug(
+                "Flushed %d outcomes, %d patterns to DB",
+                len(pending_outcomes),
+                len(pending_patterns),
+            )
+        except Exception:
+            # Re-queue on failure (best-effort durability)
+            with self._lock:
+                self._pending_outcomes.extend(pending_outcomes)
+                self._pending_patterns.update(pending_patterns)
+            logger.warning("Flush failed, re-queued pending writes")
+
+    def shutdown(self) -> None:
+        """Stop flush thread and flush pending writes."""
+        self._shutdown.set()
+        if self._flush_thread and self._flush_thread.is_alive():
+            self._flush_thread.join(timeout=5.0)
+        self.flush()
+        logger.info("SelfLearner shutdown complete")
+
+    # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
 
@@ -393,7 +499,7 @@ class SelfLearner:
         cost: float = 0.0,
         context: dict[str, Any] | None = None,
     ) -> LearningOutcome:
-        """Record a single task outcome and update patterns."""
+        """Record a single task outcome and update patterns (batched)."""
         outcome = LearningOutcome(
             task_id=task_id,
             action=action,
@@ -405,12 +511,11 @@ class SelfLearner:
         )
         with self._lock:
             self._outcomes.append(outcome)
+            self._pending_outcomes.append(outcome)
             if len(self._outcomes) > MAX_OUTCOMES:
                 self._outcomes = self._outcomes[-MAX_OUTCOMES:]
-        self._persist_outcome(outcome)
-        self._update_pattern(outcome)
         logger.debug(
-            "Recorded outcome: task=%s action=%s success=%s",
+            "Queued outcome: task=%s action=%s success=%s",
             task_id,
             action,
             success,
@@ -463,7 +568,7 @@ class SelfLearner:
                     oldest = min(self._patterns.values(), key=lambda p: p.first_seen)
                     del self._patterns[oldest.pattern_id]
             self._patterns[pid].update(outcome)
-        self._persist_pattern(self._patterns[pid])
+            self._pending_patterns[pid] = self._patterns[pid]
 
     def extract_patterns(
         self,

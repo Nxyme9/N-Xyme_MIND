@@ -11,12 +11,22 @@ import json
 import time
 import math
 import logging
+import hashlib
+import random
 from typing import Dict, Any, List, Optional, Tuple
 from pathlib import Path
 from dataclasses import dataclass, field
 from enum import Enum
 
 logger = logging.getLogger("ab-testing")
+
+# Try to import statsmodels for advanced statistics
+try:
+    from scipy import stats as scipy_stats
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+    logger.warning("scipy not available, using basic statistics")
 
 
 class TestStatus(Enum):
@@ -139,19 +149,163 @@ class ABTest:
         """Approximate normal CDF."""
         return 0.5 * (1 + math.erf(x / math.sqrt(2)))
     
-    def get_variant(self) -> str:
-        """Get variant to use based on traffic weights."""
-        import random
-        r = random.random()
-        cumulative = 0.0
+    def get_significance_report(self) -> Dict[str, Any]:
+        """Get detailed statistical significance report."""
+        if len(self.variants) < 2:
+            return {'error': 'Need at least 2 variants'}
         
-        for name, variant in self.variants.items():
-            cumulative += variant.traffic_weight
-            if r <= cumulative:
-                return name
+        variant_names = list(self.variants.keys())
+        v1 = self.variants[variant_names[0]]
+        v2 = self.variants[variant_names[1]]
         
-        # Fallback to last variant
-        return list(self.variants.keys())[-1]
+        n1 = v1.successes + v1.failures
+        n2 = v2.successes + v2.failures
+        
+        report = {
+            'test_id': self.id,
+            'test_name': self.name,
+            'status': self.status.value,
+            'total_impressions': v1.impressions + v2.impressions,
+            'variants': {}
+        }
+        
+        for name, v in self.variants.items():
+            report['variants'][name] = {
+                'impressions': v.impressions,
+                'successes': v.successes,
+                'failures': v.failures,
+                'success_rate': v.success_rate,
+                'avg_latency_ms': v.avg_latency
+            }
+        
+        if n1 > 0 and n2 > 0:
+            p1 = v1.success_rate
+            p2 = v2.success_rate
+            
+            # Chi-square test (more robust than z-test)
+            observed = [[v1.successes, v1.failures], [v2.successes, v2.failures]]
+            try:
+                chi2, p_value, dof, expected = scipy_stats.chi2_contingency(observed)
+                report['chi_square'] = {'statistic': chi2, 'p_value': p_value, 'dof': dof}
+            except Exception:
+                # Fallback to z-test
+                p_pool = (v1.successes + v2.successes) / (n1 + n2)
+                se = math.sqrt(p_pool * (1 - p_pool) * (1/n1 + 1/n2))
+                z = (p1 - p2) / se if se > 0 else 0
+                p_value = 2 * (1 - self._normal_cdf(abs(z)))
+                report['z_test'] = {'statistic': z, 'p_value': p_value}
+            
+            # Latency comparison (t-test)
+            if v1.impressions > 0 and v2.impressions > 0:
+                # Use ratio-based approximation for latency
+                if v1.avg_latency > 0 and v2.avg_latency > 0:
+                    latency_ratio = v1.avg_latency / v2.avg_latency
+                    report['latency_comparison'] = {
+                        'variant_a_avg_ms': v1.avg_latency,
+                        'variant_b_avg_ms': v2.avg_latency,
+                        'ratio': latency_ratio,
+                        'faster': variant_names[0] if v1.avg_latency < v2.avg_latency else variant_names[1]
+                    }
+            
+            # Recommendation
+            if self.status == TestStatus.COMPLETED:
+                report['winner'] = self.winner
+                report['confidence'] = self.confidence
+                report['recommendation'] = f"Use '{self.winner}' with {self.confidence:.0%} confidence"
+            elif self.status == TestStatus.INCONCLUSIVE:
+                report['recommendation'] = "More data needed - test inconclusive"
+            else:
+                needed = self.min_sample_size - (v1.impressions + v2.impressions)
+                report['recommendation'] = f"Need {needed} more impressions for significance"
+        
+        return report
+    
+    def compare_latency(self, variant_a: str, variant_b: str) -> Dict[str, Any]:
+        """Compare latency between two variants."""
+        if variant_a not in self.variants or variant_b not in self.variants:
+            return {'error': 'Invalid variant names'}
+        
+        v1 = self.variants[variant_a]
+        v2 = self.variants[variant_b]
+        
+        comparison = {
+            'variant_a': variant_a,
+            'variant_b': variant_b,
+            'variant_a_avg_ms': v1.avg_latency,
+            'variant_b_avg_ms': v2.avg_latency,
+            'difference_ms': v1.avg_latency - v2.avg_latency,
+            'percent_faster': ((v2.avg_latency - v1.avg_latency) / v2.avg_latency * 100) if v2.avg_latency > 0 else 0
+        }
+        
+        if v1.avg_latency < v2.avg_latency:
+            comparison['winner'] = variant_a
+            comparison['reason'] = f"{variant_a} is {abs(comparison['percent_faster']):.1f}% faster"
+        else:
+            comparison['winner'] = variant_b
+            comparison['reason'] = f"{variant_b} is {abs(comparison['percent_faster']):.1f}% faster"
+        
+        return comparison
+    
+    def get_recommendation(self) -> Dict[str, Any]:
+        """Get recommendation for which variant to use."""
+        if self.status == TestStatus.COMPLETED:
+            return {
+                'action': 'use_winner',
+                'variant': self.winner,
+                'confidence': self.confidence,
+                'reason': f"Winner determined with {self.confidence:.0%} statistical confidence"
+            }
+        elif self.status == TestStatus.INCONCLUSIVE:
+            return {
+                'action': 'continue_testing',
+                'reason': 'Test inconclusive, continue collecting data'
+            }
+        
+        # Check if we have enough data
+        total = sum(v.impressions for v in self.variants.values())
+        if total < self.min_sample_size:
+            return {
+                'action': 'continue_testing',
+                'reason': f"Need {self.min_sample_size - total} more impressions"
+            }
+        
+        # Check current best performer
+        best_variant = max(self.variants.items(), key=lambda x: x[1].success_rate)
+        return {
+            'action': 'use_best_so_far',
+            'variant': best_variant[0],
+            'current_success_rate': best_variant[1].success_rate,
+            'reason': f"Leading with {best_variant[1].success_rate:.0%} success rate, but not yet significant"
+        }
+    
+    def get_variant(self, task_key: Optional[str] = None) -> str:
+        """Get variant to use based on traffic weights.
+        
+        Args:
+            task_key: Optional key for deterministic routing (e.g., task_id)
+                     If provided, uses consistent hashing for same key.
+        """
+        if task_key:
+            hash_value = int(hashlib.md5(task_key.encode()).hexdigest(), 16)
+            normalized_hash = (hash_value % 10000) / 10000.0
+            
+            cumulative = 0.0
+            for name, variant in self.variants.items():
+                cumulative += variant.traffic_weight
+                if normalized_hash <= cumulative:
+                    return name
+            
+            return list(self.variants.keys())[-1]
+        else:
+            r = random.random()
+            cumulative = 0.0
+            
+            for name, variant in self.variants.items():
+                cumulative += variant.traffic_weight
+                if r <= cumulative:
+                    return name
+            
+            return list(self.variants.keys())[-1]
     
     def get_results(self) -> Dict[str, Any]:
         """Get test results."""
@@ -322,6 +476,116 @@ class ABTestingFramework:
             return None
         
         return test.winner
+    
+    def activate_test(self, test_id: str, task_key: Optional[str] = None) -> Optional[str]:
+        """Activate a test and get variant assignment for a task.
+        
+        Args:
+            test_id: The test to activate
+            task_key: Optional key for deterministic assignment
+            
+        Returns:
+            Variant name to use, or None if test not found/not running
+        """
+        test = self._tests.get(test_id)
+        if not test:
+            logger.warning(f"Test {test_id} not found")
+            return None
+        
+        if test.status != TestStatus.RUNNING:
+            logger.info(f"Test {test_id} is {test.status.value}, not activating")
+            return None
+        
+        return test.get_variant(task_key)
+    
+    def get_significance_report(self, test_id: str) -> Optional[Dict[str, Any]]:
+        """Get detailed statistical significance report for a test."""
+        test = self._tests.get(test_id)
+        if not test:
+            return None
+        return test.get_significance_report()
+    
+    def get_recommendation(self, test_id: str) -> Optional[Dict[str, Any]]:
+        """Get recommendation for a test."""
+        test = self._tests.get(test_id)
+        if not test:
+            return None
+        return test.get_recommendation()
+    
+    def compare_latency(self, test_id: str, variant_a: str, variant_b: str) -> Optional[Dict[str, Any]]:
+        """Compare latency between two variants in a test."""
+        test = self._tests.get(test_id)
+        if not test:
+            return None
+        return test.compare_latency(variant_a, variant_b)
+    
+    def create_routing_test(self, test_type: str, traffic_split: Optional[Dict[str, float]] = None) -> ABTest:
+        """Create a standard routing A/B test.
+        
+        Args:
+            test_type: One of 'embedding_vs_keyword', 'graph_vs_sql', 'meta_vs_static'
+            traffic_split: Optional custom traffic split (e.g., {'embedding': 0.5, 'keyword': 0.5})
+            
+        Returns:
+            The created ABTest
+        """
+        if test_type == 'embedding_vs_keyword':
+            variants = traffic_split or {'embedding': 0.5, 'keyword': 0.5}
+            return self.create_test(
+                test_id='routing_embedding_vs_keyword',
+                name='Embedding vs Keyword Routing',
+                description='Test semantic embedding-based routing vs keyword matching',
+                variants=variants,
+                min_sample_size=100
+            )
+        elif test_type == 'graph_vs_sql':
+            variants = traffic_split or {'graph': 0.5, 'sql': 0.5}
+            return self.create_test(
+                test_id='routing_graph_vs_sql',
+                name='Graph vs SQL Lookup',
+                description='Test knowledge graph traversal vs SQL database lookup',
+                variants=variants,
+                min_sample_size=100
+            )
+        elif test_type == 'meta_vs_static':
+            variants = traffic_split or {'meta': 0.5, 'static': 0.5}
+            return self.create_test(
+                test_id='routing_meta_vs_static',
+                name='Meta-Learning vs Static Weights',
+                description='Test meta-learning adaptive weights vs static routing weights',
+                variants=variants,
+                min_sample_size=100
+            )
+        else:
+            raise ValueError(f"Unknown test type: {test_type}. Use: embedding_vs_keyword, graph_vs_sql, meta_vs_static")
+    
+    def start_routing_test(self, test_type: str, traffic_split: Optional[Dict[str, float]] = None) -> str:
+        """Create and start a routing A/B test, returning variant for current task.
+        
+        Args:
+            test_type: Type of routing test
+            traffic_split: Optional traffic split configuration
+            
+        Returns:
+            Variant name to use for this request
+        """
+        test = self.create_routing_test(test_type, traffic_split)
+        logger.info(f"Started routing test: {test.id}")
+        return test.get_variant()
+    
+    def get_routing_test_status(self) -> Dict[str, Any]:
+        """Get status of all routing-related tests."""
+        routing_tests = {
+            'embedding_vs_keyword': self.get_test_results('routing_embedding_vs_keyword'),
+            'graph_vs_sql': self.get_test_results('routing_graph_vs_sql'),
+            'meta_vs_static': self.get_test_results('routing_meta_vs_static')
+        }
+        
+        return {
+            'active_tests': [k for k, v in routing_tests.items() if v and v.get('status') == 'running'],
+            'completed_tests': [k for k, v in routing_tests.items() if v and v.get('status') == 'completed'],
+            'tests': routing_tests
+        }
 
 
 # Global A/B testing framework instance

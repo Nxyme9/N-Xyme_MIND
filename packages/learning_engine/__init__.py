@@ -65,6 +65,21 @@ from .delegation import (
 )
 
 # =============================================================================
+# Cross-session and outcome hooks
+# =============================================================================
+
+from .session_hooks import (
+    SessionLifecycleHook,
+)
+
+from .routing.outcome_hook import (
+    TaskOutcomeHook,
+    TaskContext,
+    TaskState,
+    get_hook,
+)
+
+# =============================================================================
 # Module-level singletons (lazy initialization, thread-safe)
 # =============================================================================
 
@@ -75,6 +90,8 @@ from typing import Optional
 _learner: Optional[DelegationLearner] = None
 _routing_optimizer: Optional[RoutingWeightOptimizer] = None
 _ab_testing: Optional[ABTestingFramework] = None
+_session_hook: Optional[SessionLifecycleHook] = None
+_task_hook: Optional[TaskOutcomeHook] = None
 _lock = threading.Lock()
 
 
@@ -152,6 +169,26 @@ def status() -> dict:
     return result
 
 
+def get_session_hook() -> SessionLifecycleHook:
+    """Get or create the global SessionLifecycleHook instance."""
+    global _session_hook
+    if _session_hook is None:
+        with _lock:
+            if _session_hook is None:
+                _session_hook = SessionLifecycleHook()
+    return _session_hook
+
+
+def get_task_hook() -> TaskOutcomeHook:
+    """Get or create the global TaskOutcomeHook instance."""
+    global _task_hook
+    if _task_hook is None:
+        with _lock:
+            if _task_hook is None:
+                _task_hook = TaskOutcomeHook()
+    return _task_hook
+
+
 def retrain() -> None:
     """Trigger retraining of learning models.
     
@@ -204,6 +241,14 @@ __all__ = [
     "learn_from_delegations",
     "get_routing_recommendations",
     "generate_learning_report",
+    # hooks
+    "SessionLifecycleHook",
+    "TaskOutcomeHook",
+    "TaskContext",
+    "TaskState",
+    "get_hook",
+    "get_session_hook",
+    "get_task_hook",
     # Public API
     "record_outcome",
     "route_task",

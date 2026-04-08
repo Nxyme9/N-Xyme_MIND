@@ -299,8 +299,399 @@ class MultiGraphMemory:
 
 
 # ---------------------------------------------------------------------------
-# Graph Store Wrapper
+# NetworkX Graph Store (Primary Implementation)
 # ---------------------------------------------------------------------------
+
+import time
+from collections import deque
+from contextlib import contextmanager
+from dataclasses import dataclass, field
+from datetime import datetime, timezone, timedelta
+from enum import Enum
+from typing import Any, Generator, Optional
+
+import networkx as nx
+
+
+class NodeType(str, Enum):
+    TASK = "Task"
+    AGENT = "Agent"
+    OUTCOME = "Outcome"
+    SESSION = "Session"
+    TOOL = "Tool"
+    SKILL = "Skill"
+
+
+class EdgeType(str, Enum):
+    PERFORMED_BY = "performed_by"
+    RESULTED_IN = "resulted_in"
+    BELONGED_TO = "belonged_to"
+    USED_TOOL = "used_tool"
+    REQUIRED_SKILL = "required_skill"
+    HAS_SKILL = "has_skill"
+    SIMILAR_TO = "similar_to"
+
+
+@dataclass
+class TemporalNode:
+    id: str
+    node_type: NodeType
+    label: str
+    properties: dict = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_accessed: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+@dataclass
+class TemporalEdge:
+    source: str
+    target: str
+    edge_type: EdgeType
+    weight: float = 1.0
+    properties: dict = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class NetworkXGraphStore:
+    """Graph memory using NetworkX with temporal weighting.
+    
+    Features:
+    - NetworkX DiGraph for graph storage
+    - JSON file persistence
+    - Temporal weighting (recent = higher weight)
+    - Temporal pattern mining
+    - Time-decay for recency
+    """
+
+    def __init__(self, storage_file: str = ".sisyphus/graph_memory.json"):
+        self.storage_file = Path(storage_file)
+        self.storage_file.parent.mkdir(parents=True, exist_ok=True)
+        self.graph = nx.DiGraph()
+        self._time_decay_half_life = timedelta(days=7)
+        self._load()
+
+    def _load(self):
+        if self.storage_file.exists():
+            data = json.loads(self.storage_file.read_text(encoding="utf-8"))
+            nodes = data.get("nodes", [])
+            edges = data.get("edges", [])
+            
+            for node in nodes:
+                self.graph.add_node(
+                    node["id"],
+                    node_type=node.get("node_type"),
+                    label=node.get("label", ""),
+                    properties=node.get("properties", {}),
+                    created_at=datetime.fromisoformat(node.get("created_at", datetime.now(timezone.utc).isoformat())),
+                    last_accessed=datetime.fromisoformat(node.get("last_accessed", datetime.now(timezone.utc).isoformat())),
+                )
+            
+            for edge in edges:
+                self.graph.add_edge(
+                    edge["source"],
+                    edge["target"],
+                    edge_type=edge.get("edge_type"),
+                    weight=edge.get("weight", 1.0),
+                    properties=edge.get("properties", {}),
+                    created_at=datetime.fromisoformat(edge.get("created_at", datetime.now(timezone.utc).isoformat())),
+                )
+
+    def _save(self):
+        nodes = []
+        for node_id, attrs in self.graph.nodes(data=True):
+            nodes.append({
+                "id": node_id,
+                "node_type": attrs.get("node_type"),
+                "label": attrs.get("label", ""),
+                "properties": attrs.get("properties", {}),
+                "created_at": attrs.get("created_at").isoformat() if attrs.get("created_at") else datetime.now(timezone.utc).isoformat(),
+                "last_accessed": attrs.get("last_accessed").isoformat() if attrs.get("last_accessed") else datetime.now(timezone.utc).isoformat(),
+            })
+        
+        edges = []
+        for source, target, attrs in self.graph.edges(data=True):
+            edges.append({
+                "source": source,
+                "target": target,
+                "edge_type": attrs.get("edge_type"),
+                "weight": attrs.get("weight", 1.0),
+                "properties": attrs.get("properties", {}),
+                "created_at": attrs.get("created_at").isoformat() if attrs.get("created_at") else datetime.now(timezone.utc).isoformat(),
+            })
+        
+        self.storage_file.write_text(
+            json.dumps({"nodes": nodes, "edges": edges}, indent=2),
+            encoding="utf-8",
+        )
+
+    def _calculate_time_decay_weight(self, created_at: datetime) -> float:
+        """Calculate time-decay weight (recent = higher)."""
+        age = datetime.now(timezone.utc) - created_at
+        half_life_seconds = self._time_decay_half_life.total_seconds()
+        if half_life_seconds <= 0:
+            return 1.0
+        import math
+        return math.pow(0.5, age.total_seconds() / half_life_seconds)
+
+    def add_node(self, id: str, node_type: str, label: str = "", properties: dict = None) -> None:
+        """Add a node to the graph."""
+        self.graph.add_node(
+            id,
+            node_type=node_type,
+            label=label,
+            properties=properties or {},
+            created_at=datetime.now(timezone.utc),
+            last_accessed=datetime.now(timezone.utc),
+        )
+        self._save()
+
+    def add_edge(self, source: str, target: str, edge_type: str, weight: float = 1.0, properties: dict = None) -> None:
+        """Add an edge between two nodes."""
+        self.graph.add_edge(
+            source,
+            target,
+            edge_type=edge_type,
+            weight=weight,
+            properties=properties or {},
+            created_at=datetime.now(timezone.utc),
+        )
+        self._save()
+
+    def get_node(self, id: str) -> dict | None:
+        """Get a node by ID."""
+        if not self.graph.has_node(id):
+            return None
+        attrs = self.graph.nodes[id]
+        attrs["last_accessed"] = datetime.now(timezone.utc)
+        self._save()
+        return {
+            "id": id,
+            "node_type": attrs.get("node_type"),
+            "label": attrs.get("label", ""),
+            "properties": attrs.get("properties", {}),
+            "created_at": attrs.get("created_at").isoformat() if attrs.get("created_at") else None,
+        }
+
+    def delete_node(self, id: str) -> bool:
+        """Delete a node and its edges."""
+        if self.graph.has_node(id):
+            self.graph.remove_node(id)
+            self._save()
+            return True
+        return False
+
+    def delete_edge(self, source: str, target: str) -> bool:
+        """Delete an edge."""
+        if self.graph.has_edge(source, target):
+            self.graph.remove_edge(source, target)
+            self._save()
+            return True
+        return False
+
+    def get_node_type(self, node_id: str) -> Optional[str]:
+        """Get the type of a node."""
+        if self.graph.has_node(node_id):
+            return self.graph.nodes[node_id].get("node_type")
+        return None
+
+    def find_nodes_by_type(self, node_type: str) -> list[dict]:
+        """Find all nodes of a specific type."""
+        results = []
+        for node_id, attrs in self.graph.nodes(data=True):
+            if attrs.get("node_type") == node_type:
+                created_at = attrs.get("created_at")
+                time_weight = self._calculate_time_decay_weight(created_at) if created_at else 1.0
+                results.append({
+                    "id": node_id,
+                    "label": attrs.get("label", ""),
+                    "properties": attrs.get("properties", {}),
+                    "time_weight": time_weight,
+                    "created_at": created_at.isoformat() if created_at else None,
+                })
+        return results
+
+    def find_edges_by_type(self, edge_type: str) -> list[dict]:
+        """Find all edges of a specific type."""
+        results = []
+        for source, target, attrs in self.graph.edges(data=True):
+            if attrs.get("edge_type") == edge_type:
+                results.append({
+                    "source": source,
+                    "target": target,
+                    "weight": attrs.get("weight", 1.0),
+                    "properties": attrs.get("properties", {}),
+                })
+        return results
+
+    def get_neighbors(self, node_id: str, edge_type: Optional[str] = None) -> list[tuple[str, float]]:
+        """Get neighbors of a node, optionally filtered by edge type."""
+        if not self.graph.has_node(node_id):
+            return []
+        
+        neighbors = []
+        for successor in self.graph.successors(node_id):
+            attrs = self.graph[node_id][successor]
+            if edge_type is None or attrs.get("edge_type") == edge_type:
+                time_weight = self._calculate_time_decay_weight(attrs.get("created_at"))
+                weighted_score = attrs.get("weight", 1.0) * time_weight
+                neighbors.append((successor, weighted_score))
+        
+        return sorted(neighbors, key=lambda x: x[1], reverse=True)
+
+    def get_incoming_edges(self, node_id: str, edge_type: Optional[str] = None) -> list[tuple[str, float]]:
+        """Get incoming edges to a node."""
+        if not self.graph.has_node(node_id):
+            return []
+        
+        neighbors = []
+        for predecessor in self.graph.predecessors(node_id):
+            attrs = self.graph[predecessor][node_id]
+            if edge_type is None or attrs.get("edge_type") == edge_type:
+                time_weight = self._calculate_time_decay_weight(attrs.get("created_at"))
+                weighted_score = attrs.get("weight", 1.0) * time_weight
+                neighbors.append((predecessor, weighted_score))
+        
+        return sorted(neighbors, key=lambda x: x[1], reverse=True)
+
+    def query_agent_successes(self, agent_id: str, days: int = 30) -> list[dict]:
+        """Query: Which tasks did an agent succeed with recently?"""
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        successes = []
+        
+        for successor in self.graph.successors(agent_id):
+            edge_attrs = self.graph[agent_id][successor]
+            if edge_attrs.get("edge_type") == EdgeType.PERFORMED_BY.value:
+                node_attrs = self.graph.nodes[successor]
+                if node_attrs.get("node_type") == NodeType.TASK.value:
+                    task_created = node_attrs.get("created_at")
+                    if task_created and task_created >= cutoff:
+                        successes.append({
+                            "task_id": successor,
+                            "label": node_attrs.get("label", ""),
+                            "properties": node_attrs.get("properties", {}),
+                            "time_weight": self._calculate_time_decay_weight(task_created),
+                        })
+        
+        return sorted(successes, key=lambda x: x["time_weight"], reverse=True)
+
+    def query_similar_tasks(self, task_id: str, max_results: int = 5) -> list[dict]:
+        """Find tasks similar to a given task."""
+        if not self.graph.has_node(task_id):
+            return []
+        
+        similar = []
+        for successor in self.graph.successors(task_id):
+            edge_attrs = self.graph[task_id][successor]
+            if edge_attrs.get("edge_type") == EdgeType.SIMILAR_TO.value:
+                node_attrs = self.graph.nodes[successor]
+                created_at = node_attrs.get("created_at")
+                similar.append({
+                    "task_id": successor,
+                    "label": node_attrs.get("label", ""),
+                    "properties": node_attrs.get("properties", {}),
+                    "time_weight": self._calculate_time_decay_weight(created_at) if created_at else 1.0,
+                })
+        
+        return sorted(similar, key=lambda x: x["time_weight"], reverse=True)[:max_results]
+
+    def find_common_paths(self, min_occurrences: int = 2) -> list[dict]:
+        """Find recurring task sequences (temporal pattern mining)."""
+        path_counts: dict[tuple, int] = {}
+        
+        for node_id, attrs in self.graph.nodes(data=True):
+            if attrs.get("node_type") != NodeType.TASK.value:
+                continue
+            
+            path = [node_id]
+            self._find_paths_recursive(node_id, path, path_counts, max_depth=3)
+        
+        common_paths = []
+        for path, count in path_counts.items():
+            if count >= min_occurrences:
+                common_paths.append({
+                    "path": list(path),
+                    "occurrences": count,
+                })
+        
+        return sorted(common_paths, key=lambda x: x["occurrences"], reverse=True)
+
+    def _find_paths_recursive(self, node_id: str, path: list, path_counts: dict, max_depth: int = 3):
+        if len(path) >= max_depth + 1:
+            path_counts[tuple(path)] = path_counts.get(tuple(path), 0) + 1
+            return
+        
+        for successor in self.graph.successors(node_id):
+            if successor in path:
+                continue
+            new_path = path + [successor]
+            path_counts[tuple(new_path)] = path_counts.get(tuple(new_path), 0) + 1
+            self._find_paths_recursive(successor, new_path, path_counts, max_depth)
+
+    def get_outcome_for_task(self, task_id: str) -> Optional[dict]:
+        """Get the outcome associated with a task."""
+        if not self.graph.has_node(task_id):
+            return None
+        
+        for successor in self.graph.successors(task_id):
+            attrs = self.graph.nodes[successor]
+            if attrs.get("node_type") == NodeType.OUTCOME.value:
+                edge_attrs = self.graph[task_id][successor]
+                return {
+                    "outcome_id": successor,
+                    "label": attrs.get("label", ""),
+                    "properties": attrs.get("properties", {}),
+                    "edge_type": edge_attrs.get("edge_type"),
+                    "success": attrs.get("properties", {}).get("success", False),
+                }
+        return None
+
+    def get_stats(self) -> dict[str, Any]:
+        """Get statistics about the graph store."""
+        node_types: dict[str, int] = {}
+        edge_types: dict[str, int] = {}
+        
+        for _, attrs in self.graph.nodes(data=True):
+            nt = attrs.get("node_type", "unknown")
+            node_types[nt] = node_types.get(nt, 0) + 1
+        
+        for _, _, attrs in self.graph.edges(data=True):
+            et = attrs.get("edge_type", "unknown")
+            edge_types[et] = edge_types.get(et, 0) + 1
+        
+        return {
+            "total_nodes": self.graph.number_of_nodes(),
+            "total_edges": self.graph.number_of_edges(),
+            "node_types": node_types,
+            "edge_types": edge_types,
+            "backend": "networkx",
+        }
+
+    def clear(self) -> None:
+        """Clear all nodes and edges."""
+        self.graph.clear()
+        self._save()
+
+    @property
+    def number_of_nodes(self) -> int:
+        """Delegate to underlying graph (fallback for incorrect access patterns)."""
+        return self.graph.number_of_nodes()
+
+    @property
+    def number_of_edges(self) -> int:
+        """Delegate to underlying graph (fallback for incorrect access patterns)."""
+        return self.graph.number_of_edges()
+
+
+# Global instance for router
+_networkx_graph: Optional[NetworkXGraphStore] = None
+
+
+def get_networkx_graph() -> NetworkXGraphStore:
+    """Get or create global NetworkX graph instance."""
+    global _networkx_graph
+    if _networkx_graph is None:
+        _networkx_graph = NetworkXGraphStore()
+    return _networkx_graph
 
 
 class GraphStore:
@@ -338,6 +729,10 @@ __all__ = [
     "GraphType",
     "RelationType",
     "Neo4jGraphStore",
+    "NetworkXGraphStore",
+    "NodeType",
+    "EdgeType",
+    "get_networkx_graph",
 ]
 
 

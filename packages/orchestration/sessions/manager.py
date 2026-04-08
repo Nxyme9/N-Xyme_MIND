@@ -1,9 +1,27 @@
-"""Session Manager — Manage active sessions"""
+"""Session Manager — Manage active sessions with cross-session knowledge transfer."""
 
-import logging, time, uuid
-from typing import Dict, List
+import logging
+import time
+import uuid
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+# Lazy import to avoid circular deps
+_session_hook: Optional[Any] = None
+
+
+def _get_session_hook():
+    """Lazily load SessionLifecycleHook."""
+    global _session_hook
+    if _session_hook is None:
+        try:
+            from learning_engine import get_session_hook
+            _session_hook = get_session_hook()
+        except ImportError as e:
+            logger.warning(f"Could not import SessionLifecycleHook: {e}")
+            _session_hook = False  # Mark as failed
+    return _session_hook if _session_hook else None
 
 
 class SessionManager:
@@ -20,6 +38,16 @@ class SessionManager:
             "metadata": metadata or {},
         }
         logger.info(f"SessionManager: Created {session_id}")
+
+        # Call session hook at start
+        hook = _get_session_hook()
+        if hook:
+            try:
+                result = hook.on_session_start()
+                logger.info(f"Session hook on_session_start: {result}")
+            except Exception as e:
+                logger.error(f"Error in on_session_start: {e}")
+
         return session_id
 
     def get(self, session_id: str) -> Dict:
@@ -31,6 +59,15 @@ class SessionManager:
 
     def close(self, session_id: str) -> bool:
         if session_id in self._sessions:
+            # Call session hook at end BEFORE removing
+            hook = _get_session_hook()
+            if hook:
+                try:
+                    result = hook.on_session_end(session_id)
+                    logger.info(f"Session hook on_session_end: {result}")
+                except Exception as e:
+                    logger.error(f"Error in on_session_end: {e}")
+
             del self._sessions[session_id]
             return True
         return False
@@ -45,5 +82,12 @@ class SessionManager:
             sid for sid, s in self._sessions.items() if now - s["last_active"] > max_age_seconds
         ]
         for sid in expired:
+            # Call session hook for each expired session
+            hook = _get_session_hook()
+            if hook:
+                try:
+                    hook.on_session_end(sid)
+                except Exception as e:
+                    logger.error(f"Error in on_session_end during cleanup: {e}")
             del self._sessions[sid]
         return len(expired)

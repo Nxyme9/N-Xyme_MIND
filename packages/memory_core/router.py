@@ -5,6 +5,7 @@ Implements:
 - Retriever selection based on query characteristics
 - Integration with TEMPRRetriever for hybrid search
 - Integration with QLearningEngine for routing decisions
+- Graph-based context retrieval via NetworkX
 """
 
 import logging
@@ -37,6 +38,7 @@ class UnifiedMemoryQuery:
     max_results_per_source: int = 10
     use_semantic: bool = True
     filters: dict = field(default_factory=dict)
+    query_type: Optional[QueryType] = None  # Cached after first classification
 
 
 @dataclass
@@ -68,6 +70,78 @@ class MemoryRouter:
         self._semantic_retriever: Optional[Any] = None
         self._q_learning = None
         self._q_learning_db_path = q_learning_db_path
+        self._graph_store = None
+        self._use_graph = True
+
+    def _get_graph_store(self):
+        """Lazy-load NetworkX graph store."""
+        if self._graph_store is None:
+            try:
+                from .stores.graph_store import get_networkx_graph
+
+                self._graph_store = get_networkx_graph()
+                self._use_graph = self._graph_store is not None
+            except ImportError as e:
+                logger.warning(f"NetworkX graph store not available: {e}")
+                self._use_graph = False
+                self._graph_store = None
+        return self._graph_store
+
+    def query_graph_agent_task_success(
+        self, agent_id: str, days: int = 30
+    ) -> List[Dict[str, Any]]:
+        """Query graph: Which agents succeeded with similar tasks recently?"""
+        if not self._use_graph or self._graph_store is None:
+            return []
+        try:
+            return self._graph_store.query_agent_successes(agent_id, days)
+        except Exception as e:
+            logger.warning(f"Graph query failed: {e}")
+            return []
+
+    def query_graph_similar_tasks(self, task_id: str, max_results: int = 5) -> List[Dict[str, Any]]:
+        """Query graph for similar tasks."""
+        if not self._use_graph or self._graph_store is None:
+            return []
+        try:
+            return self._graph_store.query_similar_tasks(task_id, max_results)
+        except Exception as e:
+            logger.warning(f"Graph query failed: {e}")
+            return []
+
+    def add_graph_context(self, node_type: str, node_id: str, label: str = "", 
+                          properties: dict = None, outcomes: list = None) -> bool:
+        """Add graph context from search results for learning."""
+        if not self._use_graph or self._graph_store is None:
+            return False
+        try:
+            self._graph_store.add_node(node_id, node_type, label, properties)
+            
+            if outcomes:
+                for outcome in outcomes:
+                    outcome_id = f"{node_id}_outcome_{outcome.get('success', False)}"
+                    self._graph_store.add_node(
+                        outcome_id, "Outcome", outcome.get("label", ""),
+                        outcome.get("properties", {})
+                    )
+                    self._graph_store.add_edge(
+                        node_id, outcome_id, "resulted_in",
+                        weight=1.0 if outcome.get("success") else 0.5
+                    )
+            return True
+        except Exception as e:
+            logger.warning(f"Graph add failed: {e}")
+            return False
+
+    def get_graph_stats(self) -> Dict[str, Any]:
+        """Get graph store statistics."""
+        if not self._use_graph or self._graph_store is None:
+            return {"available": False}
+        try:
+            return self._graph_store.get_stats()
+        except Exception as e:
+            logger.warning(f"Graph stats failed: {e}")
+            return {"available": False, "error": str(e)}
 
     def _get_tempr_retriever(self):
         """Lazy-load TEMPR retriever."""
@@ -118,11 +192,17 @@ class MemoryRouter:
         Returns:
             QueryType classification
         """
+        # Return cached classification if available
+        if query.query_type is not None:
+            return query.query_type
+
         q = query.query.strip()
 
         # Check for filters first
         if query.filters and len(query.filters) > 0:
-            return QueryType.FILTERED
+            result = QueryType.FILTERED
+            query.query_type = result
+            return result
 
         # Keyword: short query (1-2 words), possibly specific terms
         word_count = len(q.split())
@@ -130,8 +210,12 @@ class MemoryRouter:
             # Short queries are typically keyword searches
             # But check if it looks like natural language
             if len(q) < 20 and not any(c in q for c in "aeiou"):
-                return QueryType.KEYWORD
-            return QueryType.KEYWORD
+                result = QueryType.KEYWORD
+                query.query_type = result
+                return result
+            result = QueryType.KEYWORD
+            query.query_type = result
+            return result
 
         # Semantic: natural language, 3+ words
         if word_count >= 3:
@@ -140,11 +224,12 @@ class MemoryRouter:
                 q.lower().startswith(w)
                 for w in ["how", "what", "why", "when", "where", "explain", "find"]
             ):
-                return QueryType.SEMANTIC
-            return QueryType.SEMANTIC
-
-        # Default to semantic for ambiguous cases
-        return QueryType.SEMANTIC
+                result = QueryType.SEMANTIC
+                query.query_type = result
+                return result
+            result = QueryType.SEMANTIC
+            query.query_type = result
+            return result
 
     def _select_retriever_actions(
         self, query_type: QueryType, query: UnifiedMemoryQuery

@@ -4,7 +4,7 @@ Implements:
 - Extract decisions and outcomes from completed sessions
 - Generalize to principles applicable to future sessions
 - Store as global-scoped memories for all agents
-- Transferability scoring based on generalizability, outcome, repetition
+- Transferability scoring based on embeddings + generalizability + outcome + repetition
 """
 
 from __future__ import annotations
@@ -17,6 +17,17 @@ from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Generalization patterns for semantic scoring
+GENERAL_PATTERNS = [
+    "best practice", "convention", "pattern", "principle", "guideline",
+    "always", "never", "should", "avoid", "recommend", "prefer",
+    "learned", "discovered", "found that", "effective", "works well",
+    "architecture", "design pattern", "strategy", "approach",
+]
+SPECIFIC_PATTERNS = [
+    "file:", "line:", "function:", "class:", "/src/", ".py:", ".ts:",
+]
 
 
 @dataclass
@@ -34,21 +45,37 @@ class TransferableKnowledge:
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
     metadata: dict[str, Any] = field(default_factory=dict)
+    embedding: list[float] = field(default_factory=list)  # Semantic embedding for similarity
 
 
 class CrossSessionTransfer:
     """Transfers learnings across sessions."""
 
-    def __init__(self, storage_path: Path | None = None):
+    def __init__(self, storage_path: Path | None = None, use_embeddings: bool = True):
         """Initialize cross-session transfer.
 
         Args:
             storage_path: Path to store transferred knowledge.
+            use_embeddings: Whether to use embedding-based scoring.
         """
         self.storage_path = storage_path or Path(".sisyphus/cross_session")
         self.storage_path.mkdir(parents=True, exist_ok=True)
         self.knowledge: list[TransferableKnowledge] = []
+        self.use_embeddings = use_embeddings
+        self._embedding_cache = None
         self._load_knowledge()
+
+    @property
+    def _cache(self):
+        """Lazy-load embedding cache."""
+        if self._embedding_cache is None and self.use_embeddings:
+            try:
+                from .embeddings.model_cache import get_embedding_cache
+                self._embedding_cache = get_embedding_cache()
+            except ImportError:
+                logger.warning("Embedding cache unavailable, falling back to keyword scoring")
+                self.use_embeddings = False
+        return self._embedding_cache
 
     def extract_decisions(
         self,
@@ -81,6 +108,8 @@ class CrossSessionTransfer:
             )
 
             if transferability > 0.6:  # Only transfer high-quality knowledge
+                embedding = self._get_embedding(content)
+
                 knowledge = TransferableKnowledge(
                     id=str(uuid.uuid4())[:8],
                     source_session=session_id,
@@ -90,6 +119,7 @@ class CrossSessionTransfer:
                     transferability_score=transferability,
                     occurrence_count=decision.get("occurrence_count", 1),
                     metadata={"outcome": outcome},
+                    embedding=embedding,
                 )
                 transferred.append(knowledge)
                 self.knowledge.append(knowledge)
@@ -126,6 +156,8 @@ class CrossSessionTransfer:
             )
 
             if transferability > 0.5:
+                embedding = self._get_embedding(content)
+
                 knowledge = TransferableKnowledge(
                     id=str(uuid.uuid4())[:8],
                     source_session=session_id,
@@ -135,6 +167,7 @@ class CrossSessionTransfer:
                     transferability_score=transferability,
                     occurrence_count=lesson.get("occurrence_count", 1),
                     metadata=lesson.get("metadata", {}),
+                    embedding=embedding,
                 )
                 transferred.append(knowledge)
                 self.knowledge.append(knowledge)
@@ -196,18 +229,72 @@ class CrossSessionTransfer:
         Returns:
             Transferability score (0-1).
         """
-        # Generalizability: less specific = more transferable
-        specific_indicators = ["file:", "line:", "function:", "class:", "/"]
-        specificity = sum(1 for ind in specific_indicators if ind in content.lower())
-        generalizability = max(0.0, 1.0 - specificity * 0.2)
+        generalizability = self._semantic_generalizability(content)
 
-        # Outcome weight
         outcome_weight = 1.0 if success else 0.2
 
-        # Repetition weight
         repetition = min(1.0, occurrence_count / 3.0)
 
         return generalizability * 0.4 + outcome_weight * 0.4 + repetition * 0.2
+
+    def _semantic_generalizability(self, content: str) -> float:
+        """Score semantic generalizability using embeddings and pattern matching.
+
+        Args:
+            content: Knowledge content to score.
+
+        Returns:
+            Generalizability score (0-1).
+        """
+        content_lower = content.lower()
+
+        general_score = sum(
+            0.08 for pattern in GENERAL_PATTERNS
+            if pattern in content_lower
+        )
+
+        specific_score = sum(
+            0.15 for pattern in SPECIFIC_PATTERNS
+            if pattern in content_lower
+        )
+
+        base_score = 0.5 + general_score - specific_score
+        base_score = max(0.0, min(1.0, base_score))
+
+        if self.use_embeddings and self._cache is not None:
+            try:
+                general_embedding = self._cache.encode("general principle best practice learned")
+                content_embedding = self._cache.encode(content)
+
+                from numpy import dot
+                from numpy.linalg import norm
+                similarity = dot(general_embedding, content_embedding) / (
+                    norm(general_embedding) * norm(content_embedding) + 1e-8
+                )
+
+                semantic_weight = 0.3
+                return base_score * (1 - semantic_weight) + (similarity + 1) / 2 * semantic_weight
+            except Exception as e:
+                logger.debug(f"Embedding similarity failed: {e}")
+
+        return base_score
+
+    def _get_embedding(self, content: str) -> list[float]:
+        """Get embedding for content using cache.
+
+        Args:
+            content: Content to embed.
+
+        Returns:
+            List of embedding dimensions.
+        """
+        if self.use_embeddings and self._cache is not None:
+            try:
+                emb = self._cache.encode(content)
+                return emb.tolist()
+            except Exception as e:
+                logger.debug(f"Failed to encode content: {e}")
+        return []
 
     def _save_knowledge(self) -> None:
         """Save knowledge to storage."""
@@ -222,6 +309,7 @@ class CrossSessionTransfer:
                 "occurrence_count": k.occurrence_count,
                 "created_at": k.created_at,
                 "metadata": k.metadata,
+                "embedding": k.embedding,
             }
             for k in self.knowledge
         ]
@@ -247,6 +335,7 @@ class CrossSessionTransfer:
                         occurrence_count=d.get("occurrence_count", 1),
                         created_at=d.get("created_at", ""),
                         metadata=d.get("metadata", {}),
+                        embedding=d.get("embedding", []),
                     )
                 )
         except Exception as e:
@@ -268,9 +357,57 @@ class CrossSessionTransfer:
             ),
         }
 
+    def activate_for_session(
+        self,
+        task_context: str,
+        min_score: float = 0.5,
+    ) -> list[dict[str, Any]]:
+        """Activate cross-session transfer at session start.
+
+        Loads relevant knowledge based on current task context and prepares
+        it for injection into routing context.
+
+        Args:
+            task_context: Current task/session description.
+            min_score: Minimum transferability threshold.
+
+        Returns:
+            List of knowledge dicts ready for context injection.
+        """
+        relevant = self.get_transferable_knowledge(
+            query=task_context,
+            min_score=min_score,
+            limit=5,
+        )
+
+        if not relevant:
+            return []
+
+        activated = []
+        for knowledge in relevant:
+            activated.append({
+                "content": knowledge.content,
+                "knowledge_type": knowledge.knowledge_type,
+                "confidence": knowledge.confidence,
+                "transferability_score": knowledge.transferability_score,
+                "source_session": knowledge.source_session,
+                "metadata": knowledge.metadata,
+            })
+
+        logger.info(f"Activated {len(activated)} transferable knowledge items for session")
+        return activated
+
 
 # Global singleton
 _transfer = CrossSessionTransfer()
+
+
+def activate_for_session(
+    task_context: str,
+    min_score: float = 0.5,
+) -> list[dict[str, Any]]:
+    """Convenience function to activate transfer for a session."""
+    return _transfer.activate_for_session(task_context, min_score)
 
 
 def extract_decisions(

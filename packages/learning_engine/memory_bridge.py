@@ -167,39 +167,68 @@ class TaskWrapper:
         if not self._auto_memory:
             return ""
 
-        # === BLEEDING EDGE: Use actual unified-memory router ===
+        # === ATHENA CONTEXT: Use Athena Context MCP for learning context ===
         try:
-            from packages.memory_core.router import MemoryRouter, UnifiedMemoryQuery
-            from packages.memory_core.retrievers.fusion import TEMPRRetriever
-
-            router = MemoryRouter()
-            uq = UnifiedMemoryQuery(query=query, max_results_per_source=top_k)
-            results = router.search(uq)
-
-            if not results.results:
-                return ""
-
-            # Format as memory context
+            from athena_context_mcp import get_user_profile, get_style_context, get_archive_context
+            
+            # Try Athena Context first - get_user_profile, get_style_context, get_archive_context
+            user_profile = get_user_profile() if hasattr(get_user_profile, '__call__') else None
+            style_context = get_style_context() if hasattr(get_style_context, '__call__') else None
+            archive_context = get_archive_context() if hasattr(get_archive_context, '__call__') else None
+            
+            # Format Athena Context results
             lines = [
-                "[MEMORY_BRIDGE MEMORY - Relevant context from previous sessions]:\n"
+                "[ATHENA CONTEXT - User Profile, Style & Archive]:\n"
             ]
-            for r in results.results:
-                lines.append(
-                    f"- {r.content[:300]} "
-                    f"(source: {r.source}, score: {r.relevance_score:.2f})"
-                )
+            
+            if user_profile:
+                lines.append(f"- USER: {str(user_profile)[:200]}")
+            if style_context:
+                lines.append(f"- STYLE: {str(style_context)[:200]}")
+            if archive_context:
+                lines.append(f"- ARCHIVE: {str(archive_context)[:300]}")
+            
             lines.append("")
-
+            
             logger.info(
-                f"MEMORY_BRIDGE pre-read: found {len(results.results)} "
-                f"memories from {results.sources_queried}"
+                f"MEMORY_BRIDGE: Retrieved context from Athena Context MCP"
             )
             return "\n".join(lines)
 
-        except Exception as e:
-            logger.warning(f"Unified memory search failed: {e}, falling back to cache")
-            # Fallback to simple keyword search from cache
-            return self._pre_read_fallback(query, top_k)
+        except ImportError:
+            # Fallback: Use unified-memory router if Athena Context not available
+            try:
+                from packages.memory_core.router import MemoryRouter, UnifiedMemoryQuery
+                from packages.memory_core.retrievers.fusion import TEMPRRetriever
+
+                router = MemoryRouter()
+                uq = UnifiedMemoryQuery(query=query, max_results_per_source=top_k)
+                results = router.search(uq)
+
+                if not results.results:
+                    return ""
+
+                # Format as memory context
+                lines = [
+                    "[MEMORY_BRIDGE MEMORY - Relevant context from previous sessions]:\n"
+                ]
+                for r in results.results:
+                    lines.append(
+                        f"- {r.content[:300]} "
+                        f"(source: {r.source}, score: {r.relevance_score:.2f})"
+                    )
+                lines.append("")
+
+                logger.info(
+                    f"MEMORY_BRIDGE pre-read: found {len(results.results)} "
+                    f"memories from {results.sources_queried}"
+                )
+                return "\n".join(lines)
+
+            except Exception as e:
+                logger.warning(f"Unified memory search failed: {e}, falling back to cache")
+                # Fallback to simple keyword search from cache
+                return self._pre_read_fallback(query, top_k)
 
     def _pre_read_fallback(self, query: str, top_k: int = 5) -> str:
         """Simple keyword-based fallback search."""

@@ -1,0 +1,39 @@
+[project]
+name = "n-xyme-core-mcp"
+version = "0.1.0"
+description = "Core MCP server for N-Xyme integration with memory, learning, and intelligence"
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
+dependencies = [
+    "n-xyme-memory-core",
+    "n-xyme-learning-engine",
+    "n-xyme-intelligence",
+    "nx-mind-mcp",
+    "fastmcp>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pyright>=1.1",
+    "ruff>=0.4",
+]
+
+[project.scripts]
+core-mcp = "core_mcp.__main__:main"
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+n-xyme-memory-core = { workspace = true }
+n-xyme-learning-engine = { workspace = true }
+n-xyme-intelligence = { workspace = true }
+nx-mind-mcp = { workspace = true }
+
+[tool.pyright]
+include = ["core_mcp"]
+executionEnvironments = [{ root = "." }]

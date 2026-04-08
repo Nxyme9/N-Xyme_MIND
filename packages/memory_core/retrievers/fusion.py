@@ -1,5 +1,6 @@
 """RRF Fusion Engine — Reciprocal Rank Fusion for multi-retriever result merging."""
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import logging
@@ -277,22 +278,37 @@ class TEMPRRetriever:
         if strategies is None:
             strategies = ["semantic", "keyword"]
 
-        # Run retrievers in parallel (sequential for now, can be async later)
-        retriever_results = []
-
         # Ensure top_k is an integer (defensive fix for type errors)
         top_k_int = int(top_k) if top_k else 10
 
-        for strategy in strategies:
+        # Run retrievers in parallel using ThreadPoolExecutor
+        retriever_results = []
+
+        def run_retriever(strategy_name: str):
+            """Execute a single retriever and return results."""
             try:
-                if strategy == "semantic":
-                    results = semantic.search(query, top_k_int * 2, tier)
-                    retriever_results.append(results)
-                elif strategy == "keyword":
-                    results = keyword.search(query, top_k_int * 2, tier)
-                    retriever_results.append(results)
+                if strategy_name == "semantic":
+                    return semantic.search(query, top_k_int * 2, tier)
+                elif strategy_name == "keyword":
+                    return keyword.search(query, top_k_int * 2, tier)
             except Exception as e:
-                logger.warning(f"TEMPR retriever: {strategy} strategy failed: {e}")
+                logger.warning(f"TEMPR retriever: {strategy_name} strategy failed: {e}")
+                return []
+
+        # Execute all retrievers in parallel
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_to_strategy = {
+                executor.submit(run_retriever, s): s for s in strategies
+            }
+            # Collect results as they complete
+            for future in as_completed(future_to_strategy):
+                strategy = future_to_strategy[future]
+                try:
+                    results = future.result()
+                    if results:
+                        retriever_results.append(results)
+                except Exception as e:
+                    logger.warning(f"TEMPR retriever: {strategy} failed: {e}")
 
         # Fuse results
         fused = rrf_fusion(retriever_results)

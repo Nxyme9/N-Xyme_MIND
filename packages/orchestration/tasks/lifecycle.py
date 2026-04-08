@@ -6,6 +6,7 @@ Implements a complete task lifecycle with:
 - Task persistence, resumption, and dependency tracking
 - Task hierarchy (parent/child tasks)
 - Task output streaming and retrieval
+- Auto-logging of task outcomes to learning engine
 
 Pattern: Tasks are first-class citizens with full lifecycle management,
 enabling complex multi-step workflows with error recovery.
@@ -15,15 +16,35 @@ from __future__ import annotations
 
 import json
 import logging
+import threading
 import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 
 logger = logging.getLogger(__name__)
+
+# Import hooks for auto-logging (lazy import to avoid circular deps)
+_task_outcome_hook: Optional[Any] = None
+
+# TaskWatchdog singleton
+_watchdog: Optional[Any] = None
+
+
+def _get_watchdog():
+    """Lazily load TaskWatchdog to avoid circular imports."""
+    global _watchdog
+    if _watchdog is None:
+        try:
+            from packages.orchestration.task_watchdog import get_watchdog
+            _watchdog = get_watchdog()
+        except ImportError as e:
+            logger.warning(f"Could not import TaskWatchdog: {e}")
+            _watchdog = False  # Mark as failed
+    return _watchdog if _watchdog else None
 
 
 class TaskType(str, Enum):
@@ -144,6 +165,8 @@ class Task:
             raise ValueError(f"Cannot start task in {self.status} state")
         self.status = TaskStatus.RUNNING
         self.started_at = datetime.now(timezone.utc).isoformat()
+        # Call the outcome hook
+        _call_before_task(self)
 
     def pause(self) -> None:
         """Pause a running task."""
@@ -173,6 +196,8 @@ class Task:
         self.completed_at = datetime.now(timezone.utc).isoformat()
         if output:
             self.output = output
+        # Call the outcome hook for success
+        _call_after_task(self, success=True)
 
     def fail(self, error_message: str) -> None:
         """Mark task as failed."""
@@ -181,6 +206,8 @@ class Task:
         self.status = TaskStatus.FAILED
         self.completed_at = datetime.now(timezone.utc).isoformat()
         self.error_message = error_message
+        # Call the outcome hook for failure
+        _call_after_task(self, success=False, error=error_message)
 
     def cancel(self) -> None:
         """Cancel a task."""
@@ -188,6 +215,8 @@ class Task:
             raise ValueError(f"Cannot cancel task in {self.status} state")
         self.status = TaskStatus.CANCELLED
         self.completed_at = datetime.now(timezone.utc).isoformat()
+        # Call the outcome hook for cancellation (treated as failure)
+        _call_after_task(self, success=False, error="cancelled")
 
     def to_dict(self) -> dict[str, Any]:
         """Convert task to dictionary."""
@@ -435,3 +464,107 @@ def list_tasks(
 ) -> list[Task]:
     """Convenience function to list tasks."""
     return _task_manager.list_tasks(status, task_type, parent_id)
+
+
+# =============================================================================
+# TaskOutcomeHook Integration
+# =============================================================================
+
+def _get_task_outcome_hook():
+    """Lazily load TaskOutcomeHook to avoid circular imports."""
+    global _task_outcome_hook
+    if _task_outcome_hook is None:
+        try:
+            from learning_engine import get_task_hook
+            _task_outcome_hook = get_task_hook()
+        except ImportError as e:
+            logger.warning(f"Could not import TaskOutcomeHook: {e}")
+            _task_outcome_hook = False  # Mark as failed
+    return _task_outcome_hook if _task_outcome_hook else None
+
+
+def _call_before_task(task: Task) -> None:
+    """Call TaskOutcomeHook.before_task() when task starts."""
+    hook = _get_task_outcome_hook()
+    if hook is None:
+        return
+    try:
+        task_type_map = {
+            TaskType.LOCAL_BASH: "implementation",
+            TaskType.LOCAL_AGENT: "implementation",
+            TaskType.REMOTE_AGENT: "implementation",
+            TaskType.WORKFLOW: "implementation",
+            TaskType.MONITOR: "monitor",
+            TaskType.DREAM: "research",
+        }
+        hook.before_task(
+            task_id=task.id,
+            description=task.description,
+            agent="unknown",  # Will be auto-detected
+            level=3,  # Default to moderate complexity
+            task_type=task_type_map.get(task.type, "implementation"),
+            context={
+                "task_type_enum": task.type.value,
+                "parent_id": task.parent_id,
+                "dependencies": task.dependencies,
+                "metadata": task.metadata,
+            },
+        )
+    except Exception as e:
+        logger.error(f"Error calling before_task hook: {e}")
+    finally:
+        # Register with TaskWatchdog for timeout monitoring
+        _register_with_watchdog(task)
+
+
+def _register_with_watchdog(task: Task) -> None:
+    """Register task with TaskWatchdog for stall detection."""
+    watchdog = _get_watchdog()
+    if watchdog is None:
+        return
+    try:
+        timeout = task.timeout_seconds or 300  # Default 5 min
+        watchdog.register_task(
+            task_id=task.id,
+            agent_type=task.type.value,
+            timeout_seconds=timeout,
+        )
+    except Exception as e:
+        logger.error(f"Error registering with watchdog: {e}")
+
+
+def send_heartbeat(task_id: str) -> None:
+    """Send heartbeat for a running task to prevent stall detection."""
+    watchdog = _get_watchdog()
+    if watchdog is None:
+        return
+    try:
+        watchdog.heartbeat(task_id)
+    except Exception as e:
+        logger.error(f"Error sending heartbeat: {e}")
+
+
+def _call_after_task(task: Task, success: bool, error: str | None = None) -> None:
+    """Call TaskOutcomeHook.after_task() when task completes."""
+    hook = _get_task_outcome_hook()
+    if hook is None:
+        return
+    try:
+        additional_context = {
+            "task_type_enum": task.type.value,
+            "status": task.status.value,
+            "duration_seconds": task.duration_seconds,
+        }
+        if task.output:
+            additional_context["exit_code"] = task.output.exit_code
+        if task.metadata:
+            additional_context["metadata"] = task.metadata
+
+        hook.after_task(
+            task_id=task.id,
+            success=success,
+            error=error or task.error_message,
+            additional_context=additional_context,
+        )
+    except Exception as e:
+        logger.error(f"Error calling after_task hook: {e}")

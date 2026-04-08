@@ -44,11 +44,13 @@ class LocalLLM:
         "temperature": 0.3,  # Lower for deterministic tool selection
         "top_p": 0.95,  # Nucleus sampling
         "top_k": 40,  # Limit vocabulary
-        "num_ctx": 8192,  # Context window size
+        "num_ctx": 131072,  # Context window size (128k for large codebases)
+        "num_gpu": 35,  # GPU layers for GGUF models
         "repeat_penalty": 1.1,  # Reduce token repetition
         "seed": 42,  # Reproducibility
         "num_predict": 2048,  # Max tokens to generate
         "stream": False,  # Easier parsing
+        "cache_type": "q4_0",  # KV cache quantization
     }
 
     # Override params for general chat (higher creativity)

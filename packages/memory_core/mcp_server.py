@@ -190,7 +190,7 @@ def get_memory_stats() -> dict:
                 try:
                     cur.execute(f"SELECT COUNT(*) FROM {table}")
                     tables[table] = cur.fetchone()[0]
-                except:
+                except sqlite3.Error:
                     pass
             stats["file_registry"] = tables
             conn.close()

@@ -70,6 +70,9 @@ class UnifiedDelegationRouter:
         self._advanced_learning = None
         self._ActionType = None
 
+        # NEW: Semantic Task Classifier (Strategy 2.5)
+        self._semantic_classifier = None
+
     def _init_components(self):
         """Lazy initialization of all routing components."""
         # Core components
@@ -85,7 +88,7 @@ class UnifiedDelegationRouter:
             try:
                 from packages.intelligence.router.trigger import get_trigger_router
 
-                project_root = Path(__file__).parent.parent
+                project_root = Path(__file__).parent.parent.parent.parent
                 trigger_config = str(
                     project_root / ".sisyphus" / "routing-triggers.json"
                 )
@@ -211,6 +214,16 @@ class UnifiedDelegationRouter:
             except Exception as e:
                 logger.warning(f"Advanced Learning Engine unavailable: {e}")
 
+        # NEW: Initialize Semantic Task Classifier (Strategy 2.5)
+        if self._semantic_classifier is None:
+            try:
+                from packages.intelligence.router.semantic_classifier import SemanticTaskClassifier
+
+                self._semantic_classifier = SemanticTaskClassifier(db_path=".sisyphus/routing.db")
+                logger.info("SemanticTaskClassifier connected to UnifiedRouter")
+            except Exception as e:
+                logger.warning(f"Semantic Task Classifier unavailable: {e}")
+
     async def route_task(self, task_description: str) -> RoutingDecision:
         """Route a task using all available strategies with fallback chain."""
         start_time = time.time()
@@ -271,12 +284,46 @@ class UnifiedDelegationRouter:
             except Exception as e:
                 logger.warning(f"ML routing failed: {e}")
 
+        # Strategy 2.5: Semantic Classifier (NEW - between ML and Memory)
+        if self._semantic_classifier:
+            try:
+                semantic_result = self._semantic_classifier.classify(task_description)
+                if semantic_result.confidence > 0.75:
+                    # High confidence - return immediately as PRIMARY strategy
+                    decision = RoutingDecision(
+                        task_description=task_description,
+                        level=semantic_result.predicted_level,
+                        agent=semantic_result.predicted_agent,
+                        confidence=semantic_result.confidence,
+                        strategy_used="semantic_classifier",
+                        reason=f"Semantic classifier: {semantic_result.method}, top agents: {semantic_result.top_features}",
+                        alternatives=alternatives,
+                        latency_ms=(time.time() - start_time) * 1000,
+                    )
+                    logger.info(
+                        f"Semantic classifier routing: {decision.agent} (L{decision.level}, conf={semantic_result.confidence:.2f})"
+                    )
+                    return self._enhance_decision(decision, task_description)
+                else:
+                    # Lower confidence - add to alternatives with lower priority
+                    alternatives.append(
+                        {
+                            "strategy": "semantic_classifier",
+                            "level": semantic_result.predicted_level,
+                            "agent": semantic_result.predicted_agent,
+                            "confidence": semantic_result.confidence,
+                            "method": semantic_result.method,
+                        }
+                    )
+            except Exception as e:
+                logger.warning(f"Semantic classifier routing failed: {e}")
+
         # Strategy 3: Memory-augmented routing
         if self._memory_router:
             try:
                 keyword_level = 2
                 if self._complexity_scorer:
-                    keyword_level = self._complexity_scorer(task_description).level
+                    keyword_level = self._complexity_scorer.score(task_description).level
 
                 recommendation = await self._memory_router.get_routing_recommendation(
                     task_description, keyword_level
@@ -312,7 +359,7 @@ class UnifiedDelegationRouter:
         # Strategy 4: Local model analysis (for L3+ tasks)
         if self._local_analyzer and self._complexity_scorer:
             try:
-                keyword_result = self._complexity_scorer(task_description)
+                keyword_result = self._complexity_scorer.score(task_description)
                 if keyword_result.level >= 3:
                     analysis = await self._local_analyzer.analyze_complexity(
                         task_description, keyword_result.level
@@ -347,7 +394,7 @@ class UnifiedDelegationRouter:
             try:
                 keyword_level = 2
                 if self._complexity_scorer:
-                    keyword_level = self._complexity_scorer(task_description).level
+                    keyword_level = self._complexity_scorer.score(task_description).level
 
                 # Use Q-Learning for action selection
                 context = {"level": keyword_level, "strategy": "q_learning"}
@@ -398,7 +445,7 @@ class UnifiedDelegationRouter:
             try:
                 keyword_level = 2
                 if self._complexity_scorer:
-                    keyword_level = self._complexity_scorer(task_description).level
+                    keyword_level = self._complexity_scorer.score(task_description).level
 
                 recommendation = self._routing_optimizer.get_optimal_agent(
                     task_description, keyword_level
@@ -431,7 +478,7 @@ class UnifiedDelegationRouter:
         # Strategy 6: Keyword-based fallback (always available)
         if self._complexity_scorer:
             try:
-                keyword_result = self._complexity_scorer(task_description)
+                keyword_result = self._complexity_scorer.score(task_description)
                 decision = RoutingDecision(
                     task_description=task_description,
                     level=keyword_result.level,
@@ -641,6 +688,14 @@ class UnifiedDelegationRouter:
                 )
             except Exception as e:
                 logger.warning(f"Advanced learning update failed: {e}")
+
+        # NEW: Update Semantic Classifier with online learning
+        if self._semantic_classifier:
+            try:
+                self._semantic_classifier.partial_fit(task_description, agent, success)
+                logger.debug(f"Semantic classifier updated with outcome: {agent}")
+            except Exception as e:
+                logger.warning(f"Semantic classifier update failed: {e}")
 
         # Record to memory router
         if self._memory_router:

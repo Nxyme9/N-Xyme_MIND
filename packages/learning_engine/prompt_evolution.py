@@ -40,10 +40,42 @@ class PromptVersion:
     grade: EvaluationGrade = EvaluationGrade.POOR
     created_at: float = field(default_factory=time.time)
     metadata: Dict[str, Any] = field(default_factory=dict)
+    outcome_count: int = 0
+    outcome_successes: int = 0
+    total_latency_ms: float = 0.0
+    total_tokens: int = 0
 
     def content_hash(self) -> str:
         """SHA-256 hash of the prompt content."""
         return hashlib.sha256(self.content.encode("utf-8")).hexdigest()[:16]
+
+    def success_rate(self) -> float:
+        """Calculate outcome-based success rate."""
+        if self.outcome_count == 0:
+            return 0.0
+        return self.outcome_successes / self.outcome_count
+
+    def avg_latency_ms(self) -> float:
+        """Calculate average latency per outcome."""
+        if self.outcome_count == 0:
+            return 0.0
+        return self.total_latency_ms / self.outcome_count
+
+    def avg_tokens(self) -> float:
+        """Calculate average tokens per outcome."""
+        if self.outcome_count == 0:
+            return 0.0
+        return self.total_tokens / self.outcome_count
+
+    def token_efficiency_score(self) -> float:
+        """Score based on token efficiency (shorter prompts = higher score)."""
+        word_count = len(self.content.split())
+        if word_count == 0:
+            return 0.0
+        max_efficient_words = 100
+        if word_count <= max_efficient_words:
+            return 1.0 - (word_count / max_efficient_words) * 0.3
+        return 0.7
 
 
 @dataclass
@@ -127,7 +159,23 @@ class PromptWizard:
                     grade TEXT NOT NULL DEFAULT 'poor',
                     created_at REAL NOT NULL,
                     metadata_json TEXT NOT NULL DEFAULT '{}',
+                    outcome_count INTEGER NOT NULL DEFAULT 0,
+                    outcome_successes INTEGER NOT NULL DEFAULT 0,
+                    total_latency_ms REAL NOT NULL DEFAULT 0.0,
+                    total_tokens INTEGER NOT NULL DEFAULT 0,
                     FOREIGN KEY (prompt_id) REFERENCES prompt_records(prompt_id)
+                );
+                CREATE TABLE IF NOT EXISTS prompt_outcomes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    prompt_id TEXT NOT NULL,
+                    version INTEGER NOT NULL,
+                    success INTEGER NOT NULL,
+                    latency_ms REAL NOT NULL,
+                    tokens_used INTEGER NOT NULL DEFAULT 0,
+                    task_description TEXT NOT NULL DEFAULT '',
+                    created_at REAL NOT NULL,
+                    FOREIGN KEY (prompt_id, version) 
+                        REFERENCES prompt_versions(prompt_id, version)
                 );
             """)
 
@@ -168,6 +216,10 @@ class PromptWizard:
                     grade=EvaluationGrade(v["grade"]),
                     created_at=v["created_at"],
                     metadata=json.loads(v["metadata_json"]),
+                    outcome_count=v["outcome_count"],
+                    outcome_successes=v["outcome_successes"],
+                    total_latency_ms=v["total_latency_ms"],
+                    total_tokens=v["total_tokens"],
                 )
                 record.versions.append(pv)
             self._records[record.prompt_id] = record
@@ -197,8 +249,9 @@ class PromptWizard:
                     INSERT INTO prompt_versions (
                         prompt_id, version, content, generation_method,
                         critique, refinements_json, score, grade,
-                        created_at, metadata_json
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        created_at, metadata_json, outcome_count, 
+                        outcome_successes, total_latency_ms, total_tokens
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT DO NOTHING
                     """,
                     (
@@ -212,6 +265,10 @@ class PromptWizard:
                         v.grade.value,
                         v.created_at,
                         json.dumps(v.metadata),
+                        v.outcome_count,
+                        v.outcome_successes,
+                        v.total_latency_ms,
+                        v.total_tokens,
                     ),
                 )
 
@@ -432,6 +489,158 @@ class PromptWizard:
         """Return a summary of all versions: (version, score, grade)."""
         record = self._get(prompt_id)
         return [(v.version, v.score, v.grade.value) for v in record.versions]
+
+    def record_outcome(
+        self,
+        prompt_id: str,
+        version: int,
+        success: bool,
+        latency_ms: float,
+        tokens_used: int = 0,
+        task_description: str = "",
+    ) -> None:
+        """Record a delegation outcome for a specific prompt version.
+
+        This links actual delegation results to prompt versions for
+        outcome-based scoring.
+
+        Args:
+            prompt_id: The prompt identifier
+            version: The prompt version number
+            success: Whether the delegation succeeded
+            latency_ms: Time taken for the delegation
+            tokens_used: Number of tokens consumed
+            task_description: Description of the task (for tracking)
+        """
+        record = self._get(prompt_id)
+        v = next((ver for ver in record.versions if ver.version == version), None)
+        if v is None:
+            raise KeyError(f"Version {version} not found for prompt '{prompt_id}'")
+
+        v.outcome_count += 1
+        if success:
+            v.outcome_successes += 1
+        v.total_latency_ms += latency_ms
+        v.total_tokens += tokens_used
+
+        with self._connect() as conn:
+            conn.execute(
+                """
+                INSERT INTO prompt_outcomes 
+                    (prompt_id, version, success, latency_ms, tokens_used, task_description, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    prompt_id,
+                    version,
+                    1 if success else 0,
+                    latency_ms,
+                    tokens_used,
+                    task_description,
+                    time.time(),
+                ),
+            )
+        record.updated_at = time.time()
+        self._persist_record(record)
+        logger.info(
+            "Recorded outcome for '%s' v%d: success=%s, latency=%.0fms, tokens=%d",
+            prompt_id,
+            version,
+            success,
+            latency_ms,
+            tokens_used,
+        )
+
+    def get_outcome_based_score(self, prompt_id: str, version: int) -> float:
+        """Calculate outcome-based score for a prompt version.
+
+        Combines:
+        - Success rate (40% weight)
+        - Token efficiency (30% weight) - shorter prompts score higher
+        - Latency efficiency (30% weight) - faster is better
+
+        Returns:
+            Score between 0.0 and 1.0
+        """
+        record = self._get(prompt_id)
+        v = next((ver for ver in record.versions if ver.version == version), None)
+        if v is None:
+            raise KeyError(f"Version {version} not found for prompt '{prompt_id}'")
+
+        success_rate = v.success_rate()
+        token_efficiency = v.token_efficiency_score()
+        latency_score = self._calculate_latency_score(v.avg_latency_ms())
+
+        weighted_score = (
+            success_rate * 0.4
+            + token_efficiency * 0.3
+            + latency_score * 0.3
+        )
+        return max(0.0, min(1.0, weighted_score))
+
+    def update_scores_from_outcomes(self, prompt_id: str) -> None:
+        """Update all versions of a prompt with outcome-based scores.
+
+        Replaces heuristic scores with outcome-based scores where
+        outcome data is available.
+        """
+        record = self._get(prompt_id)
+        for v in record.versions:
+            if v.outcome_count > 0:
+                v.score = self.get_outcome_based_score(prompt_id, v.version)
+                v.grade = self._score_to_grade(v.score)
+        best = record.best()
+        if best is not None:
+            record.best_version = best.version
+        record.updated_at = time.time()
+        self._persist_record(record)
+        logger.info("Updated scores from outcomes for prompt '%s'", prompt_id)
+
+    def get_prompt_outcomes(
+        self, prompt_id: str, version: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
+        """Get all recorded outcomes for a prompt version or all versions."""
+        with self._connect() as conn:
+            if version is not None:
+                rows = conn.execute(
+                    """SELECT * FROM prompt_outcomes 
+                       WHERE prompt_id = ? AND version = ? 
+                       ORDER BY created_at DESC""",
+                    (prompt_id, version),
+                ).fetchall()
+            else:
+                rows = conn.execute(
+                    """SELECT * FROM prompt_outcomes 
+                       WHERE prompt_id = ? 
+                       ORDER BY version, created_at DESC""",
+                    (prompt_id,),
+                ).fetchall()
+        return [
+            {
+                "version": r["version"],
+                "success": bool(r["success"]),
+                "latency_ms": r["latency_ms"],
+                "tokens_used": r["tokens_used"],
+                "task_description": r["task_description"],
+                "created_at": r["created_at"],
+            }
+            for r in rows
+        ]
+
+    @staticmethod
+    def _calculate_latency_score(avg_latency_ms: float) -> float:
+        """Convert average latency to a 0-1 score."""
+        if avg_latency_ms <= 0:
+            return 0.0
+        if avg_latency_ms <= 500:
+            return 1.0
+        if avg_latency_ms <= 2000:
+            return 0.8
+        if avg_latency_ms <= 5000:
+            return 0.6
+        if avg_latency_ms <= 10000:
+            return 0.4
+        return 0.2
 
     def delete(self, prompt_id: str) -> None:
         """Remove a prompt record and all its versions.

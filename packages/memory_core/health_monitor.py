@@ -38,11 +38,13 @@ DRIVES_TO_CHECK = [
 
 # Weights for health score calculation
 WEIGHTS = {
-    "db_integrity": 0.20,
-    "chroma_health": 0.20,
-    "disk_space": 0.25,
-    "memory_usage": 0.15,
-    "embedding_coverage": 0.20,
+    "db_integrity": 0.17,
+    "chroma_health": 0.17,
+    "disk_space": 0.22,
+    "memory_usage": 0.12,
+    "embedding_coverage": 0.17,
+    "embedding_cache": 0.08,
+    "qlearning_state": 0.07,
 }
 
 
@@ -408,6 +410,96 @@ class HealthMonitor:
         )
         return result
 
+    def check_embedding_cache(self) -> dict:
+        """Check embedding cache/model availability.
+
+        Returns:
+            dict with status, details, timestamp
+        """
+        result = {
+            "status": "healthy",
+            "details": {},
+            "timestamp": self._get_timestamp(),
+        }
+
+        try:
+            from sentence_transformers import SentenceTransformer
+
+            model = SentenceTransformer("all-MiniLM-L6-v2")
+            test_embedding = model.encode("test", convert_to_numpy=True)
+            result["details"]["model_loaded"] = True
+            result["details"]["embedding_dim"] = len(test_embedding)
+
+        except ImportError:
+            result["status"] = "degraded"
+            result["details"]["error"] = "sentence-transformers not installed"
+            result["details"]["fallback"] = "using chroma embeddings"
+        except Exception as e:
+            result["status"] = "degraded"
+            result["details"]["error"] = str(e)
+            result["details"]["fallback"] = "using chroma embeddings"
+
+        self._log_check("embedding_cache", result["status"].upper(), result["details"])
+        return result
+
+    def check_qlearning_state(self) -> dict:
+        """Check Q-Learning state and routing database.
+
+        Returns:
+            dict with status, details, timestamp
+        """
+        result = {
+            "status": "healthy",
+            "details": {},
+            "timestamp": self._get_timestamp(),
+        }
+
+        try:
+            project_root = Path(__file__).parent.parent.parent
+            config_path = project_root / ".sisyphus" / "learning-config.json"
+            routing_db = project_root / ".sisyphus" / "routing.db"
+
+            if config_path.exists():
+                import json
+
+                with open(config_path) as f:
+                    config = json.load(f)
+                result["details"]["config_exists"] = True
+                result["details"]["learning_enabled"] = config.get("enabled", False)
+            else:
+                result["details"]["config_exists"] = False
+
+            if routing_db.exists():
+                conn = sqlite3.connect(str(routing_db), timeout=10.0)
+                cursor = conn.execute(
+                    "SELECT COUNT(*) FROM delegation_outcomes"
+                )
+                outcome_count = cursor.fetchone()[0]
+                conn.close()
+                result["details"]["routing_db_exists"] = True
+                result["details"]["outcome_count"] = outcome_count
+            else:
+                result["details"]["routing_db_exists"] = False
+
+            if not result["details"].get("config_exists") and not result["details"].get(
+                "routing_db_exists"
+            ):
+                result["status"] = "degraded"
+                result["details"]["note"] = "No learning state found, using defaults"
+
+        except ImportError:
+            result["status"] = "degraded"
+            result["details"]["error"] = "json not available"
+        except sqlite3.Error as e:
+            result["status"] = "degraded"
+            result["details"]["routing_error"] = str(e)
+        except Exception as e:
+            result["status"] = "warning"
+            result["details"]["error"] = str(e)
+
+        self._log_check("qlearning_state", result["status"].upper(), result["details"])
+        return result
+
     def check_all(self) -> dict:
         """Run all health checks.
 
@@ -420,6 +512,8 @@ class HealthMonitor:
             "disk_space": self.check_disk_space(),
             "memory_usage": self.check_memory_usage(),
             "embedding_coverage": self.check_embedding_coverage(),
+            "embedding_cache": self.check_embedding_cache(),
+            "qlearning_state": self.check_qlearning_state(),
         }
 
         self._last_check = {
@@ -458,11 +552,17 @@ class HealthMonitor:
                     check_result = self.check_memory_usage()
                 elif check_name == "embedding_coverage":
                     check_result = self.check_embedding_coverage()
+                elif check_name == "embedding_cache":
+                    check_result = self.check_embedding_cache()
+                elif check_name == "qlearning_state":
+                    check_result = self.check_qlearning_state()
 
             status = check_result.get("status", "healthy")
 
             if status == "healthy":
                 score += weight * 1.0
+            elif status == "degraded":
+                score += weight * 0.75
             elif status == "warning":
                 score += weight * 0.5
             elif status == "critical":

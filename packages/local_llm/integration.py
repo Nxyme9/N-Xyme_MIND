@@ -273,18 +273,32 @@ class LocalLLMIntegration:
             return {"error": str(e), "note": "unified-memory MCP not connected"}
 
     async def _handle_athena_search(self, args: Dict[str, Any]) -> Dict[str, Any]:
-        """Handle athena_smart_search tool."""
+        """Handle athena_smart_search tool - now uses unified-memory."""
         try:
-            from athena import athena_smart_search
-
-            result = athena_smart_search(
+            # Use unified-memory instead of deprecated Athena
+            from packages.memory_core.router import MemoryRouter, UnifiedMemoryQuery
+            
+            router = MemoryRouter()
+            query = UnifiedMemoryQuery(
                 query=args.get("query", ""),
-                limit=args.get("limit", 10),
-                rerank=args.get("rerank", False),
+                max_results_per_source=args.get("limit", 10)
             )
-            return result
+            results = router.search(query)
+            
+            return {
+                "results": [
+                    {
+                        "source": r.source,
+                        "content": r.content[:500] if isinstance(r.content, str) else str(r.content)[:500],
+                        "score": r.relevance_score
+                    }
+                    for r in results.results
+                ],
+                "total": results.total_results,
+                "sources": results.sources_queried
+            }
         except Exception as e:
-            return {"error": str(e), "note": "athena MCP not connected"}
+            return {"error": str(e), "note": "unified-memory search failed"}
 
     async def _handle_git_log(self, args: Dict[str, Any]) -> Dict[str, Any]:
         """Handle git_log tool."""

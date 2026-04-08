@@ -77,7 +77,7 @@ class HealthMonitor:
             components["file_watcher"] = {"running": watcher_ok, "healthy": watcher_ok}
             if not watcher_ok:
                 errors.append("File watcher not running")
-        except Exception as e:
+        except ImportError as e:
             components["file_watcher"] = {
                 "running": False,
                 "healthy": False,
@@ -99,7 +99,7 @@ class HealthMonitor:
             }
             if not scheduler_ok:
                 errors.append("Scan scheduler not running")
-        except Exception as e:
+        except ImportError as e:
             components["scan_scheduler"] = {
                 "running": False,
                 "healthy": False,
@@ -116,7 +116,7 @@ class HealthMonitor:
             components["drives"] = {"healthy": all_healthy, "drives": drive_results}
             if not all_healthy:
                 errors.append("Some drives not healthy")
-        except Exception as e:
+        except ImportError as e:
             components["drives"] = {"healthy": False, "error": str(e)}
             errors.append(f"Drive health check error: {e}")
 
@@ -125,7 +125,7 @@ class HealthMonitor:
             from . import vector_index
 
             components["vector_index"] = {"healthy": True}
-        except Exception as e:
+        except ImportError as e:
             components["vector_index"] = {"healthy": False, "error": str(e)}
             errors.append(f"Vector index error: {e}")
 
@@ -254,7 +254,7 @@ class MemoryDaemon:
             from .scan_scheduler import get_scan_status
 
             components["scan_scheduler"] = get_scan_status()
-        except Exception as e:
+        except ImportError as e:
             logger.debug(f"Could not get scan status: {e}")
 
         # Get watcher status
@@ -262,7 +262,7 @@ class MemoryDaemon:
             from .file_watcher import is_watcher_running
 
             components["file_watcher"] = {"running": is_watcher_running()}
-        except Exception as e:
+        except ImportError as e:
             logger.debug(f"Could not get watcher status: {e}")
 
         status: dict[str, Any] = {
@@ -285,7 +285,7 @@ class MemoryDaemon:
                 if self._health_monitor:
                     self._health_monitor.check()
                 self._write_status()
-            except Exception as e:
+            except (OSError, ImportError) as e:
                 logger.error(f"Health check error: {e}")
 
             # Sleep until next check
@@ -328,14 +328,14 @@ class MemoryDaemon:
                     status = tracker.get_status("learning_cycle")
                     if status.get("nudge_message"):
                         logger.warning(f"Budget nudge: {status['nudge_message']}")
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.debug(f"Budget tracking skipped: {e}")
                 # 1. Adapt priority weights
                 try:
                     if self._priority_engine:
                         self._priority_engine._adapt_weights()
                         logger.info("Priority weights adapted")
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.error(f"Error adapting priority weights: {e}")
 
                 # 2. Check knowledge graph for merges
@@ -348,7 +348,7 @@ class MemoryDaemon:
                         logger.info(f"Found {len(merges)} entity merge suggestions")
                     else:
                         logger.debug("No entity merges suggested")
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.error(f"Error checking knowledge graph merges: {e}")
 
                 # 3. Archive old memories if enabled
@@ -361,7 +361,7 @@ class MemoryDaemon:
                             min_importance=config.get("min_confidence", 0.8),
                         )
                         logger.info(f"Archived {archived} old memories")
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.error(f"Error archiving old memories: {e}")
                 # 4. Run self-healing check
                 try:
@@ -403,7 +403,7 @@ class MemoryDaemon:
                                 # Normalize: <500ms = 100, >5000ms = 0
                                 response_score = max(0, 100 - (elapsed_ms - 500) / 50)
                                 return response_score, 0.0  # No error
-                        except Exception:
+                        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, OSError):
                             return 0.0, 100.0  # Max error rate
 
                     # Helper function to measure Memory DB health
@@ -422,7 +422,7 @@ class MemoryDaemon:
                                 # More tables = healthier (normalized 0-100)
                                 return min(100.0, count * 10), 0.0
                             return 0.0, 100.0  # DB doesn't exist = error
-                        except Exception:
+                        except (sqlite3.Error, OSError, FileNotFoundError):
                             return 0.0, 100.0
 
                     # Helper function to measure Knowledge Graph health
@@ -437,7 +437,7 @@ class MemoryDaemon:
                             total = entities + relations
                             score = min(100.0, total / 10)  # 100 entities = 100 score
                             return score, 0.0
-                        except Exception:
+                        except (ImportError, OSError):
                             return 0.0, 100.0
 
                     # Helper function to measure MCP Server health
@@ -459,7 +459,7 @@ class MemoryDaemon:
                                 except (psutil.NoSuchProcess, psutil.AccessDenied):
                                     pass
                             return 20.0, 80.0  # No process found
-                        except Exception:
+                        except (ImportError, OSError):
                             return 0.0, 100.0  # Cannot determine health
 
                     # Measure real metrics for each component
@@ -500,7 +500,7 @@ class MemoryDaemon:
                             logger.info(
                                 f"Recovery for '{comp}': {state.attempts} attempts, recovered={state.recovered}"
                             )
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.error(f"Error in self-healing check: {e}")
 
                 # 5. Run sleep cycle (JOURNAL → CONSOLIDATE → RECALL)
@@ -532,13 +532,13 @@ class MemoryDaemon:
                                 else []
                             )
                             logger.info("Sleep cycle results re-indexed")
-                    except Exception as e:
+                    except (ImportError, OSError) as e:
                         logger.debug(f"Sleep re-index skipped: {e}")
-                except Exception as e:
+                except (ImportError, OSError) as e:
                     logger.error(f"Error running sleep cycle: {e}")
                 logger.info("Learning cycle completed")
 
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"Learning cycle error: {e}")
 
             # Sleep until next cycle (check stop event every minute)
@@ -556,7 +556,7 @@ class MemoryDaemon:
                 for line in f:
                     if line.startswith("VmRSS:"):
                         return int(line.split()[1]) / 1024  # kB → MB
-        except Exception:
+        except (OSError, FileNotFoundError, PermissionError):
             return 0.0
         return 0.0
 
@@ -584,7 +584,7 @@ class MemoryDaemon:
                     return  # Never reached after execv
 
                 self._memory_stop_event.wait(self.MEMORY_CHECK_INTERVAL)
-            except Exception as e:
+            except (OSError, ImportError) as e:
                 logger.error(f"Memory monitor error: {e}")
                 self._memory_stop_event.wait(self.MEMORY_CHECK_INTERVAL)
 
@@ -615,7 +615,7 @@ class MemoryDaemon:
                 db_path = self.config.get("db_path", "context/memory/file_registry.db")
                 self._priority_engine = RealPriorityEngine(db_path)
                 logger.info("Real PriorityEngine initialized")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.warning(f"Failed to initialize PriorityEngine: {e}")
 
             # Start file watcher
@@ -629,7 +629,7 @@ class MemoryDaemon:
                     logger.info("File watcher started")
                 else:
                     logger.warning("Failed to start file watcher")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"File watcher error: {e}")
 
             # Start scan scheduler
@@ -641,7 +641,7 @@ class MemoryDaemon:
                     logger.info(f"Scan scheduler started (interval: {interval}h)")
                 else:
                     logger.warning("Failed to start scan scheduler")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"Scan scheduler error: {e}")
 
             # Start health check thread
@@ -675,7 +675,7 @@ class MemoryDaemon:
                     self._learning_thread.start()
                     self._threads.append(self._learning_thread)
                     logger.info("Learning cycle thread started")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"Error starting learning thread: {e}")
 
             # Mark as running
@@ -687,7 +687,7 @@ class MemoryDaemon:
             logger.info("MemoryDaemon started successfully")
             return True
 
-        except Exception as e:
+        except (ImportError, OSError) as e:
             logger.error(f"Failed to start daemon: {e}")
             self._status["errors"].append(str(e))
             return False
@@ -715,7 +715,7 @@ class MemoryDaemon:
 
                 stop_watcher()
                 logger.info("File watcher stopped")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"Error stopping file watcher: {e}")
 
             # Stop scan scheduler
@@ -724,7 +724,7 @@ class MemoryDaemon:
 
                 stop_scheduler()
                 logger.info("Scan scheduler stopped")
-            except Exception as e:
+            except (ImportError, OSError) as e:
                 logger.error(f"Error stopping scan scheduler: {e}")
 
             # Signal memory monitor to stop
@@ -750,7 +750,7 @@ class MemoryDaemon:
             logger.info("MemoryDaemon stopped successfully")
             return True
 
-        except Exception as e:
+        except (ImportError, OSError) as e:
             logger.error(f"Error during shutdown: {e}")
             return False
 
@@ -790,14 +790,14 @@ class MemoryDaemon:
             from .file_watcher import is_watcher_running
 
             status["components"]["file_watcher"] = {"running": is_watcher_running()}
-        except Exception:
+        except (ImportError, OSError):
             pass
 
         try:
             from .scan_scheduler import get_scan_status
 
             status["components"]["scan_scheduler"] = get_scan_status()
-        except Exception:
+        except (ImportError, OSError):
             pass
 
         return status

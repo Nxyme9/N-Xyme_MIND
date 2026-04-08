@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# vpnsocks — Run any command through VPN proxy
+# Usage: vpnsocks [-s|--socks] [-p PORT] <command> [args...]
+
+PROXY_HOST="127.0.0.1"
+PROXY_PORT=18080
+USE_SOCKS=false
+
+die() { printf '[vpnsocks] ERROR: %s\n' "$*" >&2; exit 1; }
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -s|--socks) USE_SOCKS=true; shift ;;
+        -p|--port)  PROXY_PORT="${2:?-p requires a port number}"; shift 2 ;;
+        -h|--help)
+            echo "vpnsocks — Run any command through VPN proxy"
+            echo ""
+            echo "Usage: vpnsocks [-s|--socks] [-p PORT] <command> [args...]"
+            echo ""
+            echo "  -s, --socks    Use SOCKS5 proxy instead of HTTP CONNECT"
+            echo "  -p, --port     Proxy port (default: 18080)"
+            echo ""
+            echo "Examples:"
+            echo "  vpnsocks curl https://httpbin.org/ip"
+            echo "  vpnsocks git clone https://github.com/user/repo.git"
+            echo "  vpnsocks pip install requests"
+            exit 0
+            ;;
+        -*)         die "Unknown flag: $1" ;;
+        *)          break ;;
+    esac
+done
+
+(( $# )) || die "Usage: vpnsocks [-s|--socks] [-p PORT] <command> [args...]"
+
+# Check if proxy is reachable
+if ! (echo >/dev/tcp/"$PROXY_HOST"/"$PROXY_PORT") 2>/dev/null; then
+    die "VPN proxy not running on $PROXY_HOST:$PROXY_PORT. Start it first."
+fi
+
+# Build proxy URL
+if $USE_SOCKS; then
+    PROXY_URL="socks5h://${PROXY_HOST}:${PROXY_PORT}"
+else
+    PROXY_URL="http://${PROXY_HOST}:${PROXY_PORT}"
+fi
+
+# Export all proxy variables
+export HTTP_PROXY="$PROXY_URL"
+export HTTPS_PROXY="$PROXY_URL"
+export ALL_PROXY="$PROXY_URL"
+export http_proxy="$PROXY_URL"
+export https_proxy="$PROXY_URL"
+export all_proxy="$PROXY_URL"
+export NO_PROXY="localhost,127.0.0.1,::1"
+export no_proxy="localhost,127.0.0.1,::1"
+
+exec "$@"

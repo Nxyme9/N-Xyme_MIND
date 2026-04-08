@@ -8,7 +8,7 @@ import asyncio
 import logging
 import time
 from typing import Dict, Any, List, Optional, Callable
-from .message_queue import get_message_queue, MessageQueue
+from packages.intelligence.message_queue import get_message_queue, MessageQueue
 
 logger = logging.getLogger("agent-communication")
 
