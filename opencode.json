@@ -18,7 +18,11 @@
   "enabled_providers": [
     "opencode",
     "openrouter",
+    "anthropic",
     "google",
+    "deepseek",
+    "xai",
+    "cohere",
     "ollama"
   ],
   "permission": {
@@ -236,85 +240,73 @@
   "mcp": {
     "sequential-thinking": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-sequential-thinking"
-      ]
+      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
     "context7": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@upstash/context7-mcp@latest"
-      ]
+      "command": ["npx", "-y", "@upstash/context7-mcp@latest"]
     },
     "nx-mind": {
       "type": "local",
-      "command": [
-        "./packages/nx-mind-mcp/venv/bin/python",
-        "-m",
-        "nx_mind_mcp"
-      ]
+      "command": ["./.venv/bin/python", "-m", "nx_mind_mcp"],
+      "environment": { "PYTHONPATH": "." }
     },
     "unified-memory": {
       "type": "local",
-      "command": [
-        "./venvs/athena/bin/python",
-        "-m",
-        "packages.memory_core.mcp_server"
-      ],
-      "environment": {
-        "PYTHONPATH": ".:src/infrastructure",
-        "ROOT": "."
-      }
+      "command": ["./.venv/bin/python", "-m", "packages.memory_core.mcp_server"],
+      "environment": { "PYTHONPATH": ".:src/infrastructure", "ROOT": "." }
     },
     "learning-engine": {
       "type": "local",
-      "command": [
-        "./venvs/athena/bin/python",
-        "-m",
-        "packages.learning_engine.mcp_server"
-      ],
-      "environment": {
-        "PYTHONPATH": "."
-      }
+      "command": ["./.venv/bin/python", "-m", "packages.learning_engine.mcp_server"],
+      "environment": { "PYTHONPATH": "." }
     },
     "intelligence": {
       "type": "local",
-      "command": [
-        "./venvs/athena/bin/python",
-        "-m",
-        "packages.intelligence.mcp_server"
-      ],
-      "environment": {
-        "PYTHONPATH": "."
-      }
+      "command": ["./.venv/bin/python", "-m", "packages.intelligence.mcp_server"],
+      "environment": { "PYTHONPATH": "." }
     },
     "quality-gates": {
       "type": "local",
-      "command": [
-        "python3",
-        "-m",
-        "quality_gates_mcp"
-      ],
-      "environment": {
-        "PYTHONPATH": "packages/quality-gates-mcp"
-      }
+      "command": ["./.venv/bin/quality-gates-mcp"],
+      "environment": { "PYTHONPATH": "packages/quality-gates-mcp" }
     },
     "telegram": {
       "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@benjapieres/mcp-telegram-listener"
-      ],
+      "command": ["./.venv/bin/telegram-mcp-wrapper"],
       "environment": {
-        "TELEGRAM_BOT_TOKEN": "8397949824:AAEkYzjVwIVUQAfTiFL2UcsGVC4Dgr7lXDw"
+        "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
       }
-    }
-  },
+    },
+    "athena-context": {
+      "type": "local",
+      "command": ["./.venv/bin/python", "-m", "athena_context_mcp"],
+      "environment": { "PYTHONPATH": "." }
+    },
+    "trigger-guardian": {
+      "type": "local",
+      "command": ["./.venv/bin/python", "-m", "trigger_guardian_mcp"],
+      "environment": { "PYTHONPATH": "packages/trigger-guardian-mcp" }
+    },
+    "orchestration": {
+      "type": "local",
+      "command": ["./.venv/bin/python", "-m", "packages.orchestration.mcp_server"],
+      "environment": { "PYTHONPATH": "." }
+    },
+    "obsidian": {
+      "type": "local",
+      "command": ["uvx", "mcp-obsidian"],
+      "environment": {
+        "OBSIDIAN_API_KEY": "${OBSIDIAN_API_KEY}",
+        "OBSIDIAN_HOST": "127.0.0.1",
+        "OBSIDIAN_PORT": "27124"
+      }
+    },
+    "github": {
+      "type": "local",
+      "command": ["npx", "-y", "@beautyfree/modelcontextprotocol-server-github"],
+      "environment": {}
+    },
   "provider": {
     "openrouter": {
       "options": {
@@ -368,6 +360,32 @@
         },
         "llama3.2:3b": {
           "name": "Llama 3.2 3B (local)"
+        }
+      }
+    },
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio (local)",
+      "options": {
+        "baseURL": "http://localhost:1234/v1"
+      },
+      "models": {}
+    },
+    "gguf": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "GGUF Direct (local)",
+      "options": {
+        "baseURL": "http://localhost:8080/v1"
+      },
+      "models": {
+        "qwen2.5-coder-7b-q4": {
+          "name": "Qwen 2.5 Coder 7B Q4 (direct GGUF)"
+        },
+        "qwen2.5-0.5b-q4": {
+          "name": "Qwen 2.5 0.5B Q4 (direct GGUF)"
+        },
+        "nomic-embed-text": {
+          "name": "Nomic Embed Text (embedding)"
         }
       }
     },
