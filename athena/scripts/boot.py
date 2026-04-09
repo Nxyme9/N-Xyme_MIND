@@ -9,7 +9,7 @@ Usage:
     python3 scripts/boot.py
 """
 
-import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -42,13 +42,15 @@ def recovery_shell():
 
     if choice == "1":
         print("\n🔧 Running: pip install -e .")
-        os.system(f"cd {PROJECT_ROOT} && pip install -e .")
+        subprocess.run(
+            ["pip", "install", "-e", "."], shell=False, cwd=str(PROJECT_ROOT)
+        )
         print("\n✅ Done. Try running boot.py again.")
     elif choice == "2":
         print("\n⚠️  This will discard all uncommitted changes!")
         confirm = input("Are you sure? (y/N): ").strip().lower()
         if confirm == "y":
-            os.system(f"cd {PROJECT_ROOT} && git checkout .")
+            subprocess.run(["git", "checkout", "."], shell=False, cwd=str(PROJECT_ROOT))
             print("✅ Reset complete.")
         else:
             print("Aborted.")
@@ -56,7 +58,7 @@ def recovery_shell():
         safe_boot = PROJECT_ROOT / "scripts" / "safe_boot.sh"
         if safe_boot.exists():
             print(f"\n🔧 Running: {safe_boot}")
-            os.system(f"bash {safe_boot}")
+            subprocess.run(["bash", str(safe_boot)], shell=False, cwd=str(PROJECT_ROOT))
         else:
             print("❌ safe_boot.sh not found.")
     elif choice == "4":

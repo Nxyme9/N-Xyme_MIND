@@ -7,6 +7,7 @@ Note: Requires Neo4j running at localhost:7687.
 
 import asyncio
 import logging
+import os
 
 import pytest
 
@@ -34,7 +35,7 @@ async def test_basic_workflow():
         workflow = create_workflow(
             neo4j_uri="bolt://localhost:7687",
             neo4j_user="neo4j",
-            neo4j_password="password",
+            neo4j_password=os.environ.get("NEO4J_PASSWORD", "password"),
             max_steps=5,
         )
 
@@ -66,7 +67,7 @@ async def test_resume_workflow():
         workflow = create_workflow(
             neo4j_uri="bolt://localhost:7687",
             neo4j_user="neo4j",
-            neo4j_password="password",
+            neo4j_password=os.environ.get("NEO4J_PASSWORD", "password"),
             max_steps=10,
         )
 
@@ -101,7 +102,7 @@ async def test_adapter():
         adapter = LangGraphAgentAdapter(
             neo4j_uri="bolt://localhost:7687",
             neo4j_user="neo4j",
-            neo4j_password="password",
+            neo4j_password=os.environ.get("NEO4J_PASSWORD", "password"),
         )
 
         # Mock brain and functions
@@ -147,7 +148,7 @@ async def test_recovery():
             user_input="Test recovery",
             neo4j_uri="bolt://localhost:7687",
             neo4j_user="neo4j",
-            neo4j_password="password",
+            neo4j_password=os.environ.get("NEO4J_PASSWORD", "password"),
         )
         thread_id = result1["thread_id"]
         logger.info(f"Initial: {result1.get('status')}")
@@ -158,7 +159,7 @@ async def test_recovery():
             thread_id=thread_id,
             neo4j_uri="bolt://localhost:7687",
             neo4j_user="neo4j",
-            neo4j_password="password",
+            neo4j_password=os.environ.get("NEO4J_PASSWORD", "password"),
         )
         logger.info(f"Recovered: {result2.get('status')}")
 

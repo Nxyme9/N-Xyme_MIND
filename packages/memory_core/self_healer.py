@@ -23,13 +23,34 @@ from typing import Optional
 
 import chromadb
 
-from .embeddings import get_engine
+from packages.common.self_healer_base import SelfHealerBase
 
 # Constants
 EMBED_DIM = 768
 COLLECTION_NAME = "file_embeddings"
 SQLITE_TABLE = "file_chunks"
 REGISTRY_TABLE = "file_registry"
+
+# Whitelist for table names (SQL injection defense)
+ALLOWED_TABLES = {SQLITE_TABLE, REGISTRY_TABLE}
+
+
+def _validate_table_name(table_name: str) -> str:
+    """Validate table name against whitelist.
+
+    Args:
+        table_name: Table name to validate
+
+    Returns:
+        Validated table name
+
+    Raises:
+        ValueError: If table name is not in whitelist
+    """
+    if table_name not in ALLOWED_TABLES:
+        raise ValueError(f"Invalid table name: {table_name}. Allowed: {ALLOWED_TABLES}")
+    return table_name
+
 
 # Configure logging to daemon.log
 daemon_logger = logging.getLogger("self_healer")
@@ -106,6 +127,7 @@ class SelfHealer:
         # Handle numpy arrays if present
         try:
             import numpy as np
+
             arr = np.array(embedding)
             if arr.size == 0:
                 return True
@@ -270,7 +292,9 @@ class SelfHealer:
 
         try:
             conn = self._get_registry_conn()
-            cursor = conn.execute(f"SELECT file_path FROM {REGISTRY_TABLE}")
+            # Use validated table name (whitelist defense)
+            table = _validate_table_name(REGISTRY_TABLE)
+            cursor = conn.execute(f"SELECT file_path FROM {table}")
             all_files = cursor.fetchall()
             conn.close()
 
@@ -286,8 +310,9 @@ class SelfHealer:
             for file_path in stale_files:
                 try:
                     conn = self._get_registry_conn()
+                    table = _validate_table_name(REGISTRY_TABLE)
                     conn.execute(
-                        f"DELETE FROM {REGISTRY_TABLE} WHERE file_path = ?",
+                        f"DELETE FROM {table} WHERE file_path = ?",
                         (file_path,),
                     )
                     conn.commit()
@@ -337,14 +362,17 @@ class SelfHealer:
         try:
             # Check SQLite chunks vs registry
             sqlite_conn = self._get_sqlite_conn()
+            # Use validated table name (whitelist defense)
+            sqlite_table = _validate_table_name(SQLITE_TABLE)
             sqlite_cursor = sqlite_conn.execute(
-                f"SELECT DISTINCT file_path FROM {SQLITE_TABLE}"
+                f"SELECT DISTINCT file_path FROM {sqlite_table}"
             )
             chunked_files = {row[0] for row in sqlite_cursor.fetchall()}
 
             registry_conn = self._get_registry_conn()
+            registry_table = _validate_table_name(REGISTRY_TABLE)
             registry_cursor = registry_conn.execute(
-                f"SELECT file_path FROM {REGISTRY_TABLE}"
+                f"SELECT file_path FROM {registry_table}"
             )
             registered_files = {row[0] for row in registry_cursor.fetchall()}
 
@@ -363,8 +391,10 @@ class SelfHealer:
             for file_path in orphaned_files:
                 try:
                     sqlite_conn = self._get_sqlite_conn()
+                    # Use validated table name (whitelist defense)
+                    sqlite_table = _validate_table_name(SQLITE_TABLE)
                     sqlite_conn.execute(
-                        f"DELETE FROM {SQLITE_TABLE} WHERE file_path = ?",
+                        f"DELETE FROM {sqlite_table} WHERE file_path = ?",
                         (file_path,),
                     )
                     sqlite_conn.commit()

@@ -16,7 +16,7 @@ from hindsight_api.api.mcp import create_mcp_server
 memory = MemoryEngine(
     db_url=None,  # Use embedded pg0 (no external PostgreSQL needed)
     memory_llm_provider="ollama",
-    memory_llm_api_key="ollama",
+    memory_llm_api_key=os.environ.get("MEMORY_LLM_API_KEY", "ollama"),
     memory_llm_model="qwen2.5:14b",
     memory_llm_base_url="http://localhost:11434/v1",
 )

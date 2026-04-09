@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 
+from packages.common.self_healer_base import SelfHealerBase
+
 logger = logging.getLogger(__name__)
 
 
@@ -110,7 +112,9 @@ class SelfHealer:
         if anomaly_data and anomaly_data.get("severity") in ("high", "critical"):
             service = anomaly_data.get("service", "")
             if service:
-                logger.info(f"SelfHealer: Anomaly received for {service}, recording failure")
+                logger.info(
+                    f"SelfHealer: Anomaly received for {service}, recording failure"
+                )
                 self.record_health(service, is_healthy=False)
 
     def _default_policies(self) -> List[HealingPolicy]:
@@ -151,7 +155,9 @@ class SelfHealer:
         else:
             status.consecutive_failures += 1
             status.last_failure = now
-            status.status = "unhealthy" if status.consecutive_failures >= 3 else "degraded"
+            status.status = (
+                "unhealthy" if status.consecutive_failures >= 3 else "degraded"
+            )
 
         if status.status != "healthy":
             logger.warning(
@@ -238,7 +244,9 @@ class SelfHealer:
         except Exception as e:
             action.success = False
             action.result = str(e)
-            logger.error(f"SelfHealer: Failed to execute {policy.name} for {service_name}: {e}")
+            logger.error(
+                f"SelfHealer: Failed to execute {policy.name} for {service_name}: {e}"
+            )
 
         # Update counters
         self.cooldowns[cooldown_key] = time.time()
@@ -270,7 +278,10 @@ class SelfHealer:
 
         try:
             subprocess.run(
-                ["pm2", "restart", service_name], capture_output=True, text=True, timeout=30
+                ["pm2", "restart", service_name],
+                capture_output=True,
+                text=True,
+                timeout=30,
             )
             logger.info(f"SelfHealer: PM2 restarted {service_name}")
         except FileNotFoundError:

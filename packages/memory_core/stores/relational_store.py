@@ -3,6 +3,7 @@
 import json
 import logging
 import sqlite3
+import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -79,7 +80,7 @@ MIGRATIONS = [
 
 
 class RelationalStore(RelationalStoreABC):
-    """SQLite-based relational memory store."""
+    """SQLite-based relational memory store with connection pooling."""
 
     def __init__(self, db_path: str = None):
         # Default to the correct absolute path if no path provided
@@ -93,11 +94,30 @@ class RelationalStore(RelationalStoreABC):
 
         self.db_path = path
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        conn = self._ensure_migrations_table()
+
+        # Thread-local storage for connection pooling
+        self._local = threading.local()
+
+        # Run initialization with a temporary connection
+        conn = self._create_connection()
+        self._ensure_migrations_table(conn)
         self._set_wal_mode(conn)
         self._run_pending_migrations(conn)
         self._run_integrity_check(conn)
         conn.close()
+
+    def _create_connection(self) -> sqlite3.Connection:
+        """Create a new SQLite connection with optimized settings."""
+        conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    @property
+    def _conn(self) -> sqlite3.Connection:
+        """Get thread-local connection (lazy creation, connection pooling)."""
+        if not hasattr(self._local, "conn") or self._local.conn is None:
+            self._local.conn = self._create_connection()
+        return self._local.conn
 
     def _set_wal_mode(self, conn: sqlite3.Connection) -> None:
         """Enable WAL journal mode for better concurrency."""
@@ -116,22 +136,15 @@ class RelationalStore(RelationalStoreABC):
         except Exception as e:
             logger.warning(f"Failed to run integrity check: {e}")
 
-    def _ensure_migrations_table(self):
+    def _ensure_migrations_table(self, conn: sqlite3.Connection):
         """Create the migrations tracking table if it doesn't exist."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS schema_migrations (
-                    version INTEGER PRIMARY KEY,
-                    applied_at TEXT NOT NULL,
-                    description TEXT
-                )
-            """)
-            conn.commit()
-            return conn  # Return connection for reuse
-        except sqlite3.Error:
-            conn.close()
-            raise
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS schema_migrations (
+                version INTEGER PRIMARY KEY,
+                applied_at TEXT NOT NULL,
+                description TEXT
+            )
+        """)
 
     def _get_applied_migrations(self, conn) -> set[int]:
         """Get the set of already applied migration versions."""
@@ -188,91 +201,74 @@ class RelationalStore(RelationalStoreABC):
 
     def store(self, record: MemoryRecord) -> str:
         """Store a memory record and return its ID."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            conn.execute(
-                "INSERT OR REPLACE INTO memories (id, content, kind, scope, tier, meta_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
-                (
-                    record.id,
-                    record.content,
-                    record.kind,
-                    record.scope,
-                    record.tier,
-                    json.dumps(record.metadata),
-                ),
-            )
-            conn.commit()
-            return record.id
-        finally:
-            conn.close()
+        conn = self._conn
+        conn.execute(
+            "INSERT OR REPLACE INTO memories (id, content, kind, scope, tier, meta_json, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))",
+            (
+                record.id,
+                record.content,
+                record.kind,
+                record.scope,
+                record.tier,
+                json.dumps(record.metadata),
+            ),
+        )
+        conn.commit()
+        return record.id
 
     def get(self, id: str) -> MemoryRecord | None:
         """Get a memory record by ID."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            cursor = conn.execute(
-                "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE id = ?",
-                (id,),
+        conn = self._conn
+        cursor = conn.execute(
+            "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE id = ?",
+            (id,),
+        )
+        row = cursor.fetchone()
+        if row:
+            return MemoryRecord(
+                id=row["id"],
+                content=row["content"],
+                kind=row["kind"],
+                scope=row["scope"],
+                tier=row["tier"],
+                metadata=json.loads(row["meta_json"]) if row["meta_json"] else {},
             )
-            row = cursor.fetchone()
-            if row:
-                return MemoryRecord(
-                    id=row[0],
-                    content=row[1],
-                    kind=row[2],
-                    scope=row[3],
-                    tier=row[4],
-                    metadata=json.loads(row[5]) if row[5] else {},
-                )
-            return None
-        finally:
-            conn.close()
+        return None
 
     def search(self, query: str, limit: int = 10) -> List[MemoryRecord]:
         """Search for memory records."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            cursor = conn.execute(
-                "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE content LIKE ? AND archived = 0 LIMIT ?",
-                (f"%{query}%", limit),
+        conn = self._conn
+        cursor = conn.execute(
+            "SELECT id, content, kind, scope, tier, meta_json FROM memories WHERE content LIKE ? AND archived = 0 LIMIT ?",
+            (f"%{query}%", limit),
+        )
+        return [
+            MemoryRecord(
+                id=row["id"],
+                content=row["content"],
+                kind=row["kind"],
+                scope=row["scope"],
+                tier=row["tier"],
+                metadata=json.loads(row["meta_json"]) if row["meta_json"] else {},
             )
-            return [
-                MemoryRecord(
-                    id=row[0],
-                    content=row[1],
-                    kind=row[2],
-                    scope=row[3],
-                    tier=row[4],
-                    metadata=json.loads(row[5]) if row[5] else {},
-                )
-                for row in cursor.fetchall()
-            ]
-        finally:
-            conn.close()
+            for row in cursor.fetchall()
+        ]
 
     def delete(self, id: str) -> bool:
         """Delete a memory record by ID."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            cursor = conn.execute(
-                "UPDATE memories SET archived = 1 WHERE id = ?", (id,)
-            )
-            conn.commit()
-            return cursor.rowcount > 0
-        finally:
-            conn.close()
+        conn = self._conn
+        cursor = conn.execute("UPDATE memories SET archived = 1 WHERE id = ?", (id,))
+        conn.commit()
+        return cursor.rowcount > 0
 
     def stats(self) -> Dict[str, Any]:
         """Get statistics about the store."""
-        conn = sqlite3.connect(str(self.db_path))
-        try:
-            cursor = conn.execute(
-                "SELECT COUNT(*), COUNT(DISTINCT kind) FROM memories WHERE archived = 0"
-            )
-            row = cursor.fetchone()
-            return {"total_memories": row[0] or 0, "memory_types": row[1] or 0}
-        finally:
-            conn.close()
+        conn = self._conn
+        cursor = conn.execute(
+            "SELECT COUNT(*), COUNT(DISTINCT kind) FROM memories WHERE archived = 0"
+        )
+        row = cursor.fetchone()
+        return {"total_memories": row[0] or 0, "memory_types": row[1] or 0}
 
     def checkpoint(self) -> bool:
         """Run WAL checkpoint to flush WAL to database.
@@ -280,8 +276,9 @@ class RelationalStore(RelationalStoreABC):
         Returns:
             True if checkpoint succeeded.
         """
-        conn = sqlite3.connect(str(self.db_path))
         try:
+            conn = self._conn
+            conn.commit()  # Ensure any pending changes are flushed first
             cursor = conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
             result = cursor.fetchone()
             # Result is (busy, log, checkpointed)
@@ -289,8 +286,6 @@ class RelationalStore(RelationalStoreABC):
         except Exception as e:
             logger.error(f"WAL checkpoint failed: {e}")
             return False
-        finally:
-            conn.close()
 
     def backup(self, backup_path: str) -> bool:
         """Create a backup of the database.
@@ -304,8 +299,9 @@ class RelationalStore(RelationalStoreABC):
         backup_db = Path(backup_path)
         backup_db.parent.mkdir(parents=True, exist_ok=True)
 
-        source = sqlite3.connect(str(self.db_path))
-        target = sqlite3.connect(str(backup_db))
+        # Use pooled connection for source, new connection for target
+        source = self._conn
+        target = self._create_connection()
         try:
             source.backup(target)
             logger.info(f"Database backed up to {backup_path}")
@@ -314,7 +310,6 @@ class RelationalStore(RelationalStoreABC):
             logger.error(f"Database backup failed: {e}")
             return False
         finally:
-            source.close()
             target.close()
 
     def integrity_check(self) -> tuple[bool, str]:
@@ -323,8 +318,8 @@ class RelationalStore(RelationalStoreABC):
         Returns:
             Tuple of (success: bool, message: str)
         """
-        conn = sqlite3.connect(str(self.db_path))
         try:
+            conn = self._conn
             cursor = conn.execute("PRAGMA integrity_check")
             result = cursor.fetchone()
             if result and result[0] == "ok":
@@ -333,8 +328,6 @@ class RelationalStore(RelationalStoreABC):
                 return (False, result[0] if result else "Unknown error")
         except Exception as e:
             return (False, str(e))
-        finally:
-            conn.close()
 
 
 __all__ = ["RelationalStore"]
