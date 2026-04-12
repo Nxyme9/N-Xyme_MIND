@@ -4,16 +4,26 @@ Implements:
 - Sliding window with priority retention
 - Context compression for long conversations
 - Chunked context for large codebases
-- Integration with token_estimator and context_compact
+- Integration with unified_compactor for production-grade compaction
 """
 
 from __future__ import annotations
 
 import logging
+import os
 from dataclasses import dataclass, field
 from typing import Any
 
 logger = logging.getLogger(__name__)
+
+# Try to import UnifiedCompactor - fall back to simple if not available
+try:
+    from packages.unified_compactor import UnifiedCompactor
+
+    _HAS_UNIFIED_COMPACTOR = True
+except ImportError:
+    _HAS_UNIFIED_COMPACTOR = False
+    UnifiedCompactor = None
 
 
 @dataclass
@@ -29,17 +39,35 @@ class ContextChunk:
 
 
 class ContextManager:
-    """Manages context window intelligently."""
+    """Manages context window intelligently with UnifiedCompactor integration."""
 
-    def __init__(self, max_tokens: int = 32768):
+    def __init__(self, max_tokens: int = 32768, model: str = None):
         """Initialize context manager.
 
         Args:
             max_tokens: Maximum context window size.
+            model: Model name for model-aware compaction.
         """
         self.max_tokens = max_tokens
+        self.model = model or os.environ.get(
+            "DEFAULT_MODEL", "claude-3-5-sonnet-20241022"
+        )
         self.chunks: list[ContextChunk] = []
         self._total_tokens = 0
+
+        # Integrated UnifiedCompactor for production-grade compaction
+        if _HAS_UNIFIED_COMPACTOR:
+            self._compactor = UnifiedCompactor(
+                model=self.model, threshold_pct=0.85, mode="auto"
+            )
+            logger.info(
+                f"ContextManager: Using UnifiedCompactor for model {self.model}"
+            )
+        else:
+            self._compactor = None
+            logger.warning(
+                "ContextManager: UnifiedCompactor not available, using simple compression"
+            )
 
     def add_chunk(
         self,
@@ -186,8 +214,51 @@ class ContextManager:
         }
 
     def _compress(self) -> None:
-        """Auto-compress context to fit within limits."""
-        # Remove lowest priority chunks first
+        """Auto-compress context to fit within limits.
+
+        Uses UnifiedCompactor when available for production-grade compaction.
+        """
+        if self._compactor and _HAS_UNIFIED_COMPACTOR:
+            # Convert chunks to message format for UnifiedCompactor
+            messages = [
+                {"role": chunk.source, "content": chunk.content}
+                for chunk in self.chunks
+            ]
+
+            # Use UnifiedCompactor - it handles priority, circuit breaker, etc.
+            # Force compression regardless of threshold since we're already over ContextManager's limit
+            # Create a temporary compactor with threshold_pct=1.0 to force compression
+            from packages.unified_compactor import CompressionMode
+
+            force_compactor = UnifiedCompactor(
+                model=self.model,
+                threshold_pct=1.0,  # Force compression always
+                mode=CompressionMode.AUTO,
+            )
+            result = force_compactor.compact(messages, self.model)
+
+            # Check if compaction actually reduced tokens
+            if result.reduction_pct > 0 and result.compacted_messages:
+                # Update chunks from compacted result
+                if result.compacted_messages:
+                    self.chunks = [
+                        ContextChunk(
+                            content=msg.get("content", ""),
+                            priority=5,  # Default priority for compacted
+                            source=msg.get("role", "compacted"),
+                            tokens=len(msg.get("content", "")) // 4,
+                            is_compressed=True,
+                        )
+                        for msg in result.compacted_messages
+                        if msg.get("content")
+                    ]
+                    self._total_tokens = sum(c.tokens for c in self.chunks)
+                    logger.info(
+                        f"UnifiedCompaction: reduced from {result.original_tokens} to {result.compacted_tokens} tokens"
+                    )
+                    return
+
+        # Fallback to simple priority-based removal
         self.chunks.sort(key=lambda c: c.priority)
 
         while self._total_tokens > self.max_tokens and self.chunks:
