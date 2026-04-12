@@ -225,13 +225,22 @@ class ThinkingEffort:
         if not category:
             return 0.0
 
+        # Category alias mapping for backwards compatibility
+        # 9→5 consolidation: ultrabrain→deep, artistry→deep, unspecified-low→quick, unspecified-high→deep
+        category_aliases = {
+            "ultrabrain": "deep",
+            "artistry": "deep",
+            "unspecified-low": "quick",
+            "unspecified-high": "deep",
+        }
+        category = category_aliases.get(category, category)
+
         category_scores = {
-            "ultrabrain": 3.0,
-            "deep": 1.5,
-            "unspecified-high": 1.0,
+            "deep": 2.5,  # Updated: consolidated from ultrabrain (3.0) + artistry + unspecified-high
             "writing": 0.5,
             "visual-engineering": 1.0,
             "quick": -0.5,  # Quick tasks can go lower
+            "routing": 0.0,  # Meta category, no complexity adjustment
         }
 
         return category_scores.get(category, 0.0)

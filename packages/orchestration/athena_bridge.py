@@ -65,20 +65,21 @@ class AthenaBridge:
     }
 
     # Task type -> oh-my-opencode category mapping
+    # 9→5 consolidation: ultrabrain+artistry+unspecified-high → deep, unspecified-low → quick
     CATEGORY_MAP = {
         "research": "deep",
         "analysis": "deep",
-        "architecture": "ultrabrain",
+        "architecture": "deep",  # was ultrabrain
         "coding": "deep",
         "testing": "quick",
         "documentation": "writing",
         "review": "deep",
         "debugging": "deep",
         "refactoring": "deep",
-        "planning": "unspecified-high",
+        "planning": "deep",  # was unspecified-high
         "design": "visual-engineering",
-        "sprint": "unspecified-high",
-        "story": "unspecified-high",
+        "sprint": "deep",  # was unspecified-high
+        "story": "deep",  # was unspecified-high
         "prd": "writing",
     }
 
@@ -125,7 +126,9 @@ class AthenaBridge:
             )
             tasks.append(task)
 
-        logger.info(f"AthenaBridge: Converted {len(stories)} stories to {len(tasks)} tasks")
+        logger.info(
+            f"AthenaBridge: Converted {len(stories)} stories to {len(tasks)} tasks"
+        )
         return tasks
 
     def convert_story(self, story: BMADStory) -> Task:
@@ -138,7 +141,9 @@ class AthenaBridge:
             category="deep",
         )
 
-    def execute(self, tasks: List[Task], output_dir: str = ".athena-queue") -> Dict[str, str]:
+    def execute(
+        self, tasks: List[Task], output_dir: str = ".athena-queue"
+    ) -> Dict[str, str]:
         """
         Execute tasks via oh-my-opencode agents.
 
@@ -194,7 +199,8 @@ class AthenaBridge:
                     "file_count": task.file_count,
                 }
                 task_file.write_text(
-                    json.dumps(task_data, indent=2, ensure_ascii=False), encoding="utf-8"
+                    json.dumps(task_data, indent=2, ensure_ascii=False),
+                    encoding="utf-8",
                 )
 
                 # Add to manifest
@@ -240,7 +246,9 @@ class AthenaBridge:
         )
         return results
 
-    def check_execution_status(self, task_id: str, queue_dir: str = ".athena-queue") -> str:
+    def check_execution_status(
+        self, task_id: str, queue_dir: str = ".athena-queue"
+    ) -> str:
         """Check the execution status of a queued task."""
         task_file = Path(queue_dir) / f"{task_id}.json"
         if not task_file.exists():

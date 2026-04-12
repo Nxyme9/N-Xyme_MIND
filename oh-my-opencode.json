@@ -16,21 +16,17 @@
     "momus": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "Adversarial review — red-team analysis, finds edge cases", "fallback_models": ["opencode/minimax-m2.5-free"] },
     "hephaestus": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Implementation agent — writes code, creates files, builds features", "fallback_models": ["opencode/minimax-m2.5-free"] },
     "atlas": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Plan executor — step-by-step implementation from plans", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "explore": { "model": "gguf/qwen2.5-coder-7b-q4_k_m", "mode": "subagent", "description": "Codebase search — fast grep, file discovery, pattern matching", "fallback_models": ["gguf/qwen2.5-coder-7b-q4_k_m"] },
-    "librarian": { "model": "opencode/minimax-m2.5-free", "mode": "subagent", "description": "External research — web search, documentation, stack overflow", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "sisyphus-junior": { "model": "opencode/minimax-m2.5-free", "mode": "subagent", "description": "Light tasks — quick fixes, simple modifications", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "explore": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "Codebase search — fast grep, file discovery, pattern matching", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "librarian": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "External research — web search, documentation, stack overflow", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "sisyphus-junior": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "Light tasks — quick fixes, simple modifications", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
     "multimodal-looker": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Vision agent — image, video, audio analysis", "fallback_models": ["opencode/minimax-m2.5-free"] }
   },
   "categories": {
-    "visual-engineering": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "ultrabrain": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "deep": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "artistry": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "quick": { "model": "opencode/minimax-m2.5-free", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "unspecified-low": { "model": "opencode/minimax-m2.5-free", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "unspecified-high": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "visual-engineering": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "UI/UX, styling, animations, design work" },
+    "deep": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Complex reasoning, research, autonomous implementation (consolidated from ultrabrain, artistry, unspecified-high)" },
+    "quick": { "model": "opencode/minimax-m2.5-free", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Trivial tasks, quick fixes (consolidated from quick, unspecified-low)" },
     "routing": { "model": "opencode/minimax-m2.5-free", "description": "For delegation and routing only - DO NOT write code", "fallback_models": ["opencode/minimax-m2.5-free"] },
-    "writing": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"] }
+    "writing": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Documentation, prose, technical writing" }
   },
   "background_task": {
     "defaultConcurrency": 64,

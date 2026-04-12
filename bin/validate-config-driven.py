@@ -89,16 +89,12 @@ for agent_name, agent_config in agents.items():
             f"Invalid: {re}",
         )
 
-# Check categories
+# Check categories (9→5 consolidation: visual-engineering, deep, quick, routing, writing)
 categories = omo.get("categories", {})
 expected_categories = [
     "visual-engineering",
-    "ultrabrain",
     "deep",
-    "artistry",
     "quick",
-    "unspecified-low",
-    "unspecified-high",
     "routing",
     "writing",
 ]
@@ -156,7 +152,7 @@ expected_mcp = [
     "git",
     "athena",
     "github",
-    "athena-context",
+    "nx-context",
     "trigger-guardian",
     "nx-mind",
     "unified-memory",
@@ -527,8 +523,8 @@ packages_dir = PROJECT_ROOT / "packages"
 check("Packages dir exists", packages_dir.exists(), "Directory not found")
 
 if packages_dir.exists():
-    expected_packages = ["athena-context-mcp", "nx-mind-mcp", "trigger-guardian-mcp"]
-    expected_src_dirs = ["athena_context_mcp", "nx_mind_mcp", "trigger_guardian_mcp"]
+    expected_packages = ["nx-context-mcp", "nx-mind-mcp", "trigger-guardian-mcp"]
+    expected_src_dirs = ["nx_context_mcp", "nx_mind_mcp", "trigger_guardian_mcp"]
     for i, pkg in enumerate(expected_packages):
         pkg_dir = packages_dir / pkg
         check(f"Package '{pkg}' exists", pkg_dir.exists(), f"Missing: {pkg}")
@@ -536,7 +532,9 @@ if packages_dir.exists():
             pyproject = pkg_dir / "pyproject.toml"
             check(f"  {pkg}: pyproject.toml exists", pyproject.exists(), "Missing")
             src_dir = pkg_dir / expected_src_dirs[i]
-            check(f"  {pkg}: {expected_src_dirs[i]}/ exists", src_dir.exists(), "Missing")
+            check(
+                f"  {pkg}: {expected_src_dirs[i]}/ exists", src_dir.exists(), "Missing"
+            )
 
 # ============================================================================
 # SUMMARY
