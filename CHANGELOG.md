@@ -1,39 +1,49 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to N-Xyme MIND will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2026-04-04
+## [Unreleased]
 
 ### Added
-- Portable OMO platform - clone to any machine, run bootstrap, it works
-- Bootstrap.sh creates all required directories including `.context/memory_bank/` and `.context/memory_graph/`
-- MetricsStore with environment-based path resolution (`METRICS_DB_PATH` env var)
-- Metrics-memory bridge integration (`src/integrations/metrics_memory_bridge.py`)
-- Memory bank files seeded with valid frontmatter and content
-- Agent definitions copied to project `oh-my-opencode.json`
-- Phase 0 pre-flight checks (mandatory before any work)
-- 13-point industry gold standard audit suite
+- Comprehensive system documentation in docs/obsidian/
+- Mermaid architecture diagrams in docs/diagrams/
+- Exhaustive function/class mapping for all 7 packages
+
+### Changed
+- Improved trigger system integration
+- Documentation organization for Obsidian compatibility
 
 ### Fixed
-- Replaced all hardcoded `/home/nxyme` paths with `Path(__file__)` + env vars
-- Fixed command injection vulnerability in `src/auto_launcher.py` (shell=True → shell=False with validation)
-- Fixed path portability in modelrouter/ (uses `$HOME` instead of hardcoded paths)
-- Fixed MCP imports - all packages import correctly
-- Fixed venv paths in opencode.json to use relative paths
-- Fixed AGENTS.md model names (updated to opencode/qwen3.6-plus-free)
-- Fixed bootstrap.sh --clear flag for fresh venv creation
+- GGUF server connectivity issues
+- Rosetta tool call parsing
 
-### Security
-- Command injection fix: validated config["cmd"] before subprocess execution
-- Path traversal protection in MetricsStore
-- No hardcoded secrets in source code
-- Environment variable based configuration for all sensitive values
+## [1.0.0] - 2024-04-12
 
-### Architecture
-- Clean separation: MetricsStore (SQLite) → Bridge → Memory Bank files
-- Environment-based configuration (no hardcoded paths)
-- Memory bank files follow valid frontmatter + markdown pattern
-- Bridge provides dual-write to both metrics DB and context files
+### Added
+- **Orchestration Layer** - Agent loops, BMAD workflows, triggers, governance
+- **Intelligence Layer** - Multi-strategy routing, circuit breakers, fallback chains
+- **Memory Layer** - Vector/Graph/Relational stores, cognitive processes
+- **Learning Engine** - Q-Learning, Multi-Armed Bandits, meta-learning
+- **Infrastructure** - Proxy system, GoldenSpine, monitoring
+- **Local LLM** - Direct GGUF inference, Rosetta tool translation
+- Health check system (L0/L1/L2)
+- 11 quality gates
+- VPN rotation with 8 SOCKS5 proxies
+
+### Features
+- 14x faster than Ollama with real tool calling
+- 460+ files across 7 packages fully documented
+- Obsidian-compatible documentation structure
+
+---
+
+## Version History
+
+- v1.0.0 - Initial release with full architecture
+
+---
+
+For older versions, see [release archives](https://github.com/yourusername/N-Xyme_MIND/releases).

@@ -23,7 +23,9 @@
     "deepseek",
     "xai",
     "cohere",
-    "ollama"
+    "ollama",
+    "lmstudio",
+    "gguf"
   ],
   "permission": {
     "external_directory": "allow",
@@ -53,12 +55,11 @@
   },
   "agent": {
     "sisyphus": {
-      "model": "opencode/qwen3.6-plus-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/qwen3.6-plus-free",
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_order": [
-          "opencode/mimo-v2-pro-free",
-          "opencode/minimax-m2.5-free"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -74,9 +75,8 @@
       "model": "opencode/minimax-m2.5-free",
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
-        "fallback_to_cloud": true,
         "fallback_order": [
-          "ollama/qwen2.5-coder:7b"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -89,11 +89,11 @@
       }
     },
     "prometheus": {
-      "model": "opencode/mimo-v2-pro-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/mimo-v2-pro-free",
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_order": [
-          "opencode/minimax-m2.5-free"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -109,8 +109,9 @@
       "model": "opencode/minimax-m2.5-free",
       "router_override": {
         "prefer": "opencode/minimax-m2.5-free",
+        "fallback_to_cloud": true,
         "fallback_order": [
-          "ollama/qwen2.5-coder:7b"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -123,12 +124,11 @@
       }
     },
     "oracle": {
-      "model": "opencode/mimo-v2-pro-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/mimo-v2-pro-free",
-        "skip_local": true,
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_order": [
-          "opencode/kimi-k2.5-free"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -139,10 +139,9 @@
       }
     },
     "momus": {
-      "model": "opencode/kimi-k2.5-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/kimi-k2.5-free",
-        "skip_local": true,
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_order": [
           "opencode/mimo-v2-pro-free"
         ]
@@ -155,12 +154,11 @@
       }
     },
     "metis": {
-      "model": "opencode/mimo-v2-pro-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/mimo-v2-pro-free",
-        "skip_local": true,
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_order": [
-          "opencode/minimax-m2.5-free"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -171,13 +169,10 @@
       }
     },
     "explore": {
-      "model": "opencode/minimax-m2.5-free",
+      "model": "gguf/qwen2.5-coder-7b-q4_k_m",
       "router_override": {
-        "prefer": "opencode/minimax-m2.5-free",
-        "fallback_to_cloud": true,
-        "fallback_order": [
-          "ollama/qwen2.5-coder:7b"
-        ]
+        "prefer": "gguf/qwen2.5-coder-7b-q4_k_m",
+        "fallback_order": []
       },
       "permission": {
         "edit": "deny",
@@ -205,12 +200,12 @@
       }
     },
     "sisyphus-junior": {
-      "model": "ollama/llama3.2:3b",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "ollama/llama3.2:3b",
+        "prefer": "opencode/minimax-m2.5-free",
         "fallback_to_cloud": true,
         "fallback_order": [
-          "opencode/minimax-m2.5-free"
+          "opencode/mimo-v2-pro-free"
         ]
       },
       "permission": {
@@ -222,9 +217,9 @@
       }
     },
     "multimodal-looker": {
-      "model": "opencode/mimo-v2-omni-free",
+      "model": "opencode/minimax-m2.5-free",
       "router_override": {
-        "prefer": "opencode/mimo-v2-omni-free",
+        "prefer": "opencode/minimax-m2.5-free",
         "skip_local": true
       },
       "permission": {
@@ -241,10 +236,6 @@
     "sequential-thinking": {
       "type": "local",
       "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp@latest"]
     },
     "nx-mind": {
       "type": "local",
@@ -266,6 +257,11 @@
       "command": ["./.venv/bin/python", "-m", "packages.intelligence.mcp_server"],
       "environment": { "PYTHONPATH": "." }
     },
+    "session-pool": {
+      "type": "local",
+      "command": ["python3", "-m", "mcp_server"],
+      "environment": { "PYTHONPATH": "packages/session-pool-mcp" }
+    },
     "quality-gates": {
       "type": "local",
       "command": ["./.venv/bin/quality-gates-mcp"],
@@ -278,10 +274,10 @@
         "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
       }
     },
-    "athena-context": {
+    "nx-context": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "athena_context_mcp"],
-      "environment": { "PYTHONPATH": "." }
+      "command": ["./.venv/bin/python", "-m", "nx_context_mcp"],
+      "environment": { "PYTHONPATH": "packages/nx-context-mcp:." }
     },
     "trigger-guardian": {
       "type": "local",
@@ -293,20 +289,34 @@
       "command": ["./.venv/bin/python", "-m", "packages.orchestration.mcp_server"],
       "environment": { "PYTHONPATH": "." }
     },
+    "catalyst": {
+      "type": "local",
+      "command": ["./.venv/bin/python", "-m", "catalyst_mcp"],
+      "environment": { "PYTHONPATH": "packages/catalyst-mcp:." }
+    },
+    "notion": {
+      "type": "local",
+      "command": ["npx", "-y", "@notionhq/notion-mcp-server"],
+      "environment": {
+        "NOTION_TOKEN": "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"
+      }
+    },
     "obsidian": {
       "type": "local",
-      "command": ["uvx", "mcp-obsidian"],
+      "command": ["/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv/bin/python", "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/packages/obsidian_mcp_fixed.py"],
       "environment": {
-        "OBSIDIAN_API_KEY": "${OBSIDIAN_API_KEY}",
+        "OBSIDIAN_API_KEY": "a28142a995356e59b1b6d98687111414f6e4e95dbc5aa6d784b8749796b5c867",
         "OBSIDIAN_HOST": "127.0.0.1",
-        "OBSIDIAN_PORT": "27124"
+        "OBSIDIAN_PORT": "27123",
+        "OBSIDIAN_PROTOCOL": "http"
       }
     },
     "github": {
       "type": "local",
       "command": ["npx", "-y", "@beautyfree/modelcontextprotocol-server-github"],
       "environment": {}
-    },
+    }
+  },
   "provider": {
     "openrouter": {
       "options": {
@@ -340,13 +350,68 @@
             "context": 131072,
             "output": 8192
           }
+        },
+        "meta-llama/llama-4-maverick-17b-128e-instruct": {
+          "name": "Llama 4 Maverick 17B",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "meta-llama/llama-4-scout-17b-16e-instruct": {
+          "name": "Llama 4 Scout 17B",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "qwen/qwen3-32b": {
+          "name": "Qwen 3 32B",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "qwen/qwen3-coder-32b": {
+          "name": "Qwen 3 Coder 32B",
+          "limit": { "context": 131072, "output": 8192 }
         }
       }
     },
-    "google": {
+    "xai": {
       "options": {
-        "baseURL": "https://generativelanguage.googleapis.com/v1beta"
+        "baseURL": "https://api.x.ai/v1"
+      },
+      "models": {
+        "grok-3-beta": {
+          "name": "Grok 3 Beta",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "grok-3-mini-beta": {
+          "name": "Grok 3 Mini Beta",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "grok-3-fast-beta": {
+          "name": "Grok 3 Fast Beta",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "grok-3-mini-fast-beta": {
+          "name": "Grok 3 Mini Fast Beta",
+          "limit": { "context": 131072, "output": 8192 }
+        }
       }
+    },
+    "deepseek": {
+      "options": {
+        "baseURL": "https://api.deepseek.com/v1"
+      },
+      "models": {
+        "deepseek-r1": {
+          "name": "DeepSeek R1",
+          "limit": { "context": 131072, "output": 8192 }
+        },
+        "deepseek-r1-distill-llama-70b": {
+          "name": "DeepSeek R1 Distill Llama 70B",
+          "limit": { "context": 131072, "output": 8192 }
+        }
+      }
+    },
+    "cohere": {
+      "options": {
+        "baseURL": "https://api.cohere.ai/v1"
+      },
+      "models": {}
     },
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
@@ -375,17 +440,24 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "GGUF Direct (local)",
       "options": {
-        "baseURL": "http://localhost:8080/v1"
+        "baseURL": "http://localhost:8088/v1"
       },
       "models": {
-        "qwen2.5-coder-7b-q4": {
-          "name": "Qwen 2.5 Coder 7B Q4 (direct GGUF)"
+        "qwen2.5-coder-7b-q4_k_m": {
+          "name": "Qwen 2.5 Coder 7B (GGUF - GPU 6 layers)",
+          "limit": { "context": 2048, "output": 2048 }
         },
-        "qwen2.5-0.5b-q4": {
-          "name": "Qwen 2.5 0.5B Q4 (direct GGUF)"
+        "qwen2.5-0.5b-instruct-q4_k_m": {
+          "name": "Qwen 2.5 0.5B (GGUF - fast)",
+          "limit": { "context": 2048, "output": 512 }
         },
-        "nomic-embed-text": {
-          "name": "Nomic Embed Text (embedding)"
+        "nomic-embed-text-v1.5-Q4_K_M": {
+          "name": "Nomic Embed Text (GGUF - embedding)",
+          "limit": { "context": 512, "output": 0 }
+        },
+        "rosetta-lora": {
+          "name": "Rosetta LoRA (GGUF - tool translation)",
+          "limit": { "context": 2048, "output": 256 }
         }
       }
     },

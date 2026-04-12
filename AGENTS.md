@@ -1,10 +1,52 @@
-<!-- Version: 3.4 | Updated: 2026-04-05 -->
+<!-- Version: 3.4 | Updated: 2026-04-09 -->
 <!-- Source: 70 agents (52+18), 3 codebases, 10 deprecated AGENTS.md files, 2025-2026 LLM orchestration research -->
 
 # AGENTS.md — Workspace Agent Instructions
 
 > Every AI coding agent in this workspace reads this file. It overrides defaults.
 > For Athena-specific rules, see `athena/AGENTS.md`.
+
+---
+
+## 🔬 DISSECTION MODE (MANDATORY DEFAULT)
+
+**This is our MODUS OPERANDI. All agents MUST operate in dissection mode by default.**
+
+### Core Principles
+
+1. **ALWAYS dissect before implementing** — Never take code at face value
+2. **Source code first** — Check the actual source, not docs or assumptions  
+3. **Find the root cause** — Dismantle until you understand each module
+4. **Frankenstein approach** — Take what works, discard the rest, stitch together
+5. **Version awareness** — Always check if we're using latest versions
+6. **No limits** — If no source, DECOMPILE. If binary, DISASSEMBLE. Open everything.
+
+### Dissection Methods (in order of preference)
+
+1. **Source code** → Read the actual implementation
+2. **Decompile** → Use JADX, Ghidra, IDA, objdump, strings to extract
+3. **Disassemble** → ARM/x86/whatever, reverse engineer
+4. **Network analysis** → Trace API calls, inspect traffic
+5. **Binary dissection** → Extract resources, examine PE/ELF/Mach-O
+6. **Runtime inspection** → Debug, trace, instrument
+
+**There are no restrictions. If it exists, we can take it apart.**
+
+### Examples
+
+- **Building llama.cpp?** → Check their source, compare commit versions
+- **Using a library?** → Read the actual implementation, not just docs
+- **Optimizing performance?** → Find the bottleneck by code inspection
+- **Matching LM Studio?** → Dissect their bundled llama.cpp, find the diff
+- **Closed-source app?** → Decompile it, extract what we need
+
+Before any task involving external code:
+- [ ] Check current version in use
+- [ ] Check latest available version
+- [ ] Check changelog for performance improvements
+- [ ] Evaluate if upgrade needed
+
+**NEVER use outdated libraries/frameworks without explicitly checking if newer versions exist and if they provide benefits.**
 
 ---
 
@@ -67,14 +109,11 @@
 
 | Agent | Role | Model | Mode |
 |-------|------|-------|------|
-| Sisyphus | Primary orchestrator | opencode/mimo-v2-pro-free (high) | all |
-| Prometheus | Plan builder | opencode/mimo-v2-pro-free (high) | all |
-| Hephaestus | Implementation | opencode/mimo-v2-omni-free (medium) | all |
-| Oracle | Q&A/guidance | opencode/mimo-v2-pro-free (high) | all |
-| Explore | Codebase search | opencode/minimax-m2.5-free | subagent |
-| Librarian | External research | opencode/minimax-m2.5-free | subagent |
-| Metis | Pre-planning | opencode/mimo-v2-pro-free (high) | all |
-| Momus | Plan critic | opencode/mimo-v2-pro-free (high) | all |
+| Sisyphus | Primary orchestrator | opencode/minimax-m2.5-free (high) | all |
+| Prometheus | Plan builder | opencode/minimax-m2.5-free (high) | all |
+| Oracle | Q&A/guidance | opencode/minimax-m2.5-free (high) | all |
+| Metis | Pre-planning | opencode/minimax-m2.5-free (high) | all |
+| Momus | Plan critic | opencode/kimi-k2.5-free | all |
 | Atlas | Plan executor | opencode/minimax-m2.5-free | subagent |
 | Sisyphus-Junior | Trivial fixes | opencode/minimax-m2.5-free | subagent |
 | Multimodal-Looker | Image/video | opencode/mimo-v2-omni-free (medium) | all |
@@ -341,7 +380,7 @@ Tasks touching these paths force Oracle review regardless of complexity level:
 | **sequential-thinking** | sequentialthinking | Complex reasoning, chain-of-thought |
 | **memory** | create_entities, read_graph, search_nodes | Knowledge graph operations |
 | **athena** | smart_search, agentic_search, quicksave | Context/memory retrieval |
-| **athena-context** | get_active_context, get_product_context, get_user_context | Active context, identity, preferences |
+| **nx_context** | get_active_context, get_product_context, get_user_context | Active context, identity, preferences |
 | **trigger-guardian** | register_trigger, list_triggers, check_trigger | Command routing |
 | **nx-mind** | get_mind_state, update_mind_state, get_session_history | Project state, session tracking |
 | **unified-memory** | search_memories, create_memory, get_memory_stats | Unified memory operations |
@@ -364,17 +403,13 @@ Tasks touching these paths force Oracle review regardless of complexity level:
 | **sisyphus** | allow | allow | allow | allow | ALL |
 | **prometheus** | allow | allow | allow | allow | ALL |
 | **oracle** | allow | deny | deny | allow | github, memory, sequential-thinking |
-| **metis** | allow | deny | deny | allow | memory, athena-context |
+| **metis** | allow | deny | deny | allow | memory, nx_context |
 | **momus** | allow | deny | deny | allow | github, memory |
 | **hephaestus** | allow | allow | allow (via bash) | filesystem, git, context7 |
 | **atlas** | allow | allow | allow (via bash) | filesystem, git |
 | **explore** | allow | deny | allow | deny | filesystem, git |
 | **librarian** | allow | deny | deny | allow | context7, fetch |
-| **sisyphus-junior** | allow | inherit | allow (via bash) | filesystem |
-| **atlas** | allow | allow | allow | deny | filesystem, git |
-| **explore** | allow | deny | allow | deny | filesystem, git |
-| **librarian** | allow | deny | allow | allow | context7, fetch |
-| **sisyphus-junior** | allow | inherit | allow | deny | filesystem |
+| **sisyphus-junior** | allow | inherit | allow (via bash) | deny | filesystem |
 | **multimodal-looker** | allow | deny | allow | allow | — |
 
 ### Tool Selection Guidelines
@@ -445,10 +480,105 @@ Do NOT use for:
 ### MCP Health Awareness
 
 Before making tool calls, check MCP health:
-- **12 MCPs configured**: sequential-thinking, memory, context7, filesystem, fetch, git, athena-context, trigger-guardian, nx-mind, athena, github, unified-memory
+- **12 MCPs configured**: sequential-thinking, memory, context7, filesystem, fetch, git, nx_context, trigger-guardian, nx-mind, athena, github, unified-memory
 - **Run `bash bin/mcp-doctor.sh`** to verify all MCPs are healthy
 - **If an MCP is down**: Use fallback tools from the matrix above
 - **Deprecated**: `memory` (npx) MCP — use `unified-memory` instead
+
+### MCP Optimization Guide
+
+**For maximum context performance, follow these rules:**
+
+#### 1. Proactive Context Injection (BEFORE responding)
+Before every agent response, proactively fetch relevant context:
+- Use `nx_context` MCP: get_active_context, get_product_context, get_user_context
+- Use `unified-memory` MCP: search_memories, find_context for task-specific memory
+- Use `nx-mind` MCP: get_session_history for related past sessions
+
+**Pattern:**
+```
+# At session start or before complex tasks
+context = nx_context.get_active_context()
+memory = unified-memory.search_memories(task_description)
+# Inject into your reasoning BEFORE answering
+```
+
+#### 2. Lazy MCP Loading (Performance)
+MCPs are lazy-loaded - only call them when needed:
+- Don't call memory/search on trivial tasks (typo fixes, simple lookups)
+- Batch related MCP calls together
+- Cache results in your context window
+
+**When to call MCPs:**
+| Task Type | MCPs to Use |
+|-----------|--------------|
+| Research/explore | context7, librarian, unified-memory |
+| Implementation | nx_context (inject rules), trigger-guardian |
+| Complex reasoning | sequential-thinking, unified-memory |
+| Session continuity | nx-mind, nx_context |
+
+#### 3. Dynamic Capability Discovery
+Each MCP self-describes its capabilities. Use this pattern:
+```
+# Ask MCP what it can do (no need to memorize)
+unified-memory.get_memory_stats()  # Shows what's available
+nx_context.get_bmad_agents()  # Lists BMAD agents
+nx_context.get_bmad_workflows()  # Lists workflows
+```
+
+#### 4. Context Window Optimization
+- **First**: Inject product/user context (nx_context) - identity
+- **Second**: Search relevant memory (unified-memory) - task history
+- **Third**: Use sequential-thinking for complex reasoning
+- **Last**: Fall back to context7/docs for external knowledge
+
+#### 5. MCP Tool Priority by Task
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    MCP USAGE DECISION TREE                   │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Task: "explain how X works"                                 │
+│    → librarian + context7 (external docs)                   │
+│                                                              │
+│  Task: "find code that does Y"                               │
+│    → explore agent (implicit MCP) + unified-memory          │
+│                                                              │
+│  Task: "implement Z"                                        │
+│    → nx_context (inject style/rules)                        │
+│    → unified-memory (find similar implementations)          │
+│    → hephaestus (do the work)                                │
+│                                                              │
+│  Task: "debug error"                                         │
+│    → sequential-thinking (break it down)                    │
+│    → unified-memory (search past fixes)                     │
+│    → nx_context (get constraints)                           │
+│                                                              │
+│  Task: "review my work"                                      │
+│    → oracle (architecture)                                   │
+│    → nx_context (inject quality rules)                      │
+│    → unified-memory (find similar reviews)                  │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### 6. MCP Health Monitoring
+Run diagnostics before important sessions:
+```bash
+bash bin/mcp-doctor.sh  # Quick health check
+bash bin/health-l1-pulse.sh  # Full service check
+```
+
+### Fresh Machine Setup
+
+**One-command setup** (supports Arch/Debian/Fedora/RHEL):
+```bash
+bash bootstrap.sh
+```
+
+**After bootstrap**: `source env.sh && bash n-xyme-mind.sh`
+
+**Verification**: `bash bin/health-l0-blink.sh` — runs pre-flight checks
 
 ---
 
@@ -460,18 +590,16 @@ Before making tool calls, check MCP health:
 
 ---
 
-| Server | Status | Use |
-|--------|--------|-----|
-| athena | ✅ | Context/memory/retrieval |
-| github | ✅ | Repo access, issues, PRs |
-| context7 | ✅ | Live documentation (remote SSE, no install) |
-| athena-context | ✅ | Active context, product/user context |
-| trigger-guardian | ✅ | Command routing, trigger phrases |
-| nx-mind | ✅ | Project state, session history |
-| unified-memory | ✅ | Unified search, semantic memory |
-| git | ✅ | Local version control awareness |
-| sequential-thinking | ✅ | Chain-of-thought for complex reasoning |
-| memory | ✅ | Cross-session knowledge graph |
+| Server | Status | Use | Priority |
+|--------|--------|-----|----------|
+| nx_context | ✅ | Active context, product/user context | HIGH - inject before every response |
+| unified-memory | ✅ | Unified search, semantic memory | HIGH - search for task history |
+| sequential-thinking | ✅ | Chain-of-thought for complex reasoning | MEDIUM - only when reasoning needed |
+| nx-mind | ✅ | Project state, session history | MEDIUM - session continuity |
+| trigger-guardian | ✅ | Command routing, trigger phrases | LOW - command detection |
+| context7 | ✅ | Live documentation (remote SSE, no install) | LOW - docs only |
+| learning-engine | ✅ | Routing, outcome recording | LOW - background learning |
+| intelligence | ✅ | Task routing, complexity scoring | LOW - routing decisions |
 
 ---
 
@@ -500,6 +628,12 @@ Before making tool calls, check MCP health:
 
 ## Schema Safety Protocol
 
+**JSON Config Files (opencode.json, etc.):**
+1. ALWAYS validate against official schema BEFORE editing: `curl -s https://opencode.ai/config.json | python3 -m json.tool`
+2. Validate AFTER any edit: `python3 -m json.tool opencode.json`
+3. Common errors: missing commas, extra/missing braces, duplicate keys, misplaced keys in wrong section
+4. Use the schema to find correct structure - do NOT guess
+
 **BEFORE writing code:**
 1. `lsp_diagnostics` — check existing errors
 2. `lsp_symbols` — understand existing structure
@@ -513,15 +647,21 @@ Before making tool calls, check MCP health:
 - Validate with `python3 -m json.tool` before saving
 - Never duplicate agents between opencode.json and oh-my-opencode.json
 
----
+### MANDATORY: Config Edit Pre-Flight Checklist
 
-## Compression Guard 🚨
+**BEFORE editing ANY .json config file (opencode.json, oh-my-opencode.json, etc.):**
 
-- **DO NOT TOUCH COMPRESSION**
-- All hooks DISABLED (context-window-monitor, preemptive-compaction)
-- History: "Compression loops wasted 12 hours"
-- NEVER re-enable, modify, or suggest compression improvements
-- Keep: "Compress: use compress tool when research/implementation concluded"
+1. **Fetch schema**: `curl -s https://opencode.ai/config.json | jq . > /tmp/schema.json`
+2. **Compare structure**: Check your config has same top-level keys as schema
+3. **Validate your edit**: `python3 -m json.tool your-config.json`
+4. **Check for common mistakes**:
+   - Missing commas after closing braces `}`
+   - Missing closing brackets `]`
+   - Trailing commas (not allowed in JSON)
+   - Keys in wrong section (e.g., provider inside agent)
+   - **CRITICAL**: Top-level keys must match schema exactly
+
+**ALWAYS validate AFTER save, never before.**
 
 ---
 
@@ -853,7 +993,6 @@ Before marking ANY task "done", the agent MUST show gate output:
 - ❌ Using category for implementation — use `subagent_type="hephaestus"` ONLY
 - ❌ Using free tier models for implementation without checking quality
 - ❌ Skipping quality gates
-- ❌ Touching compression hooks
 - ❌ Hardcoding paths or limits
 - ❌ Adding MCP servers without testing
 - ❌ Removing existing types (extend, don't rewrite)
@@ -881,15 +1020,10 @@ When given ANY task, decompose it FIRST:
 | Task Type | Agent | Model | Why |
 |-----------|-------|-------|-----|
 | UI/Visual | category: visual-engineering | kimi-k2.5-free (high) | Best for React/CSS |
-| Complex Logic | category: ultrabrain | opencode/mimo-v2-pro-free (high) | Deep reasoning |
-| Simple Fixes | category: unspecified-low | minimax-m2.5-free | Light task, local model |
-| Research | agent: explore | minimax-m2.5-free | Codebase search |
-| External Docs | agent: librarian | minimax-m2.5-free | Web search |
-| Architecture | agent: oracle | opencode/mimo-v2-pro-free (high) | Strategic advice |
-| Implementation | subagent_type: hephaestus | minimax-m2.5-free | Code writing (EXCLUSIVE) |
-| Tests | category: unspecified-low | minimax-m2.5-free | Test generation |
-| Review | agent: oracle | opencode/mimo-v2-pro-free (high) | Adversarial review |
-| Red-Team | agent: momus | opencode/mimo-v2-pro-free (high) | Critical analysis |
+| Complex Logic | category: ultrabrain | opencode/qwen3.6-plus-free (high) | Deep reasoning |
+| Architecture | agent: oracle | opencode/qwen3.6-plus-free (high) | Strategic advice |
+| Review | agent: oracle | opencode/qwen3.6-plus-free (high) | Adversarial review |
+| Red-Team | agent: momus | opencode/kimi-k2.5-free | Critical analysis |
 | Delegation/Routing | category: routing | minimax-m2.5-free | Routing ONLY - no code |
 
 ### Parallel Execution Rules
@@ -932,12 +1066,12 @@ When given ANY task, decompose it FIRST:
 > Agent: "Checking... nemotron-3-super-free is in our provider list but it's confirmed broken (GitHub issue #18484, infinite loops, malformed output). Should I use a different model instead?"
 
 **WRONG (sycophantic):**
-> User: "The compression hook is broken, fix it"
-> Agent: "Sure, let me modify the compression hook..." *(violates Compression Guard)*
+> User: "Add a new MCP server to config"
+> Agent: "Sure! Adding it now..." *(doesn't verify the MCP works)*
 
 **RIGHT (verified):**
-> User: "The compression hook is broken, fix it"
-> Agent: "I can't modify compression hooks — our Compression Guard rule explicitly forbids it. The hooks are intentionally disabled because compression loops wasted 12 hours in previous iterations. Can I help with something else?"
+> User: "Add a new MCP server to config"
+> Agent: "Let me first check that MCP is available and test it before adding to config"
 
 ---
 
