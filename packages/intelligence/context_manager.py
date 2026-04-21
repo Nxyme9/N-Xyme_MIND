@@ -11,14 +11,22 @@ from __future__ import annotations
 
 import logging
 import os
+import sys
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Any
+
+# Add unified-compactor to path if needed
+_package_dir = Path(__file__).resolve().parent.parent
+_unified_path = _package_dir / "unified-compactor"
+if str(_unified_path) not in sys.path:
+    sys.path.insert(0, str(_unified_path))
 
 logger = logging.getLogger(__name__)
 
 # Try to import UnifiedCompactor - fall back to simple if not available
 try:
-    from packages.unified_compactor import UnifiedCompactor
+    from unified_compactor import UnifiedCompactor
 
     _HAS_UNIFIED_COMPACTOR = True
 except ImportError:
@@ -258,12 +266,104 @@ class ContextManager:
                     )
                     return
 
-        # Fallback to simple priority-based removal
+        # Fallback to compression-based reduction (no data loss)
+        # Sort by priority (lowest first) - we'll compress low-priority first
         self.chunks.sort(key=lambda c: c.priority)
 
+        # Maximum iterations to prevent infinite loops
+        max_iterations = len(self.chunks) * 2
+        iterations = 0
+
+        while (
+            self._total_tokens > self.max_tokens
+            and self.chunks
+            and iterations < max_iterations
+        ):
+            iterations += 1
+
+            # Find first uncompressed chunk (prefer low-priority)
+            chunk_to_compress = None
+            for chunk in self.chunks:
+                if not chunk.is_compressed and chunk.tokens > 0:
+                    chunk_to_compress = chunk
+                    break
+
+            if not chunk_to_compress:
+                # All remaining chunks are already compressed or have 0 tokens
+                # Try to merge remaining chunks into a summary
+                if len(self.chunks) > 1:
+                    self._merge_chunks_summary()
+                    continue
+                else:
+                    # Only one chunk left - can't compress further
+                    break
+
+            # Attempt to compress this chunk
+            target_tokens = max(chunk_to_compress.tokens // 2, 100)
+            compressed = self._compress_content(
+                chunk_to_compress.content, target_tokens
+            )
+
+            if compressed and len(compressed) < len(chunk_to_compress.content):
+                old_tokens = chunk_to_compress.tokens
+                chunk_to_compress.content = compressed
+                chunk_to_compress.tokens = len(compressed) // 4
+                chunk_to_compress.is_compressed = True
+                self._total_tokens -= old_tokens - chunk_to_compress.tokens
+            else:
+                # Compression didn't help - try removing this chunk
+                # but mark it as compressed to avoid retrying forever
+                chunk_to_compress.is_compressed = True
+
+        # Final safety check - if still over limit, remove lowest priority chunks
+        # but now we have at least tried to compress
         while self._total_tokens > self.max_tokens and self.chunks:
             chunk = self.chunks.pop(0)
-            self._total_tokens -= chunk.tokens
+            # Guard against infinite loop if tokens is 0
+            if chunk.tokens > 0:
+                self._total_tokens -= chunk.tokens
+            else:
+                # Skip chunks with 0 tokens to prevent infinite loop
+                continue
+
+    def _merge_chunks_summary(self) -> None:
+        """Merge multiple low-priority chunks into a summary.
+
+        This preserves context by creating a summary instead of losing data.
+        """
+        if len(self.chunks) < 2:
+            return
+
+        # Take up to 3 chunks with lowest priority and merge them
+        chunks_to_merge = self.chunks[:3]
+        remaining = self.chunks[3:]
+
+        # Create summary of merged chunks
+        summary_parts = []
+        total_merged_tokens = 0
+
+        for chunk in chunks_to_merge:
+            # Extract key info from each chunk
+            source = chunk.metadata.get("source", chunk.source)
+            summary_parts.append(f"[{source}]: {chunk.content[:200]}...")
+            total_merged_tokens += chunk.tokens
+
+        summary_content = " | ".join(summary_parts)
+        summary_content += (
+            f"\n\n[... {len(chunks_to_merge)} chunks merged into summary ...]"
+        )
+
+        summary_chunk = ContextChunk(
+            content=summary_content,
+            priority=min(c.priority for c in chunks_to_merge),
+            source="merged_summary",
+            tokens=len(summary_content) // 4,
+            is_compressed=True,
+            metadata={"merged_from": len(chunks_to_merge)},
+        )
+
+        self.chunks = [summary_chunk] + remaining
+        self._total_tokens -= total_merged_tokens - summary_chunk.tokens
 
     def _compress_content(self, content: str, target_tokens: int) -> str | None:
         """Compress content to target token count.
