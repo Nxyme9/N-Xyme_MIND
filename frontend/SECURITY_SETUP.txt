@@ -1,0 +1,12 @@
+# Frontend Security Setup
+# Copy this file to frontend/.env.local and update values
+
+ADMIN_USER=admin
+ADMIN_PASS=admin
+NEXTAUTH_SECRET=change-this-secret-in-production
+
+BACKEND_BRAIN_MCP=http://localhost:8765
+BACKEND_HTTP_GATEWAY=http://localhost:8766
+BACKEND_MODEL_ROUTER=http://localhost:8000
+
+CORS_ORIGINS=http://localhost:3000
