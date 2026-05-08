@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=N-Xyme MIND Desktop
+Comment=AI coding workspace - Desktop App
+Exec=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/nx-mind-desktop/target/release/nxyme-mind-desktop
+Icon=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/nx-mind-desktop/src-tauri/icons/128x128.png
+Terminal=false
+Categories=Development;AI;
+StartupNotify=true

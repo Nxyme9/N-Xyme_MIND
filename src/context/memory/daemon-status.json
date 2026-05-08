@@ -1,0 +1,28 @@
+{
+  "daemon": {
+    "running": false,
+    "pid": 1956881,
+    "started_at": "2026-04-06T01:37:20.049554"
+  },
+  "components": {
+    "health": {
+      "healthy": true,
+      "components": {},
+      "last_check": null,
+      "errors": []
+    },
+    "scan_scheduler": {
+      "last_scan": null,
+      "next_scan": "2026-04-07T01:37:20.026457",
+      "files_scanned": 0,
+      "files_changed": 0,
+      "files_embedded": 0,
+      "errors": [],
+      "is_running": false
+    },
+    "file_watcher": {
+      "running": false
+    }
+  },
+  "last_update": "2026-04-07T10:53:57.446619"
+}

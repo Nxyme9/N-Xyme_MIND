@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=N-Xyme Tray
+Comment=System tray monitoring for N-Xyme
+Exec=python3 /home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bin/brain-tray.py
+Icon=system-monitor
+Terminal=true
+Categories=System;Network;
+StartupNotify=true

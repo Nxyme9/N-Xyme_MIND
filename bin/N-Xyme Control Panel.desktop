@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=N-Xyme Control Panel
+Comment=Web-based control panel for N-Xyme services
+Exec=python3 /home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bin/web-control.py
+Icon=utilities-terminal
+Terminal=true
+Categories=System;Network;
+StartupNotify=true

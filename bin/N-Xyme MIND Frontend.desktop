@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=N-Xyme MIND Frontend
+Comment=AI coding workspace frontend
+Exec=xdg-open http://localhost:3000
+Icon=firefox
+Terminal=false
+Categories=Development;AI;
+StartupNotify=true
+StartupWMClass=nextjs

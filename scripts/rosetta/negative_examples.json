@@ -1,0 +1,545 @@
+{
+  "negative_examples": [
+    {
+      "id": "neg_001",
+      "user_request": "What is the weather today?",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "git_commit", "github_create_issue"],
+      "reason": "This is a knowledge question that requires external information, not a tool task. No available tool can fetch real-time weather data."
+    },
+    {
+      "id": "neg_002",
+      "user_request": "Create a Python function that calculates fibonacci",
+      "correct_tool": "write_file",
+      "distractor_tools": ["git_commit", "github_search", "telegram_send_message"],
+      "reason": "User wants to create file content for a new function. The distractors involve git operations and messaging which are unrelated to creating file content."
+    },
+    {
+      "id": "neg_003",
+      "user_request": "Explain how machine learning works",
+      "correct_tool": null,
+      "distractor_tools": ["read", "edit", "write"],
+      "reason": "This is an explanatory/educational request. The model should answer directly without tool calls, as no tool is needed to explain concepts."
+    },
+    {
+      "id": "neg_004",
+      "user_request": "Search for error handling patterns in Python",
+      "correct_tool": "grep",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "User wants to search for patterns in code. While grep is appropriate, read/write are for file content, not searching. Bash could run commands but grep is the direct tool."
+    },
+    {
+      "id": "neg_005",
+      "user_request": "Send a message to my team about the deployment",
+      "correct_tool": "telegram_send_message",
+      "distractor_tools": ["read_file", "git_commit", "webfetch"],
+      "reason": "The correct tool is telegram_send_message for messaging. Git commit is for version control, read_file is for reading, webfetch is for web content - all unrelated to sending messages."
+    },
+    {
+      "id": "neg_006",
+      "user_request": "What does this code do?",
+      "correct_tool": "read_file",
+      "distractor_tools": ["telegram_send_message", "github_create_issue", "obsidian_get_file_contents"],
+      "reason": "User wants to understand code. Read_file is appropriate. Telegram/GitHub/Obsidian are for messaging, issues, and notes - not for reading arbitrary code files."
+    },
+    {
+      "id": "neg_007",
+      "user_request": "Run the test suite",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "User wants to execute tests. Bash can run 'pytest' or similar commands. Read/write/grep are for file operations, not execution."
+    },
+    {
+      "id": "neg_008",
+      "user_request": "Get the current git status",
+      "correct_tool": "git_status",
+      "distractor_tools": ["read_file", "write_file", "telegram_send_message"],
+      "reason": "Git status is a specific operation. The distractors (read/write/message) don't relate to version control status queries."
+    },
+    {
+      "id": "neg_009",
+      "user_request": "Write unit tests for this module",
+      "correct_tool": "write_file",
+      "distractor_tools": ["grep", "bash", "telegram_send_message"],
+      "reason": "User wants to create new test files. Write_file is correct. Grep searches, bash executes, telegram messages - none create new content."
+    },
+    {
+      "id": "neg_010",
+      "user_request": "Look up the Notion API documentation",
+      "correct_tool": "context7_query-docs",
+      "distractor_tools": ["read_file", "write_file", "git_commit"],
+      "reason": "User needs to look up documentation. Context7 provides docs. File operations and git commit don't fetch documentation."
+    },
+    {
+      "id": "neg_011",
+      "user_request": "Find all files containing 'TODO' comments",
+      "correct_tool": "grep",
+      "distractor_tools": ["read_file", "write_file", "github_search_code"],
+      "reason": "Grep searches file contents for patterns. Read/write are for individual files, github_search searches remote repos."
+    },
+    {
+      "id": "neg_012",
+      "user_request": "Create a new branch for my feature",
+      "correct_tool": "git_branch",
+      "distractor_tools": ["read_file", "write_file", "telegram_send_message"],
+      "reason": "Git branch creates a new branch. File operations and messaging tools don't handle version control."
+    },
+    {
+      "id": "neg_013",
+      "user_request": "Commit these changes with a message",
+      "correct_tool": "git_commit",
+      "distractor_tools": ["read_file", "write_file", "webfetch"],
+      "reason": "Git commit saves changes with a message. File operations don't commit, webfetch doesn't version control."
+    },
+    {
+      "id": "neg_014",
+      "user_request": "What is the meaning of life?",
+      "correct_tool": null,
+      "distractor_tools": ["grep", "read_file", "bash"],
+      "reason": "Philosophical question that the model can answer directly. No tool is needed or would help."
+    },
+    {
+      "id": "neg_015",
+      "user_request": "Read my notes from Obsidian",
+      "correct_tool": "obsidian_get_file_contents",
+      "distractor_tools": ["read_file", "write_file", "git_commit"],
+      "reason": "Obsidian is for vault notes. Generic read_file doesn't know about the vault structure. Git commit doesn't read notes."
+    },
+    {
+      "id": "neg_016",
+      "user_request": "Search GitHub for authentication patterns",
+      "correct_tool": "github_search_code",
+      "distractor_tools": ["read_file", "grep", "webfetch"],
+      "reason": "GitHub search is for remote repo code. Grep is for local, read_file is for specific files, webfetch fetches web pages."
+    },
+    {
+      "id": "neg_017",
+      "user_request": "Install the dependencies",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Install requires running package manager commands (npm/pip). Bash executes commands. File operations don't install."
+    },
+    {
+      "id": "neg_018",
+      "user_request": "Delete this file",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Delete requires rm command via bash. Read and write don't delete. Grep doesn't handle file deletion."
+    },
+    {
+      "id": "neg_019",
+      "user_request": "What files have changed since last commit?",
+      "correct_tool": "git_diff",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git diff shows changes. File operations don't show diffs. Grep searches content, not changes."
+    },
+    {
+      "id": "neg_020",
+      "user_request": "Create an issue on GitHub about this bug",
+      "correct_tool": "github_create_issue",
+      "distractor_tools": ["read_file", "write_file", "telegram_send_message"],
+      "reason": "GitHub issue creation is specific. File operations don't create issues. Telegram doesn't interact with GitHub."
+    },
+    {
+      "id": "neg_021",
+      "user_request": "Refactor this function to use async/await",
+      "correct_tool": "edit",
+      "distractor_tools": ["read_file", "bash", "telegram_send_message"],
+      "reason": "Refactoring requires editing code. Read shows code but doesn't change it. Bash executes, telegram messages."
+    },
+    {
+      "id": "neg_022",
+      "user_request": "Find the definition of this function",
+      "correct_tool": "lsp_goto_definition",
+      "distractor_tools": ["grep", "read_file", "write_file"],
+      "reason": "LSP goto definition navigates to symbol definition. Grep finds text but not definitions. Read/write are for content."
+    },
+    {
+      "id": "neg_023",
+      "user_request": "Rename this variable across the project",
+      "correct_tool": "lsp_rename",
+      "distractor_tools": ["grep", "edit", "bash"],
+      "reason": "LSP rename does safe cross-project renaming. Edit changes one location. Grep finds but doesn't rename."
+    },
+    {
+      "id": "neg_024",
+      "user_request": "Get type errors in this file",
+      "correct_tool": "lsp_diagnostics",
+      "distractor_tools": ["grep", "read_file", "bash"],
+      "reason": "LSP diagnostics finds type errors. Grep finds text, read shows content, bash executes - none analyze types."
+    },
+    {
+      "id": "neg_025",
+      "user_request": "List all symbols in this file",
+      "correct_tool": "lsp_symbols",
+      "distractor_tools": ["grep", "read_file", "write_file"],
+      "reason": "LSP symbols lists all symbols. Grep searches patterns, read shows content - neither lists symbols."
+    },
+    {
+      "id": "neg_026",
+      "user_request": "Show me the recent commit history",
+      "correct_tool": "git_log",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git log shows commit history. File operations don't show git history. Grep searches content."
+    },
+    {
+      "id": "neg_027",
+      "user_request": "Check for secrets in the codebase",
+      "correct_tool": "grep",
+      "distractor_tools": ["read_file", "write_file", "telegram_send_message"],
+      "reason": "Search for secrets (API keys, passwords) via grep. File operations don't search. Telegram doesn't help."
+    },
+    {
+      "id": "neg_028",
+      "user_request": "Build the project",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Build requires running build commands (npm build, make, etc.). Bash executes. Others don't build."
+    },
+    {
+      "id": "neg_029",
+      "user_request": "Format this code",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Formatting runs tools like prettier, black, gofmt. Bash executes these. Others don't format."
+    },
+    {
+      "id": "neg_030",
+      "user_request": "Linting check on this project",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Lint runs eslint, pylint, etc. via bash. File operations don't lint. Grep finds text, not lint issues."
+    },
+    {
+      "id": "neg_031",
+      "user_request": "Fetch content from this URL",
+      "correct_tool": "webfetch",
+      "distractor_tools": ["read_file", "write_file", "git_commit"],
+      "reason": "Webfetch retrieves web content. File operations read local files. Git commit doesn't fetch URLs."
+    },
+    {
+      "id": "neg_032",
+      "user_request": "Search the web for best practices",
+      "correct_tool": "websearch",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Websearch performs web searches. File operations don't search the web. Grep searches local files."
+    },
+    {
+      "id": "neg_033",
+      "user_request": "Create a pull request",
+      "correct_tool": "github_create_pull_request",
+      "distractor_tools": ["read_file", "write_file", "git_commit"],
+      "reason": "PR creation is specific to GitHub. File operations don't create PRs. Git commit is local only."
+    },
+    {
+      "id": "neg_034",
+      "user_request": "List all open issues",
+      "correct_tool": "github_list_issues",
+      "distractor_tools": ["read_file", "write_file", "telegram_send_message"],
+      "reason": "GitHub issues listing is specific. File ops don't list issues. Telegram doesn't query GitHub."
+    },
+    {
+      "id": "neg_035",
+      "user_request": "Get file contents from repository",
+      "correct_tool": "github_get_file_contents",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "GitHub file get fetches from remote repo. Read reads local. Write writes local. Grep searches."
+    },
+    {
+      "id": "neg_036",
+      "user_request": "Append content to my daily note",
+      "correct_tool": "obsidian_append_content",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Obsidian append adds to vault notes. File write overwrites. Bash doesn't interact with Obsidian."
+    },
+    {
+      "id": "neg_037",
+      "user_request": "Search my notes",
+      "correct_tool": "obsidian_search",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Obsidian search queries vault. Grep searches local files but not vault. File ops don't search."
+    },
+    {
+      "id": "neg_038",
+      "user_request": "Analyze code complexity",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Complexity analysis runs tools like radon, lizard. Bash executes. Others don't analyze complexity."
+    },
+    {
+      "id": "neg_039",
+      "user_request": "Find unused imports",
+      "correct_tool": "grep",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Find unused imports via grep for imports. Write creates files. Bash can run tools but grep is direct."
+    },
+    {
+      "id": "neg_040",
+      "user_request": "What are the references to this function?",
+      "correct_tool": "lsp_find_references",
+      "distractor_tools": ["grep", "read_file", "write_file"],
+      "reason": "LSP find references finds all symbol references. Grep finds text but not semantic references."
+    },
+    {
+      "id": "neg_041",
+      "user_request": "Start a development server",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Start dev server runs npm start, python manage.py, etc. via bash. File ops don't start servers."
+    },
+    {
+      "id": "neg_042",
+      "user_request": "Check code coverage",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Coverage runs coverage tools (pytest-cov, coverage.py). Bash executes. Others don't measure coverage."
+    },
+    {
+      "id": "neg_043",
+      "user_request": "Merge these branches",
+      "correct_tool": "git_merge",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Git merge combines branches. File ops don't merge. Bash can run git but merge is specific."
+    },
+    {
+      "id": "neg_044",
+      "user_request": "Pull latest changes",
+      "correct_tool": "git_pull",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git pull fetches and merges remote changes. File ops don't pull. Grep doesn't handle git."
+    },
+    {
+      "id": "neg_045",
+      "user_request": "Push changes to remote",
+      "correct_tool": "git_push",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Git push sends commits to remote. File ops don't push. Bash can run git but push is specific."
+    },
+    {
+      "id": "neg_046",
+      "user_request": "Clone this repository",
+      "correct_tool": "bash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Clone runs git clone via bash. File ops don't clone. Grep doesn't clone repos."
+    },
+    {
+      "id": "neg_047",
+      "user_request": "List all sessions",
+      "correct_tool": "session_list",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Session list shows past sessions. File ops don't list sessions. Grep doesn't query sessions."
+    },
+    {
+      "id": "neg_048",
+      "user_request": "Search past sessions",
+      "correct_tool": "session_search",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Session search queries session history. File ops don't search sessions. Grep is for files."
+    },
+    {
+      "id": "neg_049",
+      "user_request": "Get session info",
+      "correct_tool": "session_info",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Session info shows session metadata. File ops don't query sessions. Bash doesn't get session info."
+    },
+    {
+      "id": "neg_050",
+      "user_request": "Query the memory system",
+      "correct_tool": "unified-memory_search",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Memory search queries unified memory. File ops don't search memory. Grep is for files."
+    },
+    {
+      "id": "neg_051",
+      "user_request": "Write to memory",
+      "correct_tool": "unified-memory_write",
+      "distractor_tools": ["read_file", "grep", "bash"],
+      "reason": "Memory write stores to memory system. Read gets from memory but doesn't write. Grep searches."
+    },
+    {
+      "id": "neg_052",
+      "user_request": "Get memory statistics",
+      "correct_tool": "unified-memory_get_stats",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Memory stats shows memory system stats. File ops don't get stats. Grep doesn't query stats."
+    },
+    {
+      "id": "neg_053",
+      "user_request": "Route this task",
+      "correct_tool": "intelligence_route",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Intelligence route recommends agent routing. File ops don't route. Bash doesn't route tasks."
+    },
+    {
+      "id": "neg_054",
+      "user_request": "Score task complexity",
+      "correct_tool": "intelligence_score_complexity",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Complexity scoring rates task difficulty. File ops don't score. Grep doesn't assess complexity."
+    },
+    {
+      "id": "neg_055",
+      "user_request": "List available agents",
+      "correct_tool": "intelligence_list_agents",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "List agents shows available agents. File ops don't list agents. Bash doesn't list agents."
+    },
+    {
+      "id": "neg_056",
+      "user_request": "Run quality gates",
+      "correct_tool": "quality-gates_run_all",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Quality gates run all validation checks. File ops don't run gates. Grep doesn't run gates."
+    },
+    {
+      "id": "neg_057",
+      "user_request": "Run type checking",
+      "correct_tool": "quality-gates_run_typecheck",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Type check runs TypeScript/Python type checking. File ops don't type check. Grep doesn't type check."
+    },
+    {
+      "id": "neg_058",
+      "user_request": "Run security scan",
+      "correct_tool": "quality-gates_run_secrets",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Security scan checks for secrets. File ops don't scan. Grep finds but doesn't scan systematically."
+    },
+    {
+      "id": "neg_059",
+      "user_request": "Think through this problem step by step",
+      "correct_tool": "sequential-thinking",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Sequential thinking provides chain-of-thought reasoning. File ops don't think. Bash executes commands."
+    },
+    {
+      "id": "neg_060",
+      "user_request": "Create an entity in the knowledge graph",
+      "correct_tool": "memory_create_entities",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Memory create adds to knowledge graph. File ops don't create graph entities. Grep doesn't create."
+    },
+    {
+      "id": "neg_061",
+      "user_request": "Query the knowledge graph",
+      "correct_tool": "memory_search_nodes",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Memory search queries knowledge graph. File ops don't query graph. Grep is for text search."
+    },
+    {
+      "id": "neg_062",
+      "user_request": "Who wrote this line of code?",
+      "correct_tool": "git_blame",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git blame shows code authorship. File ops don't blame. Grep finds but doesn't attribute."
+    },
+    {
+      "id": "neg_063",
+      "user_request": "Find the commit that introduced this bug",
+      "correct_tool": "git_bisect",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git bisect finds buggy commits. File ops don't bisect. Grep doesn't find by bug."
+    },
+    {
+      "id": "neg_064",
+      "user_request": "Show me the current branch",
+      "correct_tool": "git_branch",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Git branch shows current branch. File ops don't show branches. Bash can run git but branch is specific."
+    },
+    {
+      "id": "neg_065",
+      "user_request": "Stash current changes",
+      "correct_tool": "git_stash",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git stash saves uncommitted changes. File ops don't stash. Grep doesn't stash."
+    },
+    {
+      "id": "neg_066",
+      "user_request": "Apply stashed changes",
+      "correct_tool": "git_stash_pop",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git stash pop applies stashed changes. File ops don't pop stash. Grep doesn't apply."
+    },
+    {
+      "id": "neg_067",
+      "user_request": "Reset to previous commit",
+      "correct_tool": "git_reset",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git reset reverts to commit. File ops don't reset. Grep doesn't reset commits."
+    },
+    {
+      "id": "neg_068",
+      "user_request": "Rebase onto main branch",
+      "correct_tool": "git_rebase",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Git rebase reapplies commits. File ops don't rebase. Bash can run git but rebase is specific."
+    },
+    {
+      "id": "neg_069",
+      "user_request": "Cherry-pick a commit",
+      "correct_tool": "git_cherry_pick",
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Git cherry-pick applies single commit. File ops don't cherry-pick. Grep doesn't pick commits."
+    },
+    {
+      "id": "neg_070",
+      "user_request": "Squash the last N commits",
+      "correct_tool": "git_squash",
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Git squash combines commits. File ops don't squash. Bash can run but squash is specific."
+    },
+    {
+      "id": "neg_071",
+      "user_request": "Tell me a joke",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Social request that model can answer directly. No tool needed for humor."
+    },
+    {
+      "id": "neg_072",
+      "user_request": "What do you think about AI?",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Opinion question the model can answer directly. No tool provides opinions on AI."
+    },
+    {
+      "id": "neg_073",
+      "user_request": "Help me with my math homework",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "write_file", "bash"],
+      "reason": "Educational assistance - model can help directly. No tools needed for math problems."
+    },
+    {
+      "id": "neg_074",
+      "user_request": "Write a poem about coding",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Creative writing the model can do directly. No tools needed for poetry."
+    },
+    {
+      "id": "neg_075",
+      "user_request": "Translate this to Spanish",
+      "correct_tool": null,
+      "distractor_tools": ["read_file", "write_file", "grep"],
+      "reason": "Translation the model can do directly. No tool needed for language translation."
+    }
+  ],
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-04-09",
+    "source": "ToolFormer/ToolLLM/NexusRaven research",
+    "purpose": "LoRA training for tool discrimination",
+    "total_examples": 75,
+    "categories": {
+      "knowledge_questions_no_tool_needed": 7,
+      "wrong_tool_selected_similar_incorrect": 0,
+      "multiple_tools_one_correct": 0,
+      "ambiguous_requests_explain_vs_execute": 0,
+      "tool_requested_not_available": 0,
+      "context_required_cant_execute": 0,
+      "distractor_tools_similar_but_wrong": 68
+    }
+  }
+}
