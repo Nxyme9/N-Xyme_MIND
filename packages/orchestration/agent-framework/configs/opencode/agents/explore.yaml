@@ -1,0 +1,15 @@
+name: explore
+description: Codebase search agent - finds files, patterns, and code across workspace
+type: searcher
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - search
+  - exploration
+  - discovery
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 4
+permissions:
+  - read
+skills: []

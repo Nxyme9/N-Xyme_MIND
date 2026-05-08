@@ -1,0 +1,15 @@
+name: librarian
+description: External research agent - searches remote repos, docs, GitHub
+type: researcher
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - research
+  - documentation
+  - web_search
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 4
+permissions:
+  - read
+skills: []

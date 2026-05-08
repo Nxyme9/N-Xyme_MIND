@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Xyme MIND - Unified Dashboard</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --success: #238636;
+            --error: #da3633;
+            --warning: #d29922;
+        }
+        body {
+            font-family: 'Menlo', 'Monaco', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        .app { display: flex; height: 100vh; }
+        .sidebar {
+            width: 220px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            padding: 16px 0;
+            overflow-y: auto;
+        }
+        .sidebar-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .sidebar-item:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+        .sidebar-item.active {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { color: var(--accent); font-size: 20px; }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: var(--success);
+            color: white;
+        }
+        .content { flex: 1; padding: 24px; overflow-y: auto; }
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: var(--accent);
+            font-size: 14px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value { font-size: 32px; font-weight: bold; color: var(--accent); }
+        .stat-label { color: var(--text-secondary); font-size: 12px; margin-top: 8px; }
+        .mcp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .mcp-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        .mcp-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .mcp-status.ok { background: var(--success); }
+        .mcp-status.error { background: var(--error); }
+        .mcp-status.timeout { background: var(--warning); }
+        .chart-container { height: 200px; margin-top: 16px; }
+        .chat-container { height: 400px; display: flex; flex-direction: column; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 16px; }
+        .message { margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; }
+        .message.user { background: var(--accent); color: white; text-align: right; }
+        .message.assistant { background: var(--bg-tertiary); }
+        .message.system { background: var(--warning); color: #000; font-size: 12px; }
+        .chat-input { display: flex; gap: 8px; }
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        .chat-input button {
+            padding: 12px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .chat-input button:hover { opacity: 0.9; }
+        .loading { color: var(--text-secondary); font-style: italic; }
+        .table { width: 100%; border-collapse: collapse; }
+        .table th, .table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        .table th { color: var(--text-secondary); font-size: 12px; text-transform: uppercase; }
+        .refresh-btn {
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .refresh-btn:hover { background: var(--border); }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        const API_BASE = '';
+        
+        function App() {
+            const [view, setView] = useState('dashboard');
+            const [health, setHealth] = useState(null);
+            const [learningStats, setLearningStats] = useState(null);
+            const [routingHistory, setRoutingHistory] = useState([]);
+            const [memoryStats, setMemoryStats] = useState(null);
+            const [loading, setLoading] = useState(true);
+            
+            useEffect(() => {
+                fetchData();
+                const interval = setInterval(fetchData, 30000);
+                return () => clearInterval(interval);
+            }, []);
+            
+            async function fetchData() {
+                setLoading(true);
+                try {
+                    const [h, ls, lstat, rh, ms] = await Promise.all([
+                        fetch('/api/health').then(r => r.json()),
+                        fetch('/api/routing/stats').then(r => r.json()).catch(() => null),
+                        fetch('/api/learning/status').then(r => r.json()).catch(() => null),
+                        fetch('/api/intelligence/history?limit=20').then(r => r.json()).catch(() => null),
+                        fetch('/api/memory/stats').then(r => r.json()).catch(() => null)
+                    ]);
+                    setHealth(h);
+                    setLearningStats(ls?.data || null);
+                    setRoutingHistory(rh?.data || []);
+                    setMemoryStats(ms?.data || null);
+                } catch(e) {
+                    console.error('Fetch error:', e);
+                }
+                setLoading(false);
+            }
+            
+            const navItems = [
+                { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+                { id: 'learning', label: 'Learning Engine', icon: '🧠' },
+                { id: 'memory', label: 'Memory System', icon: '💾' },
+                { id: 'chat', label: 'Chat + Memory', icon: '💬' },
+                { id: 'mcp', label: 'MCP Status', icon: '🔌' },
+                { id: 'sessions', label: 'Sessions', icon: '🔄' }
+            ];
+            
+            return (
+                <div className="app">
+                    <div className="sidebar">
+                        {navItems.map(item => (
+                            <div key={item.id} className={`sidebar-item ${view === item.id ? 'active' : ''}`} onClick={() => setView(item.id)}>
+                                <span>{item.icon}</span> {item.label}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="main">
+                        <div className="header">
+                            <h1>N-Xyme MIND Dashboard</h1>
+                            <div>
+                                <span className="status-badge">{loading ? 'Loading...' : 'Live'}</span>
+                                <button className="refresh-btn" style={{marginLeft: 12}} onClick={fetchData}>↻</button>
+                            </div>
+                        </div>
+                        <div className="content">
+                            {view === 'dashboard' && <Dashboard health={health} learningStats={learningStats} routingHistory={routingHistory} />}
+                            {view === 'learning' && <LearningPanel learningStats={learningStats} routingHistory={routingHistory} />}
+                            {view === 'memory' && <MemoryPanel memoryStats={memoryStats} />}
+                            {view === 'chat' && <ChatPanel />}
+                            {view === 'mcp' && <MCPStatus health={health} />}
+                            {view === 'sessions' && <SessionsPanel />}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function Dashboard({ health, learningStats, routingHistory }) {
+            const mcpCount = health?.mcps ? Object.keys(health.mcps).length : 0;
+            const okMcpCount = health?.mcps ? Object.keys(health.mcps).filter(k => health.mcps[k].status === 'ok').length : 0;
+            const totalRoutes = routingHistory?.length || 0;
+            
+            return (
+                <div>
+                    <div className="grid">
+                        <div className="stat-card">
+                            <div className="stat-value">{okMcpCount}/{mcpCount}</div>
+                            <div className="stat-label">MCPs Operational</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{learningStats?.total_outcomes || 0}</div>
+                            <div className="stat-label">Routing Decisions</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{(learningStats?.success_rate || 0).toFixed(1)}%</div>
+                            <div className="stat-label">Success Rate</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-value">{learningStats?.q_table_size || 0}</div>
+                            <div className="stat-label">Q-Table Entries</div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <h2>Recent Routing Decisions</h2>
+                        {routingHistory.length > 0 ? (
+                            <table className="table">
+                                <thead><tr><th>Task</th><th>Agent</th><th>Confidence</th><th>Strategy</th></tr></thead>
+                                <tbody>
+                                    {routingHistory.slice(0, 5).map((r, i) => (
+                                        <tr key={i}>
+                                            <td>{r.task_description?.substring(0, 40)}...</td>
+                                            <td>{r.agent}</td>
+                                            <td>{r.confidence?.toFixed(2) || '-'}</td>
+                                            <td>{r.strategy || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        ) : <div className="loading">No routing history yet</div>}
+                    </div>
+                </div>
+            );
+        }
+        
+        function LearningPanel({ learningStats, routingHistory }) {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+            
+            useEffect(() => {
+                if (chartRef.current && routingHistory.length > 0) {
+                    if (chartInstance.current) chartInstance.current.destroy();
+                    chartInstance.current = new Chart(chartRef.current, {
+                        type: 'line',
+                        data: {
+                            labels: routingHistory.map((_, i) => i + 1),
+                            datasets: [{
+                                label: 'Routing Success',
+                                data: routingHistory.map(r => r.success ? 1 : 0),
+                                borderColor: '#58a6ff',
+                                backgroundColor: 'rgba(88,166,255,0.1)',
+                                fill: true
+                            }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                }
+            }, [routingHistory]);
+            
+            return (
+                <div>
+                    <div className="grid">
+                        <div className="card">
+                            <h2>Q-Learning Statistics</h2>
+                            <div className="grid">
+                                <div className="stat-card">
+                                    <div className="stat-value">{learningStats?.total_outcomes || 0}</div>
+                                    <div className="stat-label">Total Outcomes</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{(learningStats?.success_rate || 0).toFixed(1)}%</div>
+                                    <div className="stat-label">Success Rate</div>
+                                </div>
+                                <div className="stat-card">
+                                    <div className="stat-value">{learningStats?.q_table_size || 0}</div>
+                                    <div className="stat-label">Q-Table Size</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="card">
+                        <h2>Routing Performance Over Time</h2>
+                        <div className="chart-container"><canvas ref={chartRef}></canvas></div>
+                    </div>
+                    
+                    <div className="card">
+                        <h2>Agent Performance</h2>
+                        <table className="table">
+                            <thead><tr><th>Agent</th><th>Decisions</th><th>Success Rate</th><th>Avg Latency</th></tr></thead>
+                            <tbody>
+                                {Object.entries(learningStats?.agent_stats || {}).map(([agent, stats]) => (
+                                    <tr key={agent}>
+                                        <td>{agent}</td>
+                                        <td>{stats?.total || 0}</td>
+                                        <td>{((stats?.success_rate || 0) * 100).toFixed(1)}%</td>
+                                        <td>{(stats?.avg_latency_ms || 0).toFixed(0)}ms</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            );
+        }
+        
+        function MemoryPanel({ memoryStats }) {
+            return (
+                <div className="card">
+                    <h2>Memory System Status</h2>
+                    {memoryStats ? (
+                        <div className="grid">
+                            <div className="stat-card">
+                                <div className="stat-value">{memoryStats.total_memories || 0}</div>
+                                <div className="stat-label">Total Memories</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{memoryStats.episodic_count || 0}</div>
+                                <div className="stat-label">Episodic</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{memoryStats.semantic_count || 0}</div>
+                                <div className="stat-label">Semantic</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-value">{memoryStats.procedural_count || 0}</div>
+                                <div className="stat-label">Procedural</div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="loading">Memory system may need embedding server. Check /api/health for details.</div>
+                    )}
+                    
+                    <div style={{marginTop: 24}}>
+                        <h3>Memory Search Test</h3>
+                        <div style={{display: 'flex', gap: 8, marginTop: 12}}>
+                            <input id="memSearch" type="text" placeholder="Search memories..." style={{flex: 1, padding: 12, background: 'var(--bg-tertiary)', border: '1px solid var(--border)', borderRadius: 8, color: 'white'}} />
+                            <button onClick={async () => {
+                                const query = document.getElementById('memSearch').value;
+                                const r = await fetch(`/api/memory/search?query=${encodeURIComponent(query)}&limit=5`);
+                                const d = await r.json();
+                                alert(JSON.stringify(d, null, 2));
+                            }} style={{padding: '12px 24px', background: 'var(--accent)', border: 'none', borderRadius: 8, color: 'white', cursor: 'pointer'}}>Search</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        function ChatPanel() {
+            const [messages, setMessages] = useState([]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            
+            const sendMessage = async () => {
+                if (!input.trim() || loading) return;
+                const userMsg = input;
+                setInput('');
+                setMessages(m => [...m, { role: 'user', content: userMsg }]);
+                setLoading(true);
+                
+                try {
+                    const r = await fetch('/api/routing/route?task=' + encodeURIComponent(userMsg));
+                    const d = await r.json();
+                    setMessages(m => [...m, { role: 'assistant', content: JSON.stringify(d, null, 2), isJson: true }]);
+                } catch(e) {
+                    setMessages(m => [...m, { role: 'system', content: 'Error: ' + e.message }]);
+                }
+                setLoading(false);
+            };
+            
+            return (
+                <div className="chat-container card">
+                    <h2>Chat with Memory-Injected Routing</h2>
+                    <div className="chat-messages">
+                        {messages.map((m, i) => (
+                            <div key={i} className={`message ${m.role}`}>
+                                {m.isJson ? <pre style={{margin: 0, whiteSpace: 'pre-wrap'}}>{m.content}</pre> : m.content}
+                            </div>
+                        ))}
+                        {loading && <div className="message system">Processing...</div>}
+                    </div>
+                    <div className="chat-input">
+                        <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMessage()} placeholder="Type your task..." />
+                        <button onClick={sendMessage} disabled={loading}>Send</button>
+                    </div>
+                </div>
+            );
+        }
+        
+        function MCPStatus({ health }) {
+            return (
+                <div className="card">
+                    <h2>MCP Server Status</h2>
+                    <div className="mcp-grid">
+                        {health?.mcps ? Object.entries(health.mcps).map(([name, data]) => (
+                            <div key={name} className="mcp-card">
+                                <span className={`mcp-status ${data.status}`}></span>
+                                <div style={{fontSize: 12, marginTop: 8}}>{name}</div>
+                                <div style={{fontSize: 10, color: 'var(--text-secondary)'}}>{data.status}</div>
+                            </div>
+                        )) : <div className="loading">Loading MCP status...</div>}
+                    </div>
+                </div>
+            );
+        }
+        
+        function SessionsPanel() {
+            const [sessions, setSessions] = useState([]);
+            
+            useEffect(() => {
+                fetch('/api/sessions').then(r => r.json()).then(d => setSessions(d.data || [])).catch(() => {});
+            }, []);
+            
+            return (
+                <div className="card">
+                    <h2>Session Pool</h2>
+                    <table className="table">
+                        <thead><tr><th>Session ID</th><th>Data</th></tr></thead>
+                        <tbody>
+                            {sessions.length > 0 ? sessions.map((s, i) => (
+                                <tr key={i}>
+                                    <td>{s.session_id || 'current'}</td>
+                                    <td>{JSON.stringify(s.data || s).substring(0, 100)}...</td>
+                                </tr>
+                            )) : <tr><td colSpan={2} className="loading">No active sessions</td></tr>}
+                        </tbody>
+                    </table>
+                </div>
+            );
+        }
+        
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>

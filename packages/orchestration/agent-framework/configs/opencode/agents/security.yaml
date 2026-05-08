@@ -1,0 +1,16 @@
+name: security
+description: Security agent - handles security scanning and validation
+type: security
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - security
+  - scanning
+  - validation
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 4
+permissions:
+  - read
+  - write
+skills: []

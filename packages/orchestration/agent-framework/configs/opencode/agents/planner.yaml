@@ -1,0 +1,15 @@
+name: planner
+description: Planning agent - creates task breakdowns and organizes work
+type: planner
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - planning
+  - coordination
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 8
+permissions:
+  - read
+  - write
+skills: []

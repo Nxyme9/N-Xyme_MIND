@@ -1,0 +1,29 @@
+{
+  "roles": {
+    "user": {
+      "permissions": ["file:read", "memory:read"],
+      "deny": []
+    },
+    "developer": {
+      "permissions": ["file:read", "file:write", "memory:read", "memory:write"],
+      "deny": []
+    },
+    "admin": {
+      "permissions": ["file:read", "file:write", "memory:read", "memory:write", "system:admin"],
+      "deny": []
+    }
+  },
+  "rules": [
+    {
+      "name": "dangerous_commands",
+      "pattern": "rm -rf|drop table|sudo",
+      "action": "deny",
+      "role": "user"
+    }
+  ],
+  "defaults": {
+    "role": "user",
+    "action": "prompt",
+    "timeout": 300
+  }
+}

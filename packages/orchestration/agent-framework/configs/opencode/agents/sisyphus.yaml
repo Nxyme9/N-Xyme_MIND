@@ -1,0 +1,16 @@
+name: sisyphus
+description: Main orchestrator - delegates tasks, manages workflow
+type: orchestrator
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - orchestration
+  - delegation
+  - coordination
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 12
+permissions:
+  - read
+  - write
+skills: []

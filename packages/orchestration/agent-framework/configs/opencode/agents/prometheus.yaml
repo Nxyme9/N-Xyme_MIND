@@ -1,0 +1,16 @@
+name: prometheus
+description: Plan builder agent - creates detailed implementation plans
+type: planner
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - planning
+  - reasoning
+  - roadmap
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 10
+permissions:
+  - read
+  - write
+skills: []

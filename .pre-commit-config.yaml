@@ -1,0 +1,29 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+        args: ["--verbose", "--no-banner"]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.0
+    hooks:
+      - id: ruff
+        args: ["--fix", "--select", "F,E,W,C4,B,SIM,UP,PT,ISC"]
+        exclude: "^(athena|_bmad|venvs?|node_modules|\\.venv)/"
+      - id: ruff-format
+        exclude: "^(athena|_bmad|venvs?|node_modules|\\.venv)/"
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        exclude: "^(athena|_bmad)/"
+      - id: check-json
+        exclude: "^(athena|_bmad)/"
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: no-commit-to-branch
+        args: ["--branch", "main"]

@@ -1,0 +1,16 @@
+name: hephaestus
+description: Implementation agent - writes code and creates files
+type: implementer
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - implementation
+  - coding
+  - building
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 10
+permissions:
+  - read
+  - write
+skills: []

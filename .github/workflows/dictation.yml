@@ -1,0 +1,80 @@
+name: Dictation Tests
+
+on:
+  push:
+    paths:
+      - 'nx-dictate/**'
+  pull_request:
+    paths:
+      - 'nx-dictate/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: |
+          uv pip install --system pytest jiwer
+
+      - name: Run tests
+        run: |
+          PYTHONPATH=. python3 -m pytest nx-dictate/tests/ -v
+
+      - name: Run linter
+        run: |
+          PYTHONPATH=. python3 -m ruff check nx-dictate/ --exit-zero
+
+  metrics:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv pip install --system jiwer
+
+      - name: Verify WER calculation
+        run: |
+          PYTHONPATH=. python3 -c "
+          from nx_dictate.metrics import calculate_wer
+          wer = calculate_wer('hello world', 'hello world')
+          assert wer == 0.0, f'Expected 0.0, got {wer}'
+          print('WER calculation verified')
+          "
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+
+      - name: Install dependencies
+        run: uv pip install --system ruff
+
+      - name: Type check
+        run: |
+          PYTHONPATH=. python3 -m ruff check nx-dictate/ --select=E,F,W --exit-zero

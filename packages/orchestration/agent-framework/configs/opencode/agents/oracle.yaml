@@ -1,0 +1,15 @@
+name: oracle
+description: Architecture review agent - high-IQ reasoning for debugging and design
+type: reviewer
+version: 1.0.0
+author: n-xyme
+capabilities:
+  - review
+  - analysis
+  - architecture
+config:
+  model: qwen2.5-coder-7b-q4_k_m
+  max_rounds: 6
+permissions:
+  - read
+skills: []

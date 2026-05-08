@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+# Trigger Status Command
+# Usage: bin/trigger-status [--list|--stats|--evaluate key=value]
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+VENV_PYTHON="${PROJECT_ROOT}/venv/bin/python"
+
+# Default: show help / status
+MODE="${1:-status}"
+
+case "$MODE" in
+    --list|-l)
+        echo "=== Registered Triggers ==="
+        cd "$PROJECT_ROOT"
+        "$VENV_PYTHON" -m src.trigger_engine --list
+        ;;
+    --stats|-s)
+        echo "=== Trigger Statistics ==="
+        cd "$PROJECT_ROOT"
+        "$VENV_PYTHON" -m src.trigger_engine --stats
+        ;;
+    --evaluate|-e)
+        shift
+        echo "=== Trigger Evaluation ==="
+        cd "$PROJECT_ROOT"
+        "$VENV_PYTHON" -m src.trigger_engine --evaluate "$@"
+        ;;
+    --help|-h)
+        echo "N-Xyme Trigger Status"
+        echo ""
+        echo "Usage: bin/trigger-status [command]"
+        echo ""
+        echo "Commands:"
+        echo "  (none)           Show trigger engine status overview"
+        echo "  --list, -l        List all registered triggers from triggers.json"
+        echo "  --stats, -s      Show trigger statistics (trigger counts, last triggered)"
+        echo "  --evaluate, -e   Evaluate triggers with context (e.g., temperature_c=90)"
+        echo "  --help, -h       Show this help"
+        echo ""
+        echo "Examples:"
+        echo "  bin/trigger-status                  # Overview"
+        echo "  bin/trigger-status --list           # List triggers"
+        echo "  bin/trigger-status --stats          # Show stats"
+        echo "  bin/trigger-status -e temperature_c=90 vram_percent=80"
+        ;;
+    *)
+        # Default: status overview
+        echo "=== N-Xyme Trigger Engine Status ==="
+        echo ""
+        
+        # Check module exists
+        if [ ! -f "$PROJECT_ROOT/src/trigger_engine.py" ]; then
+            echo "✗ trigger_engine.py not found"
+            exit 1
+        fi
+        
+        # Try to import and show info
+        echo "Trigger Engine Module: ✓ Found"
+        
+        # Count actions in ACTION_REGISTRY
+        echo ""
+        echo "=== Action Registry ==="
+        cd "$PROJECT_ROOT"
+        ACTION_COUNT=$("$VENV_PYTHON" -c "
+import sys
+sys.path.insert(0, '.')
+from src.trigger_engine import ACTION_REGISTRY
+print(len(ACTION_REGISTRY))
+" 2>/dev/null || echo "0")
+        echo "Available actions: $ACTION_COUNT"
+        
+        # List available actions
+        "$VENV_PYTHON" -c "
+import sys
+sys.path.insert(0, '.')
+from src.trigger_engine import ACTION_REGISTRY
+for name in sorted(ACTION_REGISTRY.keys()):
+    print(f'  - {name}')
+" 2>/dev/null
+        
+        # Show triggers.json info
+        echo ""
+        echo "=== Triggers Configuration ==="
+        if [ -f "$PROJECT_ROOT/triggers.json" ]; then
+            TRIGGER_COUNT=$("$VENV_PYTHON" -c "
+import json
+with open('triggers.json') as f:
+    data = json.load(f)
+    triggers = data.get('triggers', {})
+    count = sum(len(v) if isinstance(v, list) else 0 for v in triggers.values())
+    print(count)
+" 2>/dev/null || echo "?")
+            echo "triggers.json: ✓ Found ($TRIGGER_COUNT trigger definitions)"
+            
+            # Show categories
+            echo ""
+            echo "Trigger Categories:"
+            "$VENV_PYTHON" -c "
+import json
+with open('triggers.json') as f:
+    data = json.load(f)
+    triggers = data.get('triggers', {})
+    for cat, items in sorted(triggers.items()):
+        if isinstance(items, list):
+            print(f'  - {cat}: {len(items)} triggers')
+" 2>/dev/null
+        else
+            echo "triggers.json: ✗ Not found"
+        fi
+        
+        echo ""
+        echo "=== Quick Usage ==="
+        echo "  bin/trigger-status --list       # List triggers"
+        echo "  bin/trigger-status --stats      # Show stats"
+        echo "  bin/trigger-status -e temp=90  # Test evaluate"
+        ;;
+esac

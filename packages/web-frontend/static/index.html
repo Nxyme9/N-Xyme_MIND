@@ -1,0 +1,3291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N-Xyme MIND - Web Console</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border: #30363d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #58a6ff;
+            --success: #238636;
+            --error: #da3633;
+            --warning: #d29922;
+        }
+        body {
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 14px;
+        }
+        
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { color: var(--accent); font-size: 18px; }
+        .status-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 12px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--error);
+        }
+        .status-dot.ok { background: var(--success); }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            overflow-x: auto;
+        }
+        .tab {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+        }
+        .tab:hover { color: var(--text-primary); }
+        .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+        
+        /* Main content */
+        .main { padding: 20px; }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .card h3 {
+            color: var(--accent);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        /* Form elements */
+        input, textarea, select {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            width: 100%;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent); }
+        
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 12px;
+        }
+        button:hover { opacity: 0.9; }
+        button.secondary { background: var(--bg-tertiary); }
+        
+        .form-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .form-row input { flex: 1; }
+        
+        /* Results */
+        .results {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            max-height: 300px;
+            overflow: auto;
+            font-size: 12px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-secondary); font-weight: normal; }
+        
+        /* Stats grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+        .stat-card { background: var(--bg-tertiary); border-radius: 4px; padding: 12px; text-align: center; }
+        .stat-value { font-size: 20px; color: var(--accent); }
+        .stat-label { font-size: 10px; color: var(--text-secondary); margin-top: 4px; }
+        
+        /* Debug console */
+        .debug-console {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 1px solid var(--border);
+            max-height: 150px;
+            overflow: auto;
+            font-size: 11px;
+            padding: 8px;
+            display: none;
+        }
+        .debug-console.show { display: block; }
+        .debug-line { margin: 2px 0; }
+        .debug-line.error { color: var(--error); }
+        .debug-line.success { color: var(--success); }
+        .debug-line.info { color: var(--text-secondary); }
+        
+        /* Toggle debug */
+        .debug-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 100;
+        }
+        
+        /* Light theme */
+        body.light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f6f8fa;
+            --bg-tertiary: #eaeef2;
+            --border: #d0d7de;
+            --text-primary: #24292f;
+            --text-secondary: #57606a;
+        }
+        body.light .header { background: var(--bg-secondary); }
+        body.light .tabs { background: var(--bg-secondary); }
+        body.light .card { background: var(--bg-secondary); }
+        
+        /* Floating Chat */
+        .floating-chat {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 200;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .floating-chat.open { right: 0; }
+        .floating-chat-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .floating-chat-header h3 { color: var(--accent); font-size: 14px; margin: 0; }
+        .floating-chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+        .floating-chat-input {
+            padding: 12px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        .floating-chat-input input { flex: 1; }
+        
+        /* Chat messages */
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            max-width: 85%;
+        }
+        .chat-message.user {
+            background: var(--accent);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-message.assistant {
+            background: var(--bg-tertiary);
+            border-bottom-left-radius: 2px;
+        }
+        .chat-message .time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        
+        /* Tool forms */
+        .tool-form { display: none; }
+        .tool-form.active { display: block; }
+        .tool-form .form-group { margin-bottom: 12px; }
+        .tool-form label {
+            display: block;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .tool-form input, .tool-form select {
+            width: 100%;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        .data-table th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            background: var(--bg-tertiary);
+        }
+        .data-table tr:hover { background: var(--bg-tertiary); }
+        
+        /* Progress dashboard */
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .progress-card {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 16px;
+            text-align: center;
+        }
+        .progress-card .value {
+            font-size: 24px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .progress-card .label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+        .progress-card .trend {
+            font-size: 11px;
+            margin-top: 6px;
+        }
+        .progress-card .trend.up { color: var(--success); }
+        .progress-card .trend.down { color: var(--error); }
+        
+        /* JSON display */
+        .json-display {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 11px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .json-display .key { color: #79c0ff; }
+        .json-display .string { color: #a5d6ff; }
+        .json-display .number { color: #79c0ff; }
+        .json-display .boolean { color: #ff7b72; }
+        .json-display .null { color: #8b949e; }
+        
+        /* Code display */
+        .code-display {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 12px;
+            font-family: 'Menlo', 'Monaco', monospace;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        /* Copy button */
+        .copy-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .copy-btn:hover { color: var(--text-primary); background: var(--border); }
+        
+        /* Actions row */
+        .actions-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        /* Session list */
+        .session-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+        }
+        .session-item:hover { background: var(--bg-tertiary); }
+        .session-item .meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* Config file picker */
+        .file-picker {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .file-picker-btn {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .file-picker-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        /* Settings */
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-group h4 {
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .setting-row label { font-size: 13px; }
+        .setting-row .value { color: var(--text-secondary); font-size: 12px; }
+        
+        /* Toggle switch */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-tertiary);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+            background: white;
+        }
+        
+        /* Chat button in header */
+        .chat-toggle-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        .chat-toggle-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        /* Loading state */
+        body.loading { cursor: wait; }
+        body.loading * { pointer-events: none; }
+        body.loading::after {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 40px; height: 40px;
+            margin: -20px 0 0 -20px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 9999;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* ====== PHASE 3: ADHD-Friendly UX Features ====== */
+        
+        /* Toast Notification System */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-width: 350px;
+        }
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .toast.removing {
+            animation: slideOut 0.3s ease-in forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--error); }
+        .toast.info { border-left: 4px solid var(--accent); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        .toast-icon { font-size: 16px; }
+        .toast-message { flex: 1; }
+        
+        /* Focus Mode / Pomodoro Timer */
+        .timer-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+        .timer-display {
+            font-family: 'Menlo', monospace;
+            min-width: 50px;
+            text-align: center;
+        }
+        .timer-running .timer-display {
+            color: var(--success);
+        }
+        .timer-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+        }
+        .timer-running .timer-dot {
+            background: var(--success);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        .timer-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 2px 6px;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        .timer-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+        
+        /* Collapsible Sections */
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+        .collapsible-header:hover {
+            color: var(--accent);
+        }
+        .collapsible-icon {
+            transition: transform 0.2s ease;
+            font-size: 10px;
+        }
+        .collapsible-content.collapsed {
+            display: none;
+        }
+        .collapsible-header .collapsed .collapsible-icon {
+            transform: rotate(-90deg);
+        }
+        
+        /* Global Search (Ctrl+K) */
+        .search-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 500;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 100px;
+        }
+        .search-overlay.show { display: flex; }
+        .search-modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .search-modal-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-modal-header kbd {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .search-result-item {
+            padding: 10px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .search-result-item:hover, .search-result-item.selected {
+            background: var(--bg-tertiary);
+        }
+        .search-result-item .highlight {
+            background: var(--warning);
+            color: #000;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        .search-result-type {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-right: 8px;
+        }
+        
+        /* Keyboard Shortcuts Help Modal */
+        .shortcuts-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 600;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .shortcuts-overlay.show { display: flex; }
+        .shortcuts-modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .shortcuts-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .shortcuts-header h3 { margin: 0; color: var(--accent); font-size: 14px; }
+        .shortcuts-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 0;
+        }
+        .shortcuts-list {
+            padding: 16px;
+        }
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .shortcut-item:last-child { border-bottom: none; }
+        .shortcut-keys {
+            display: flex;
+            gap: 4px;
+        }
+        .shortcut-keys kbd {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            color: var(--text-primary);
+        }
+        
+        /* ====== PHASE 4: Bells & Whistles ====== */
+        
+        /* Routing Chart Visualization */
+        .routing-chart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .routing-chart-section {
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            padding: 16px;
+        }
+        .routing-chart-section h4 {
+            color: var(--accent);
+            font-size: 11px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .routing-bar-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .routing-bar-label {
+            width: 30px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .routing-bar {
+            height: 20px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+            flex: 1;
+            margin: 0 8px;
+        }
+        .routing-bar-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .routing-bar-fill.l1 { background: #238636; }
+        .routing-bar-fill.l2 { background: #58a6ff; }
+        .routing-bar-fill.l3 { background: #d29922; }
+        .routing-bar-fill.l4 { background: #db6d28; }
+        .routing-bar-fill.l5 { background: #da3633; }
+        .routing-bar-value {
+            width: 40px;
+            text-align: right;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .routing-legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .routing-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+        }
+        .routing-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        .agent-bar-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .agent-bar-name {
+            width: 80px;
+            font-size: 11px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .agent-bar {
+            height: 16px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+            flex: 1;
+            margin: 0 8px;
+        }
+        .agent-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .agent-bar-value {
+            width: 30px;
+            text-align: right;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        /* Memory Graph Visualization */
+        .memory-graph {
+            position: relative;
+            min-height: 200px;
+            padding: 16px 0;
+            overflow-x: auto;
+        }
+        .memory-graph-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .memory-node {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            min-width: 150px;
+            max-width: 250px;
+            position: relative;
+        }
+        .memory-node.episodic { border-color: #8b949e; }
+        .memory-node.semantic { border-color: #d29922; }
+        .memory-node.global { border-color: #a371f7; }
+        .memory-node-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .memory-node-kind {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+        .memory-node.episodic .memory-node-kind { background: #8b949e33; color: #8b949e; }
+        .memory-node.semantic .memory-node-kind { background: #d2992233; color: #d29922; }
+        .memory-node.global .memory-node-kind { background: #a371f733; color: #a371f7; }
+        .memory-node-score {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .memory-node-content {
+            font-size: 12px;
+            color: var(--text-primary);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .memory-node-connector {
+            position: absolute;
+            right: -16px;
+            top: 50%;
+            width: 16px;
+            height: 2px;
+            background: var(--border);
+        }
+        
+        /* Config Editor Enhancement */
+        .config-editor-container {
+            display: flex;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+        .line-numbers {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            padding: 12px 8px;
+            text-align: right;
+            font-family: 'Menlo', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            user-select: none;
+            border-right: 1px solid var(--border);
+            min-width: 40px;
+        }
+        .config-editor {
+            flex: 1;
+            padding: 12px;
+            font-family: 'Menlo', 'Monaco', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: none;
+            resize: none;
+            outline: none;
+            width: 100%;
+        }
+        .syntax-key { color: #79c0ff; }
+        .syntax-string { color: #a5d6ff; }
+        .syntax-number { color: #79c0ff; }
+        .syntax-boolean { color: #ff7b72; }
+        .syntax-null { color: #8b949e; }
+        .syntax-bracket { color: #8b949e; }
+        .config-save-indicator {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .config-save-indicator.show {
+            opacity: 1;
+        }
+        .config-save-indicator.saved {
+            background: var(--success);
+            color: white;
+        }
+        .config-save-indicator.error {
+            background: var(--error);
+            color: white;
+        }
+        
+        /* Floating Chat Enhancement */
+        .floating-chat-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .floating-chat .maximize-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        .floating-chat .maximize-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+        .floating-chat.maximized {
+            width: 600px;
+            max-width: 90vw;
+        }
+        .floating-chat-token-count {
+            font-size: 10px;
+            color: var(--text-secondary);
+            padding: 4px 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+        .floating-chat .clear-chat-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+        .floating-chat .clear-chat-btn:hover {
+            background: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+        
+        /* Settings Panel Enhancements */
+        .settings-theme-options {
+            display: flex;
+            gap: 8px;
+        }
+        .theme-option {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .theme-option:hover {
+            border-color: var(--accent);
+        }
+        .theme-option.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .settings-data-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .settings-data-actions button {
+            font-size: 11px;
+            padding: 6px 12px;
+        }
+        .settings-export-import {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .settings-port-display {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .port-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .port-item-label {
+            color: var(--text-secondary);
+        }
+        .port-item-value {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        /* Performance Optimizations */
+        .lazy-panel {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .lazy-panel.loaded {
+            opacity: 1;
+        }
+        
+        /* Resize debounce indicator */
+        .resize-indicator {
+            position: fixed;
+            bottom: 60px;
+            right: 10px;
+            padding: 4px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 10px;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 50;
+        }
+        .resize-indicator.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>N-Xyme MIND</h1>
+        <div class="status-bar">
+            <!-- Focus Mode Timer -->
+            <div class="timer-container" id="timerContainer">
+                <span class="timer-dot" id="timerDot"></span>
+                <span class="timer-display" id="timerDisplay">25:00</span>
+                <button class="timer-btn" onclick="timerToggle()" id="timerToggleBtn" title="Start/Pause">▶</button>
+                <button class="timer-btn" onclick="timerReset()" title="Reset">↺</button>
+            </div>
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Checking...</span>
+            <button class="chat-toggle-btn" onclick="toggleFloatingChat()">Chat</button>
+            <button class="chat-toggle-btn" onclick="showSearch()" title="Search (Ctrl+K)">🔍</button>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab active" data-tab="chat">Chat</button>
+        <button class="tab" data-tab="memory">Memory</button>
+        <button class="tab" data-tab="learning">Learning</button>
+        <button class="tab" data-tab="routing">Routing</button>
+        <button class="tab" data-tab="intelligence">Intelligence</button>
+        <button class="tab" data-tab="orchestration">Orchestration</button>
+        <button class="tab" data-tab="sessions">Sessions</button>
+        <button class="tab" data-tab="agents">Agents</button>
+        <button class="tab" data-tab="config">Config</button>
+        <button class="tab" data-tab="settings">Settings</button>
+    </div>
+    
+    <div class="main">
+        <!-- Chat Panel (PRIORITY 1) -->
+        <div class="panel active" id="panel-chat">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Model</h3>
+                </div>
+                <div class="form-row">
+                    <select id="chatModel">
+                        <option value="qwen">Qwen 3.6 Plus</option>
+                        <option value="minimax">MiniMax</option>
+                        <option value="deepseek-r1">DeepSeek R1</option>
+                        <option value="qwen3-coder">Qwen 3 Coder</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Message History</h3>
+                    <button class="secondary" onclick="clearChat()">Clear</button>
+                </div>
+                <div id="chatMessages" style="max-height: 300px; overflow-y: auto; margin-bottom: 12px;">
+                    <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                        No messages yet. Start a conversation.
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Input</h3>
+                </div>
+                <div class="form-row">
+                    <textarea id="chatInput" rows="3" placeholder="Enter your message..." onkeydown="if(event.key==='Enter' && (event.ctrlKey || event.metaKey)){sendChatMessage();event.preventDefault();}"></textarea>
+                </div>
+                <div class="form-row">
+                    <button onclick="sendChatMessage()">Send</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Response</h3>
+                    <button class="copy-btn" onclick="copyResponse()">Copy</button>
+                </div>
+                <div class="json-display" id="chatResponse">Response will appear here...</div>
+            </div>
+        </div>
+        
+        <!-- Memory Panel (7 tools) -->
+        <div class="panel" id="panel-memory">
+            <div class="card">
+                <div class="collapsible-header" data-section="memory-tool-select" onclick="event.stopPropagation()">
+                    <h3>Tool Selection</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div>
+                <select id="memoryTool" onchange="showMemoryToolForm()">
+                    <option value="">Select a tool...</option>
+                    <option value="search_memories">search_memories</option>
+                    <option value="get_memory_stats">get_memory_stats</option>
+                    <option value="recall_session">recall_session</option>
+                    <option value="find_context">find_context</option>
+                    <option value="memory_search">memory_search</option>
+                    <option value="memory_write">memory_write</option>
+                    <option value="memory_stats">memory_stats</option>
+                    <option value="comprehensive_stats">comprehensive_stats</option>
+                </select>
+                </div>
+            </div>
+            
+            <!-- Tool Forms -->
+            <div class="card tool-form" id="form-search_memories">
+                <div class="card-header"><h3>search_memories</h3></div>
+                <div class="form-group">
+                    <label>Query</label>
+                    <input type="text" id="memSearchQuery" placeholder="Search query...">
+                </div>
+                <div class="form-group">
+                    <label>Limit</label>
+                    <input type="number" id="memSearchLimit" value="10" min="1" max="100">
+                </div>
+                <div class="form-group">
+                    <label>Trust Weight (0-1)</label>
+                    <input type="number" id="memSearchTrust" value="0" min="0" max="1" step="0.1">
+                </div>
+                <button onclick="callMemoryTool('search_memories')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-get_memory_stats">
+                <div class="card-header"><h3>get_memory_stats</h3></div>
+                <button onclick="callMemoryTool('get_memory_stats')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-recall_session">
+                <div class="card-header"><h3>recall_session</h3></div>
+                <div class="form-group">
+                    <label>Session ID (optional)</label>
+                    <input type="text" id="memRecallSession" placeholder="session_001">
+                </div>
+                <div class="form-group">
+                    <label>Limit</label>
+                    <input type="number" id="memRecallLimit" value="50" min="1" max="500">
+                </div>
+                <button onclick="callMemoryTool('recall_session')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-find_context">
+                <div class="card-header"><h3>find_context</h3></div>
+                <div class="form-group">
+                    <label>Task</label>
+                    <input type="text" id="memContextTask" placeholder="Task to find context for...">
+                </div>
+                <div class="form-group">
+                    <label>Context Type</label>
+                    <select id="memContextType">
+                        <option value="all">All</option>
+                        <option value="semantic">Semantic</option>
+                        <option value="episodic">Episodic</option>
+                    </select>
+                </div>
+                <button onclick="callMemoryTool('find_context')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-memory_search">
+                <div class="card-header"><h3>memory_search</h3></div>
+                <div class="form-group">
+                    <label>Query</label>
+                    <input type="text" id="memRouterQuery" placeholder="Search query...">
+                </div>
+                <div class="form-group">
+                    <label>Top K</label>
+                    <input type="number" id="memRouterTopk" value="10" min="1" max="100">
+                </div>
+                <button onclick="callMemoryTool('memory_search')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-memory_write">
+                <div class="card-header"><h3>memory_write</h3></div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="memWriteContent" rows="3" placeholder="Content to store..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Kind</label>
+                    <select id="memWriteKind">
+                        <option value="episodic">Episodic</option>
+                        <option value="semantic">Semantic</option>
+                        <option value="principle">Principle</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Scope</label>
+                    <select id="memWriteScope">
+                        <option value="global">Global</option>
+                        <option value="session">Session</option>
+                        <option value="project">Project</option>
+                    </select>
+                </div>
+                <button onclick="callMemoryTool('memory_write')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-memory_stats">
+                <div class="card-header"><h3>memory_stats</h3></div>
+                <button onclick="callMemoryTool('memory_stats')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-comprehensive_stats">
+                <div class="card-header"><h3>comprehensive_stats</h3></div>
+                <button onclick="callMemoryTool('comprehensive_stats')">Execute</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Memory Graph</h3>
+                    <button class="secondary" onclick="loadMemoryGraph()">Visualize</button>
+                </div>
+                <div class="memory-graph" id="memoryGraph">
+                    <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                        Click "Visualize" to display search results as graph
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Results</h3>
+                    <button class="copy-btn" onclick="copyToClipboard('memoryResults')">Copy</button>
+                </div>
+                <div class="json-display" id="memoryResults">Select a tool...</div>
+            </div>
+        </div>
+        
+        <!-- Routing Panel -->
+        <div class="panel" id="panel-routing">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Route Task</h3>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="routeTask" placeholder="Task description..." />
+                    <button onclick="routeTask()">Route</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Routing Visualization</h3>
+                    <button class="secondary" onclick="loadRoutingChart()">Refresh</button>
+                </div>
+                <div class="routing-chart" id="routingChart">
+                    <div class="routing-chart-section">
+                        <h4>Level Distribution</h4>
+                        <div id="levelBars"></div>
+                        <div class="routing-legend">
+                            <div class="routing-legend-item"><div class="routing-legend-color" style="background:#238636"></div>L1 (Trivial)</div>
+                            <div class="routing-legend-item"><div class="routing-legend-color" style="background:#58a6ff"></div>L2 (Simple)</div>
+                            <div class="routing-legend-item"><div class="routing-legend-color" style="background:#d29922"></div>L3 (Moderate)</div>
+                            <div class="routing-legend-item"><div class="routing-legend-color" style="background:#db6d28"></div>L4 (Complex)</div>
+                            <div class="routing-legend-item"><div class="routing-legend-color" style="background:#da3633"></div>L5 (Architect)</div>
+                        </div>
+                    </div>
+                    <div class="routing-chart-section">
+                        <h4>Agent Distribution</h4>
+                        <div id="agentBars"></div>
+                    </div>
+                </div>
+                <div class="routing-chart-info" id="routingChartInfo" style="font-size:12px;color:#8b949e;margin-top:8px;">Loading...</div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Routing Stats</h3>
+                    <button class="secondary" onclick="loadRoutingStats()">Refresh</button>
+                </div>
+                <div class="stats-grid" id="routingStatsGrid">
+                    <div class="stat-card"><div class="stat-value" id="statLevel">-</div><div class="stat-label">Level</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statAgent">-</div><div class="stat-label">Agent</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statConfidence">-</div><div class="stat-label">Confidence</div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Results</h3>
+                </div>
+                <div class="results" id="routingResults">Route a task...</div>
+            </div>
+        </div>
+        
+        <!-- Learning Panel (9 tools + dashboard) -->
+        <div class="panel" id="panel-learning">
+            <div class="card">
+                <div class="collapsible-header" data-section="learning-dashboard" onclick="event.stopPropagation()">
+                    <h3>Progress Dashboard</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div>
+                    <button class="secondary" onclick="loadLearningProgress()">Refresh</button>
+                </div>
+                <div class="progress-grid" id="learningProgressGrid">
+                    <div class="progress-card">
+                        <div class="value" id="progressTotal">-</div>
+                        <div class="label">Total Decisions</div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="value" id="progressSuccess">-</div>
+                        <div class="label">Success Rate</div>
+                        <div class="trend up" id="progressTrend"></div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="value" id="progressConvergence">-</div>
+                        <div class="label">Convergence</div>
+                    </div>
+                    <div class="progress-card">
+                        <div class="value" id="progressTopAgent">-</div>
+                        <div class="label">Top Agent</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Tool Selection</h3>
+                </div>
+                <select id="learningTool" onchange="showLearningToolForm()">
+                    <option value="">Select a tool...</option>
+                    <option value="route_task">route_task</option>
+                    <option value="record_outcome">record_outcome</option>
+                    <option value="status">status</option>
+                    <option value="retrain">retrain</option>
+                    <option value="get_recommendations">get_recommendations</option>
+                    <option value="learning_stats">learning_stats</option>
+                    <option value="log_outcome">log_outcome</option>
+                    <option value="get_outcomes">get_outcomes</option>
+                    <option value="get_learning_progress">get_learning_progress</option>
+                </select>
+            </div>
+            
+            <!-- Tool Forms -->
+            <div class="card tool-form" id="form-route_task">
+                <div class="card-header"><h3>route_task</h3></div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <input type="text" id="learningRouteTask" placeholder="Task to route...">
+                </div>
+                <button onclick="callLearningTool('route_task')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-record_outcome">
+                <div class="card-header"><h3>record_outcome</h3></div>
+                <div class="form-group">
+                    <label>Task</label>
+                    <input type="text" id="learningRecordTask" placeholder="Task description...">
+                </div>
+                <div class="form-group">
+                    <label>Agent</label>
+                    <input type="text" id="learningRecordAgent" placeholder="Agent name...">
+                </div>
+                <div class="form-group">
+                    <label>Success</label>
+                    <select id="learningRecordSuccess"><option value="true">Yes</option><option value="false">No</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Latency (ms)</label>
+                    <input type="number" id="learningRecordLatency" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Tokens Used</label>
+                    <input type="number" id="learningRecordTokens" placeholder="0">
+                </div>
+                <button onclick="callLearningTool('record_outcome')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-status">
+                <div class="card-header"><h3>status</h3></div>
+                <button onclick="callLearningTool('status')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-retrain">
+                <div class="card-header"><h3>retrain</h3></div>
+                <button onclick="callLearningTool('retrain')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-get_recommendations">
+                <div class="card-header"><h3>get_recommendations</h3></div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <input type="text" id="learningRecTask" placeholder="Task for recommendations...">
+                </div>
+                <button onclick="callLearningTool('get_recommendations')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-learning_stats">
+                <div class="card-header"><h3>learning_stats</h3></div>
+                <button onclick="callLearningTool('learning_stats')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-log_outcome">
+                <div class="card-header"><h3>log_outcome</h3></div>
+                <div class="form-group">
+                    <label>Task ID</label>
+                    <input type="text" id="learningLogId" placeholder="task_001">
+                </div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <input type="text" id="learningLogTask" placeholder="Task...">
+                </div>
+                <div class="form-group">
+                    <label>Task Type</label>
+                    <select id="learningLogType">
+                        <option value="implementation">Implementation</option>
+                        <option value="research">Research</option>
+                        <option value="review">Review</option>
+                        <option value="fix">Fix</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Agent</label>
+                    <input type="text" id="learningLogAgent" placeholder="hephaestus">
+                </div>
+                <div class="form-group">
+                    <label>Level (1-5)</label>
+                    <input type="number" id="learningLogLevel" value="3" min="1" max="5">
+                </div>
+                <div class="form-group">
+                    <label>Success</label>
+                    <select id="learningLogSuccess"><option value="true">Yes</option><option value="false">No</option></select>
+                </div>
+                <div class="form-group">
+                    <label>Latency (ms)</label>
+                    <input type="number" id="learningLogLatency" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Tokens</label>
+                    <input type="number" id="learningLogTokens" placeholder="0">
+                </div>
+                <button onclick="callLearningTool('log_outcome')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-get_outcomes">
+                <div class="card-header"><h3>get_outcomes</h3></div>
+                <div class="form-group">
+                    <label>Agent (optional)</label>
+                    <input type="text" id="learningOutcomesAgent" placeholder="Filter by agent...">
+                </div>
+                <div class="form-group">
+                    <label>Task Type (optional)</label>
+                    <input type="text" id="learningOutcomesType" placeholder="Filter by type...">
+                </div>
+                <div class="form-group">
+                    <label>Limit</label>
+                    <input type="number" id="learningOutcomesLimit" value="100" min="1" max="500">
+                </div>
+                <button onclick="callLearningTool('get_outcomes')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-get_learning_progress">
+                <div class="card-header"><h3>get_learning_progress</h3></div>
+                <button onclick="callLearningTool('get_learning_progress')">Execute</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Results</h3>
+                    <button class="copy-btn" onclick="copyToClipboard('learningResults')">Copy</button>
+                </div>
+                <div class="json-display" id="learningResults">Select a tool...</div>
+            </div>
+        </div>
+        
+        <!-- Intelligence Panel -->
+        <div class="panel" id="panel-intelligence">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Tool Selection</h3>
+                </div>
+                <select id="intelligenceTool" onchange="showIntelligenceToolForm()">
+                    <option value="">Select a tool...</option>
+                    <option value="route">route</option>
+                    <option value="score_complexity">score_complexity</option>
+                    <option value="available_agents">available_agents</option>
+                    <option value="get_routing_history">get_routing_history</option>
+                </select>
+            </div>
+            
+            <!-- Tool Forms -->
+            <div class="card tool-form" id="form-route">
+                <div class="card-header"><h3>route</h3></div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <input type="text" id="intRouteTask" placeholder="Task to route...">
+                </div>
+                <button onclick="callIntelligenceTool('route')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-score_complexity">
+                <div class="card-header"><h3>score_complexity</h3></div>
+                <div class="form-group">
+                    <label>Task Description</label>
+                    <input type="text" id="intScoreTask" placeholder="Task to analyze...">
+                </div>
+                <button onclick="callIntelligenceTool('score_complexity')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-available_agents">
+                <div class="card-header"><h3>available_agents</h3></div>
+                <button onclick="callIntelligenceTool('available_agents')">Execute</button>
+            </div>
+            
+            <div class="card tool-form" id="form-get_routing_history">
+                <div class="card-header"><h3>get_routing_history</h3></div>
+                <div class="form-group">
+                    <label>Limit</label>
+                    <input type="number" id="intHistoryLimit" value="10" min="1" max="100">
+                </div>
+                <button onclick="callIntelligenceTool('get_routing_history')">Execute</button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Results</h3>
+                    <button class="copy-btn" onclick="copyToClipboard('intelligenceResults')">Copy</button>
+                </div>
+                <div class="json-display" id="intelligenceResults">Select a tool...</div>
+            </div>
+        </div>
+        
+        <!-- Orchestration Panel -->
+        <div class="panel" id="panel-orchestration">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Task Orchestration</h3>
+                </div>
+                <div class="form-row">
+                    <select id="orchAgent">
+                        <option value="sisyphus">Sisyphus</option>
+                        <option value="hephaestus">Hephaestus</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="explore">Explore</option>
+                    </select>
+                    <input type="text" id="orchTask" placeholder="Task description..." />
+                    <button onclick="spawnTask()">Spawn</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Tools List</h3>
+                    <button class="secondary" onclick="loadTools()">Refresh</button>
+                </div>
+                <div class="results" id="orchResults">Loading...</div>
+            </div>
+        </div>
+        
+        <!-- Sessions Panel -->
+        <div class="panel" id="panel-sessions">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Search Sessions</h3>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="sessionSearch" placeholder="Search sessions..." onkeyup="filterSessions()">
+                    <button onclick="loadSessions()">Search</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="collapsible-header" data-section="sessions-list" onclick="event.stopPropagation()">
+                    <h3>Sessions List</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div>
+                    <button class="secondary" onclick="loadSessions()">Refresh</button>
+                </div>
+                <div id="sessionsList"></div>
+            </div>
+        </div>
+        
+        <!-- Agents Panel -->
+        <div class="panel" id="panel-agents">
+            <div class="card">
+                <div class="collapsible-header" data-section="agents-status" onclick="event.stopPropagation()">
+                    <h3>Agent Status</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div>
+                    <button class="secondary" onclick="loadAgents()">Refresh</button>
+                </div>
+                <div id="agentsTableContainer">
+                    <div class="results" id="agentsResults">Loading...</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Config Panel -->
+        <div class="panel" id="panel-config">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Config Files</h3>
+                </div>
+                <div class="file-picker">
+                    <button class="file-picker-btn" onclick="selectConfigFile('opencode.json')">opencode.json</button>
+                    <button class="file-picker-btn" onclick="selectConfigFile('AGENTS.md')">AGENTS.md</button>
+                    <button class="file-picker-btn" onclick="selectConfigFile('oh-my-opencode.json')">oh-my-opencode.json</button>
+                    <button class="file-picker-btn" onclick="selectConfigFile('triggers.json')">triggers.json</button>
+                </div>
+                <div class="form-row">
+                    <input type="text" id="configFile" placeholder="Or enter filename..." />
+                    <button onclick="loadConfig()">Load</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h3>Config Content</h3>
+                    <div>
+                        <span class="config-save-indicator" id="configSaveIndicator">Saved</span>
+                        <button class="secondary" onclick="validateConfig()">Validate</button>
+                        <button onclick="saveConfig()">Save</button>
+                    </div>
+                </div>
+                <div class="config-editor-container" style="position:relative;">
+                    <div class="line-numbers" id="configLineNumbers">1</div>
+                    <textarea id="configContent" class="config-editor" rows="20" style="width: 100%; font-family: monospace; font-size: 12px;" oninput="updateConfigEditor()" onscroll="syncConfigScroll()"></textarea>
+                </div>
+                <div style="margin-top:8px;font-size:11px;color:var(--text-secondary);">
+                    Press <kbd>Ctrl+S</kbd> to save | JSON validation on paste
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings Panel -->
+        <div class="panel" id="panel-settings">
+            <div class="card">
+                <div class="settings-group">
+                    <h4>Appearance</h4>
+                    <div class="setting-row">
+                        <label>Theme</label>
+                        <div class="settings-theme-options">
+                            <span class="theme-option" data-theme="dark" onclick="setTheme('dark')">Dark</span>
+                            <span class="theme-option" data-theme="light" onclick="setTheme('light')">Light</span>
+                            <span class="theme-option" data-theme="system" onclick="setTheme('system')">System</span>
+                        </div>
+                    </div>
+                </div>
+                    <div class="settings-group">
+                    <h4>System Ports</h4>
+                    <div class="settings-port-display">
+                        <div class="port-item">
+                            <span class="port-item-label">Web Server</span>
+                            <span class="port-item-value" id="portWeb">8000</span>
+                        </div>
+                        <div class="port-item">
+                            <span class="port-item-label">API</span>
+                            <span class="port-item-value" id="portApi">8080</span>
+                        </div>
+                        <div class="port-item">
+                            <span class="port-item-label">MCP Server</span>
+                            <span class="port-item-value" id="portMcp">8765</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h4>API Settings</h4>
+                    <div class="setting-row">
+                        <label>Refresh Interval</label>
+                        <select id="refreshInterval" onchange="saveSettings()">
+                            <option value="5000">5 seconds</option>
+                            <option value="10000">10 seconds</option>
+                            <option value="30000" selected>30 seconds</option>
+                            <option value="60000">1 minute</option>
+                            <option value="300000">5 minutes</option>
+                        </select>
+                    </div>
+                    <div class="setting-row">
+                        <label>Cache Duration</label>
+                        <select id="cacheDuration" onchange="saveSettings()">
+                            <option value="0">No cache</option>
+                            <option value="5000" selected>5 seconds</option>
+                            <option value="10000">10 seconds</option>
+                            <option value="30000">30 seconds</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h4>Data Management</h4>
+                    <div class="settings-data-actions">
+                        <button onclick="clearMemories()" class="secondary">Clear Memories</button>
+                        <button onclick="clearSessions()" class="secondary">Clear Sessions</button>
+                        <button onclick="clearCache()" class="secondary">Clear Cache</button>
+                    </div>
+                </div>
+                <div class="settings-group">
+                    <h4>Export/Import</h4>
+                    <div class="settings-export-import">
+                        <button onclick="exportSettings()">Export JSON</button>
+                        <button onclick="document.getElementById('importFile').click()" class="secondary">Import JSON</button>
+                        <input type="file" id="importFile" style="display:none" onchange="importSettings(event)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Global Search Overlay (Ctrl+K) -->
+    <div class="search-overlay" id="searchOverlay" onclick="if(event.target===this)hideSearch()">
+        <div class="search-modal">
+            <div class="search-modal-header">
+                <span>🔍</span>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search memories, agents, sessions..." onkeydown="handleSearchKeydown(event)">
+                <kbd>ESC</kbd>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                    Press Enter to search
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Keyboard Shortcuts Help Modal -->
+    <div class="shortcuts-overlay" id="shortcutsOverlay" onclick="if(event.target===this)hideShortcuts()">
+        <div class="shortcuts-modal">
+            <div class="shortcuts-header">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="shortcuts-close" onclick="hideShortcuts()">✕</button>
+            </div>
+            <div class="shortcuts-list">
+                <div class="shortcut-item"><span>Global Search</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>K</kbd></div></div>
+                <div class="shortcut-item"><span>Show Help</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>?</kbd></div></div>
+                <div class="shortcut-item"><span>Close Modal</span><div class="shortcut-keys"><kbd>ESC</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 1</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>1</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 2</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>2</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 3</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>3</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 4</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>4</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 5</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>5</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 6</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>6</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 7</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>7</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 8</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>8</kbd></div></div>
+                <div class="shortcut-item"><span>Switch to Tab 9</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>9</kbd></div></div>
+                <div class="shortcut-item"><span>Refresh Data</span><div class="shortcut-keys"><kbd>Ctrl</kbd><kbd>R</kbd></div></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Chat -->
+    <div class="floating-chat" id="floatingChat">
+        <div class="floating-chat-header">
+            <h3>Quick Chat</h3>
+            <div class="floating-chat-controls">
+                <span class="floating-chat-token-count" id="floatingTokenCount">0 tokens</span>
+                <button class="clear-chat-btn" onclick="clearFloatingChat()" title="Clear conversation">🗑</button>
+                <button class="maximize-btn" onclick="toggleChatMaximize()" title="Maximize/Minimize">⛶</button>
+                <button class="secondary" onclick="toggleFloatingChat()">✕</button>
+            </div>
+        </div>
+        <div class="floating-chat-messages" id="floatingChatMessages">
+            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">
+                No messages yet
+            </div>
+        </div>
+        <div class="floating-chat-input">
+            <input type="text" id="floatingChatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){sendFloatingMessage();event.preventDefault();}">
+            <button onclick="sendFloatingMessage()">Send</button>
+        </div>
+    </div>
+    
+    <!-- Resize Indicator -->
+    <div class="resize-indicator" id="resizeIndicator">Resizing...</div>
+    
+    <button class="debug-toggle" onclick="toggleDebug()">Debug</button>
+    <div class="debug-console" id="debugConsole"></div>
+    
+    <script>
+        const API = '/api';
+        const MODELS = ['qwen', 'minimax', 'deepseek-r1', 'qwen3-coder'];
+        const APP_CONFIG = {
+            apiBase: API,
+            models: MODELS,
+            defaultModel: 'qwen',
+            timeout: 30000,
+            maxRetries: 3
+        };
+        let loadingState = {};
+        const debug = [];
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            const container = document.querySelector('.toast-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
+            toast.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ'}</span><span class="toast-message">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.classList.add('removing'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+        
+        function log(msg, type = 'info') {
+            const line = { msg, type, time: new Date().toISOString() };
+            debug.push(line);
+            const consoleEl = document.getElementById('debugConsole');
+            const lineEl = document.createElement('div');
+            lineEl.className = 'debug-line ' + type;
+            lineEl.textContent = `[${line.time.split('T')[1].split('.')[0]}] ${msg}`;
+            consoleEl.appendChild(lineEl);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+        
+        function toggleDebug() {
+            document.getElementById('debugConsole').classList.toggle('show');
+        }
+        
+        async function apiCall(path) {
+            log('Calling: ' + path, 'info');
+            try {
+                const res = await fetch(API + path);
+                log('Response status: ' + res.status, res.ok ? 'success' : 'error');
+                const data = await res.json();
+                log('Data received: ' + JSON.stringify(data).substring(0, 100), 'success');
+                return data;
+            } catch (e) {
+                log('Error: ' + e.message, 'error');
+                throw e;
+            }
+        }
+        
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Health check
+        async function checkHealth() {
+            try {
+                const data = await apiCall('/health');
+                document.getElementById('statusDot').classList.toggle('ok', data.status === 'ok');
+                document.getElementById('statusText').textContent = data.status === 'ok' ? 'Connected' : 'Error';
+            } catch (e) {
+                document.getElementById('statusText').textContent = 'Offline';
+            }
+        }
+        checkHealth();
+        
+        // Memory
+        async function searchMemory() {
+            const query = document.getElementById('memoryQuery').value.trim();
+            if (!query) return;
+            try {
+                const data = await apiCall('/memory/search?query=' + encodeURIComponent(query) + '&limit=20');
+                document.getElementById('memoryResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('memoryResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        async function writeMemory() {
+            const content = document.getElementById('memoryContent').value.trim();
+            if (!content) return;
+            try {
+                const data = await apiCall('/memory/write', 'POST', { content, kind: 'episodic', scope: 'global' });
+                document.getElementById('memoryContent').value = '';
+                document.getElementById('memoryResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('memoryResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        async function loadMemoryStats() {
+            try {
+                const data = await apiCall('/memory/stats');
+                const d = data.data || data;
+                const html = '<div class="stat-card"><div class="stat-value">' + (d.total || 'N/A') + '</div><div class="stat-label">Total</div></div>';
+                document.getElementById('memoryStatsGrid').innerHTML = html;
+            } catch (e) {
+                log('Memory stats error: ' + e.message, 'error');
+            }
+        }
+        loadMemoryStats();
+        
+        // Routing
+        async function routeTask() {
+            const task = document.getElementById('routeTask').value.trim();
+            if (!task) return;
+            try {
+                const data = await apiCall('/routing/route?task=' + encodeURIComponent(task));
+                const d = data.data || data;
+                document.getElementById('statLevel').textContent = d.level ?? '-';
+                document.getElementById('statAgent').textContent = d.agent ?? '-';
+                document.getElementById('statConfidence').textContent = d.confidence ? (d.confidence * 100).toFixed(0) + '%' : '-';
+                document.getElementById('routingResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('routingResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        async function loadRoutingStats() {
+            try {
+                const data = await apiCall('/routing/stats');
+                document.getElementById('routingResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('routingResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // Intelligence Tool Functions
+        function showIntelligenceToolForm() {
+            const tool = document.getElementById('intelligenceTool').value;
+            document.querySelectorAll('.tool-form').forEach(f => f.classList.remove('active'));
+            if (tool) document.getElementById('form-' + tool).classList.add('active');
+        }
+        
+        async function callIntelligenceTool(tool) {
+            let url = '/intelligence/';
+            const btn = document.querySelector('#form-' + tool + ' button') || document.querySelector('.panel-intelligence button');
+            const originalText = btn ? btn.textContent : 'Execute';
+            if (btn) btn.textContent = 'Loading...';
+            
+            switch(tool) {
+                case 'route':
+                    url += 'route?task=' + encodeURIComponent(document.getElementById('intRouteTask').value || '');
+                    break;
+                case 'score_complexity':
+                    url += 'score?task_description=' + encodeURIComponent(document.getElementById('intScoreTask').value || '');
+                    break;
+                case 'available_agents':
+                    url += 'agents';
+                    break;
+                case 'get_routing_history':
+                    url += 'history?limit=' + (document.getElementById('intHistoryLimit').value || 10);
+                    break;
+            }
+            
+            try {
+                const data = await apiCall(url);
+                document.getElementById('intelligenceResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('intelligenceResults').textContent = 'Error: ' + e.message;
+            } finally {
+                if (btn) btn.textContent = originalText;
+            }
+        }
+        
+        // Intelligence (legacy)
+        async function scoreComplexity() {
+            const task = document.getElementById('complexityTask').value.trim();
+            if (!task) return;
+            try {
+                const data = await apiCall('/intelligence/route?task=' + encodeURIComponent(task));
+                document.getElementById('intelligenceResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('intelligenceResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        async function loadIntelligenceAgents() {
+            try {
+                const data = await apiCall('/intelligence/agents');
+                document.getElementById('intelligenceResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('intelligenceResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        loadIntelligenceAgents();
+        
+        // Orchestration
+        async function spawnTask() {
+            const agent = document.getElementById('orchAgent').value;
+            const task = document.getElementById('orchTask').value.trim();
+            if (!task) return;
+            try {
+                const data = await apiCall('/orchestration/spawn?agent=' + agent + '&task=' + encodeURIComponent(task));
+                document.getElementById('orchResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('orchResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        async function loadTools() {
+            try {
+                const data = await apiCall('/orchestration/tools');
+                document.getElementById('orchResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('orchResults').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        // Sessions
+        let allSessions = [];
+        
+        async function loadSessions() {
+            try {
+                const data = await apiCall('/sessions/list');
+                allSessions = data.data || data || [];
+                renderSessions(allSessions);
+            } catch (e) {
+                // Try legacy endpoint
+                try {
+                    const data = await apiCall('/sessions');
+                    allSessions = data.data ? [data.data] : [];
+                    renderSessions(allSessions);
+                } catch (e2) {
+                    document.getElementById('sessionsList').innerHTML = '<div class="results">Error: ' + escapeHtml(e2.message) + '</div>';
+                }
+            }
+        }
+        
+        function renderSessions(sessions) {
+            const container = document.getElementById('sessionsList');
+            if (!sessions || sessions.length === 0) {
+                container.innerHTML = '<div class="results">No sessions found</div>';
+                return;
+            }
+            
+            let html = '<div class="session-list">';
+            sessions.forEach((session, idx) => {
+                const sessionId = session.session_id || session.id || 'session-' + idx;
+                const date = session.date || session.timestamp || session.created_at || '';
+                const messages = session.messages || session.message_count || 0;
+                const agents = session.agents || session.agents_used || '';
+                
+                html += `<div class="session-item" onclick="toggleSessionDetails('${sessionId}')">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <strong>${escapeHtml(String(sessionId))}</strong>
+                        <span style="color:var(--text-secondary);font-size:11px;">${messages} messages</span>
+                    </div>
+                    <div class="meta">${escapeHtml(date)} ${agents ? ' | ' + escapeHtml(agents) : ''}</div>
+                    <div class="session-details" id="details-${sessionId}" style="display:none;margin-top:10px;padding:10px;background:var(--bg-tertiary);border-radius:4px;">
+                        <pre style="font-size:11px;white-space:pre-wrap;">${escapeHtml(JSON.stringify(session, null, 2))}</pre>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function toggleSessionDetails(sessionId) {
+            const details = document.getElementById('details-' + sessionId);
+            if (details) {
+                details.style.display = details.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+        
+        function filterSessions() {
+            const query = document.getElementById('sessionSearch').value.toLowerCase();
+            if (!query) {
+                renderSessions(allSessions);
+                return;
+            }
+            
+            const filtered = allSessions.filter(s => {
+                const str = JSON.stringify(s).toLowerCase();
+                return str.includes(query);
+            });
+            renderSessions(filtered);
+        }
+        loadSessions();
+        
+        // Agents
+        async function loadAgents() {
+            try {
+                const data = await apiCall('/agents');
+                const container = document.getElementById('agentsTableContainer');
+                
+                if (!data.data || Object.keys(data.data).length === 0) {
+                    container.innerHTML = '<div class="results">No agents found</div>';
+                    return;
+                }
+                
+                // Build table HTML
+                let html = '<table class="data-table"><thead><tr><th>Name</th><th>Model</th><th>Role</th><th>Enabled</th><th>Action</th></tr></thead><tbody>';
+                
+                for (const [name, agent] of Object.entries(data.data)) {
+                    const model = agent.model || agent.provider || 'N/A';
+                    const role = agent.role || agent.description || agent.category || 'N/A';
+                    const enabled = agent.enabled !== false ? '<span style="color:var(--success)">Enabled</span>' : '<span style="color:var(--text-secondary)">Disabled</span>';
+                    
+                    html += `<tr>
+                        <td><strong>${escapeHtml(name)}</strong></td>
+                        <td>${escapeHtml(model)}</td>
+                        <td>${escapeHtml(role)}</td>
+                        <td>${enabled}</td>
+                        <td><button class="secondary" onclick="spawnAgent('${escapeHtml(name)}')">Spawn</button></td>
+                    </tr>`;
+                }
+                html += '</tbody></table>';
+                container.innerHTML = html;
+            } catch (e) {
+                document.getElementById('agentsTableContainer').innerHTML = '<div class="results">Error: ' + escapeHtml(e.message) + '</div>';
+            }
+        }
+        
+        async function spawnAgent(agentName) {
+            const task = prompt('Enter task for ' + agentName + ':');
+            if (!task) return;
+            
+            try {
+                const data = await apiCall('/orchestration/spawn?agent=' + encodeURIComponent(agentName) + '&task=' + encodeURIComponent(task));
+                showToast('Agent spawned: ' + JSON.stringify(data, null, 2), 'success');
+            } catch (e) {
+                showToast('Error: ' + e.message, 'error');
+            }
+        }
+        
+        // Config
+        async function loadConfig() {
+            const file = document.getElementById('configFile').value.trim();
+            if (!file) return;
+            try {
+                const data = await apiCall('/config/' + encodeURIComponent(file));
+                if (data.data && data.data.content) {
+                    document.getElementById('configContent').value = data.data.content;
+                } else {
+                    document.getElementById('configContent').value = JSON.stringify(data.data, null, 2);
+                }
+            } catch (e) {
+                document.getElementById('configContent').value = 'Error: ' + e.message;
+            }
+        }
+        
+        function selectConfigFile(filename) {
+            document.getElementById('configFile').value = filename;
+            loadConfig();
+            document.querySelectorAll('.file-picker-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function validateConfig() {
+            try {
+                const content = document.getElementById('configContent').value;
+                JSON.parse(content);
+                showToast('Valid JSON', 'success');
+            } catch (e) {
+                showToast('Invalid JSON: ' + e.message, 'error');
+            }
+        }
+        
+        async function saveConfig() {
+            const file = document.getElementById('configFile').value.trim();
+            if (!file) { showToast('Please select a file first', 'warning'); return; }
+            const content = document.getElementById('configContent').value;
+            try {
+                const data = await apiCall('/config/' + encodeURIComponent(file), 'PUT', { content });
+                showToast('Saved successfully', 'success');
+            } catch (e) {
+                showToast('Error saving: ' + e.message, 'error');
+            }
+        }
+        
+        // Settings
+        function toggleTheme() {
+            const isDark = document.getElementById('themeToggle').checked;
+            document.body.classList.toggle('light', !isDark);
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        
+        function loadSettings() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.getElementById('themeToggle').checked = theme === 'dark';
+            if (theme === 'light') document.body.classList.add('light');
+            const interval = localStorage.getItem('refreshInterval') || '30000';
+            document.getElementById('refreshInterval').value = interval;
+        }
+        loadSettings();
+        
+        function saveSettings() {
+            const interval = document.getElementById('refreshInterval').value;
+            localStorage.setItem('refreshInterval', interval);
+        }
+        
+        // Chat Functions
+        const chatHistory = [];
+        
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const model = document.getElementById('chatModel').value;
+            const message = input.value.trim();
+            if (!message) return;
+            
+            chatHistory.push({ role: 'user', content: message });
+            renderChatMessages();
+            input.value = '';
+            
+            try {
+                const request = {
+                    model: model,
+                    messages: chatHistory,
+                    stream: false
+                };
+                const data = await apiCall('/chat/completions', 'POST', request);
+                
+                const response = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                chatHistory.push({ role: 'assistant', content: response });
+                renderChatMessages();
+                document.getElementById('chatResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                chatHistory.push({ role: 'assistant', content: 'Error: ' + e.message });
+                renderChatMessages();
+                document.getElementById('chatResponse').textContent = 'Error: ' + e.message;
+            }
+        }
+        
+        function renderChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (chatHistory.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No messages yet. Start a conversation.</div>';
+                return;
+            }
+            container.innerHTML = chatHistory.map(msg => `
+                <div class="chat-message ${msg.role}">
+                    <div>${escapeHtml(msg.content)}</div>
+                    <div class="time">${msg.role}</div>
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function clearChat() {
+            chatHistory.length = 0;
+            renderChatMessages();
+            document.getElementById('chatResponse').textContent = 'Response will appear here...';
+        }
+        
+        function copyResponse() {
+            const content = document.getElementById('chatResponse').textContent;
+            navigator.clipboard.writeText(content);
+        }
+        
+        // Floating Chat
+        function toggleFloatingChat() {
+            document.getElementById('floatingChat').classList.toggle('open');
+        }
+        
+        async function sendFloatingMessage() {
+            const input = document.getElementById('floatingChatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const container = document.getElementById('floatingChatMessages');
+            container.innerHTML += `<div class="chat-message user"><div>${escapeHtml(message)}</div></div>`;
+            input.value = '';
+            
+            try {
+                const request = { model: document.getElementById('chatModel').value, messages: [{ role: 'user', content: message }], stream: false };
+                const data = await apiCall('/chat/completions', 'POST', request);
+                const response = data.choices?.[0]?.message?.content || JSON.stringify(data);
+                container.innerHTML += `<div class="chat-message assistant"><div>${escapeHtml(response)}</div></div>`;
+                container.scrollTop = container.scrollHeight;
+            } catch (e) {
+                container.innerHTML += `<div class="chat-message assistant"><div>Error: ${e.message}</div></div>`;
+            }
+        }
+        
+        // Memory Tool Functions
+        function showMemoryToolForm() {
+            const tool = document.getElementById('memoryTool').value;
+            document.querySelectorAll('.tool-form').forEach(f => f.classList.remove('active'));
+            if (tool) document.getElementById('form-' + tool).classList.add('active');
+        }
+        
+        async function callMemoryTool(tool) {
+            let url = '/memory/';
+            let method = 'GET';
+            let body = null;
+            
+            // Get the button and show loading state
+            const formEl = document.getElementById('form-' + tool);
+            const btn = formEl ? formEl.querySelector('button') : null;
+            const originalText = btn ? btn.textContent : 'Execute';
+            if (btn) btn.textContent = 'Loading...';
+            
+            switch(tool) {
+                case 'search_memories':
+                    url += 'search?query=' + encodeURIComponent(document.getElementById('memSearchQuery').value || '');
+                    url += '&limit=' + (document.getElementById('memSearchLimit').value || 10);
+                    url += '&trust_weight=' + (document.getElementById('memSearchTrust').value || 0);
+                    break;
+                case 'get_memory_stats':
+                    url += 'stats';
+                    break;
+                case 'recall_session':
+                    url += 'recall?session_id=' + encodeURIComponent(document.getElementById('memRecallSession').value || '');
+                    url += '&limit=' + (document.getElementById('memRecallLimit').value || 50);
+                    break;
+                case 'find_context':
+                    url += 'context?task=' + encodeURIComponent(document.getElementById('memContextTask').value || '');
+                    url += '&context_type=' + (document.getElementById('memContextType').value || 'all');
+                    break;
+                case 'memory_search':
+                    url += 'router-search?query=' + encodeURIComponent(document.getElementById('memRouterQuery').value || '');
+                    url += '&top_k=' + (document.getElementById('memRouterTopk').value || 10);
+                    break;
+                case 'memory_write':
+                    method = 'POST';
+                    body = {
+                        content: document.getElementById('memWriteContent').value || '',
+                        kind: document.getElementById('memWriteKind').value || 'episodic',
+                        scope: document.getElementById('memWriteScope').value || 'global'
+                    };
+                    break;
+                case 'memory_stats':
+                    url += 'comprehensive-stats';
+                    break;
+                case 'comprehensive_stats':
+                    url += 'comprehensive-stats';
+                    break;
+            }
+            
+            try {
+                const data = method === 'POST' ? await apiCall(url, 'POST', body) : await apiCall(url);
+                document.getElementById('memoryResults').textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+                document.getElementById('memoryResults').textContent = 'Error: ' + e.message;
+            } finally {
+                if (btn) btn.textContent = originalText;
+            }
+        }
+        
+        // Learning Tool Functions
+        function showLearningToolForm() {
+            const tool = document.getElementById('learningTool').value;
+            document.querySelectorAll('.tool-form').forEach(f => f.classList.remove('active'));
+            if (tool) document.getElementById('form-' + tool).classList.add('active');
+        }
+        
+        async function callLearningTool(tool) {
+            let url = '/learning/';
+            let body = null;
+            
+            // Get the button and show loading state
+            const formEl = document.getElementById('form-' + tool);
+            const btn = formEl ? formEl.querySelector('button') : null;
+            const originalText = btn ? btn.textContent : 'Execute';
+            if (btn) btn.textContent = 'Loading...';
+            
+            switch(tool) {
+                case 'route_task':
+                    url = '/routing/route?task=' + encodeURIComponent(document.getElementById('learningRouteTask').value || '');
+                    break;
+                case 'record_outcome':
+                    url += 'record';
+                    body = {
+                        task: document.getElementById('learningRecordTask').value || '',
+                        agent: document.getElementById('learningRecordAgent').value || '',
+                        success: document.getElementById('learningRecordSuccess').value === 'true',
+                        latency_ms: parseInt(document.getElementById('learningRecordLatency').value) || 0,
+                        tokens_used: parseInt(document.getElementById('learningRecordTokens').value) || 0
+                    };
+                    break;
+                case 'status':
+                    url += 'status';
+                    break;
+                case 'retrain':
+                    url += 'retrain';
+                    break;
+                case 'get_recommendations':
+                    url += 'recommendations?task_description=' + encodeURIComponent(document.getElementById('learningRecTask').value || '');
+                    break;
+                case 'learning_stats':
+                    url += 'status';
+                    break;
+                case 'log_outcome':
+                    url += 'log';
+                    body = {
+                        task_id: document.getElementById('learningLogId').value || '',
+                        task_description: document.getElementById('learningLogTask').value || '',
+                        task_type: document.getElementById('learningLogType').value || 'implementation',
+                        agent: document.getElementById('learningLogAgent').value || '',
+                        level: parseInt(document.getElementById('learningLogLevel').value) || 3,
+                        success: document.getElementById('learningLogSuccess').value === 'true',
+                        latency_ms: parseInt(document.getElementById('learningLogLatency').value) || 0,
+                        tokens_used: parseInt(document.getElementById('learningLogTokens').value) || 0
+                    };
+                    break;
+                case 'get_outcomes':
+                    url += 'status?agent=' + encodeURIComponent(document.getElementById('learningOutcomesAgent').value || '');
+                    break;
+                case 'get_learning_progress':
+                    url += 'progress';
+                    break;
+            }
+            
+            try {
+                const data = body ? await apiCall(url, 'POST', body) : await apiCall(url);
+                document.getElementById('learningResults').textContent = JSON.stringify(data, null, 2);
+                if (tool === 'get_learning_progress' || tool === 'learning_stats') {
+                    updateLearningProgress(data);
+                }
+            } catch (e) {
+                document.getElementById('learningResults').textContent = 'Error: ' + e.message;
+            } finally {
+                if (btn) btn.textContent = originalText;
+            }
+        }
+        
+        function updateLearningProgress(data) {
+            const d = data.data || data;
+            if (d.total_decisions !== undefined) {
+                document.getElementById('progressTotal').textContent = d.total_decisions;
+            }
+            if (d.success_rate !== undefined) {
+                document.getElementById('progressSuccess').textContent = d.success_rate + '%';
+            }
+            if (d.convergence !== undefined) {
+                document.getElementById('progressConvergence').textContent = d.convergence;
+            }
+            if (d.top_performers && d.top_performers[0]) {
+                document.getElementById('progressTopAgent').textContent = d.top_performers[0].agent;
+            }
+            if (d.recent_reward_trend) {
+                const trendEl = document.getElementById('progressTrend');
+                trendEl.textContent = d.recent_reward_trend;
+                trendEl.className = 'trend ' + (d.recent_reward_trend === 'positive' ? 'up' : 'down');
+            }
+        }
+        
+        async function loadLearningProgress() {
+            try {
+                const data = await apiCall('/learning/progress');
+                updateLearningProgress(data);
+            } catch (e) {
+                log('Learning progress error: ' + e.message, 'error');
+            }
+        }
+        
+        // Utility
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function copyToClipboard(elementId) {
+            const content = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(content);
+        }
+        
+        async function apiCall(path, method = 'GET', body = null, options = {}) {
+            const loadingKey = options.loadingKey || path;
+            loadingState[loadingKey] = true;
+            updateLoadingUI();
+            log('Calling: ' + path, 'info');
+            const fetchOptions = { method };
+            if (body) {
+                fetchOptions.headers = { 'Content-Type': 'application/json' };
+                fetchOptions.body = JSON.stringify(body);
+            }
+            try {
+                const res = await fetch(API + path, fetchOptions);
+                log('Response status: ' + res.status, res.ok ? 'success' : 'error');
+                const data = await res.json();
+                log('Data received: ' + JSON.stringify(data).substring(0, 100), 'success');
+                return data;
+            } catch (e) {
+                log('Error: ' + e.message, 'error');
+                throw e;
+            } finally {
+                loadingState[loadingKey] = false;
+                updateLoadingUI();
+            }
+        }
+        
+        function updateLoadingUI() {
+            const isLoading = Object.values(loadingState).some(v => v);
+            document.body.classList.toggle('loading', isLoading);
+        }
+        
+        function showError(message, retryCallback) {
+            const retryHtml = retryCallback ? `<button onclick="(${retryCallback})()" style="margin-top:8px;padding:4px 12px;background:var(--error);color:white;border:none;border-radius:4px;cursor:pointer;">Retry</button>` : '';
+            return message + retryHtml;
+        }
+        
+        /* ====== PHASE 3: ADHD-Friendly UX Features ====== */
+        
+        // --- Toast Notification System ---
+        const toastContainer = document.getElementById('toastContainer');
+        const toastIcons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
+        
+        function toastNotify(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.innerHTML = '<span class="toast-icon">' + toastIcons[type] + '</span><span class="toast-message">' + message + '</span>';
+            toastContainer.appendChild(toast);
+            
+            // Auto-dismiss after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('removing');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Wrap apiCall to show toasts
+        const originalApiCall = apiCall;
+        apiCall = async function(path) {
+            try {
+                const result = await originalApiCall(path);
+                if (path.includes('/write') || path.includes('/save')) {
+                    toastNotify('Saved successfully', 'success');
+                }
+                return result;
+            } catch (e) {
+                toastNotify('Error: ' + e.message, 'error');
+                throw e;
+            }
+        };
+        
+        // --- Focus Mode / Pomodoro Timer ---
+        const WORK_DURATION = 25 * 60; // 25 minutes in seconds
+        const BREAK_DURATION = 5 * 60; // 5 minutes
+        let timerInterval = null;
+        let timerSeconds = WORK_DURATION;
+        let isBreak = false;
+        
+        // Load timer state from localStorage
+        function loadTimerState() {
+            const saved = localStorage.getItem('pomodoroState');
+            if (saved) {
+                const state = JSON.parse(saved);
+                timerSeconds = state.seconds;
+                isBreak = state.isBreak;
+                if (state.running) {
+                    startTimer();
+                }
+            }
+            updateTimerDisplay();
+        }
+        
+        function saveTimerState() {
+            const isRunning = timerInterval !== null;
+            localStorage.setItem('pomodoroState', JSON.stringify({
+                seconds: timerSeconds,
+                isBreak: isBreak,
+                running: isRunning
+            }));
+        }
+        
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60);
+            const secs = timerSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+        }
+        
+        function timerToggle() {
+            if (timerInterval) {
+                pauseTimer();
+            } else {
+                startTimer();
+            }
+        }
+        
+        function startTimer() {
+            document.getElementById('timerContainer').classList.add('timer-running');
+            document.getElementById('timerToggleBtn').textContent = '⏸';
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                if (timerSeconds <= 0) {
+                    timerComplete();
+                }
+                saveTimerState();
+            }, 1000);
+            saveTimerState();
+        }
+        
+        function pauseTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            document.getElementById('timerContainer').classList.remove('timer-running');
+            document.getElementById('timerToggleBtn').textContent = '▶';
+            saveTimerState();
+        }
+        
+        function timerReset() {
+            pauseTimer();
+            timerSeconds = isBreak ? BREAK_DURATION : WORK_DURATION;
+            updateTimerDisplay();
+            saveTimerState();
+            toastNotify('Timer reset to ' + (isBreak ? 'break' : 'work') + ' mode', 'info');
+        }
+        
+        function timerComplete() {
+            pauseTimer();
+            // Play audio notification
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                oscillator.connect(audioCtx.destination);
+                oscillator.frequency.value = 800;
+                oscillator.start();
+                setTimeout(() => oscillator.stop(), 200);
+            } catch(e) {}
+            
+            isBreak = !isBreak;
+            timerSeconds = isBreak ? BREAK_DURATION : WORK_DURATION;
+            updateTimerDisplay();
+            saveTimerState();
+            
+            toastNotify(isBreak ? 'Time for a break!' : 'Back to work!', isBreak ? 'warning' : 'success');
+        }
+        
+        // Initialize timer
+        loadTimerState();
+        
+        // --- Collapsible Sections ---
+        function initCollapsible() {
+            document.querySelectorAll('.collapsible-header').forEach(header => {
+                const content = header.nextElementSibling;
+                const key = 'collapsible_' + header.dataset.section;
+                const saved = localStorage.getItem(key);
+                
+                if (saved === 'collapsed') {
+                    content.classList.add('collapsed');
+                    header.querySelector('.collapsible-icon').textContent = '▶';
+                } else {
+                    header.querySelector('.collapsible-icon').textContent = '▼';
+                }
+                
+                header.addEventListener('click', () => {
+                    content.classList.toggle('collapsed');
+                    const isCollapsed = content.classList.contains('collapsed');
+                    header.querySelector('.collapsible-icon').textContent = isCollapsed ? '▶' : '▼';
+                    localStorage.setItem(key, isCollapsed ? 'collapsed' : 'expanded');
+                });
+            });
+        }
+        
+        // --- Global Search (Ctrl+K) ---
+        let searchTimeout = null;
+        
+        function showSearch() {
+            document.getElementById('searchOverlay').classList.add('show');
+            document.getElementById('searchInput').focus();
+        }
+        
+        function hideSearch() {
+            document.getElementById('searchOverlay').classList.remove('show');
+        }
+        
+        function handleSearchKeydown(e) {
+            if (e.key === 'Escape') {
+                hideSearch();
+            } else if (e.key === 'Enter') {
+                performSearch();
+            }
+        }
+        
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            
+            // Debounce search
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const resultsDiv = document.getElementById('searchResults');
+                resultsDiv.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">Searching...</div>';
+                
+                try {
+                    // Search memories
+                    const memRes = await originalApiCall('/memory/search?query=' + encodeURIComponent(query) + '&limit=5');
+                    const memData = memRes.data?.results || [];
+                    
+                    // Search sessions
+                    const sesRes = await originalApiCall('/sessions/list');
+                    const sesData = sesRes.data || [];
+                    const filteredSessions = sesData.filter(s => 
+                        s.session_id?.toLowerCase().includes(query.toLowerCase())
+                    ).slice(0, 3);
+                    
+                    // Display results
+                    let html = '';
+                    
+                    // Memory results
+                    if (memData.length > 0) {
+                        html += '<div style="padding:8px 12px;font-size:11px;color:var(--text-secondary);text-transform:uppercase;">Memory Results</div>';
+                        memData.forEach(item => {
+                            const title = item.content?.substring(0, 60) || 'Memory';
+                            const highlighted = title.replace(new RegExp('(' + query + ')', 'gi'), '<span class="highlight">$1</span>');
+                            html += '<div class="search-result-item" onclick="hideSearch();toastNavigate(\'memory\')"><span class="search-result-type">memory</span>' + highlighted + '</div>';
+                        });
+                    }
+                    
+                    // Session results
+                    if (filteredSessions.length > 0) {
+                        html += '<div style="padding:8px 12px;font-size:11px;color:var(--text-secondary);text-transform:uppercase;">Sessions</div>';
+                        filteredSessions.forEach(s => {
+                            const id = s.session_id?.substring(0, 20) || 'Session';
+                            const highlighted = id.replace(new RegExp('(' + query + ')', 'gi'), '<span class="highlight">$1</span>');
+                            html += '<div class="search-result-item" onclick="hideSearch();toastNavigate(\'sessions\')"><span class="search-result-type">session</span>' + highlighted + '</div>';
+                        });
+                    }
+                    
+                    if (!html) {
+                        html = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">No results found</div>';
+                    }
+                    
+                    resultsDiv.innerHTML = html;
+                } catch(e) {
+                    resultsDiv.innerHTML = '<div style="text-align:center;color:var(--error);padding:20px;">Search error: ' + e.message + '</div>';
+                }
+            }, 300);
+        }
+        
+        function toastNavigate(tab) {
+            // Navigate to the specified tab
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(t => {
+                if (t.dataset.tab === tab) {
+                    t.click();
+                }
+            });
+        }
+        
+        // --- Keyboard Shortcuts ---
+        function showShortcuts() {
+            document.getElementById('shortcutsOverlay').classList.add('show');
+        }
+        
+        function hideShortcuts() {
+            document.getElementById('shortcutsOverlay').classList.remove('show');
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+K - Global Search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                showSearch();
+            }
+            
+            // Ctrl+? - Show Shortcuts
+            if ((e.ctrlKey || e.metaKey) && e.key === '?') {
+                e.preventDefault();
+                showShortcuts();
+            }
+            
+            // Ctrl+1-9 - Switch Tabs
+            if ((e.ctrlKey || e.metaKey) && e.key >= '1' && e.key <= '9') {
+                e.preventDefault();
+                const tabNum = parseInt(e.key);
+                const tabs = document.querySelectorAll('.tab');
+                if (tabs[tabNum - 1]) {
+                    tabs[tabNum - 1].click();
+                }
+            }
+            
+            // Ctrl+R - Refresh (reload page)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                toastNotify('Refreshing data...', 'info');
+                checkHealth();
+                loadAllDashboardData();
+            }
+            
+            // Escape - Close Modals
+            if (e.key === 'Escape') {
+                hideSearch();
+                hideShortcuts();
+            }
+        });
+        
+        // --- Initialize Collapsible Sections ---
+        // Call this after DOM is ready
+        setTimeout(initCollapsible, 100);
+        
+        /* ====== PHASE 4: Bells & Whistles ====== */
+        
+        // --- API Response Cache ---
+        const apiCache = new Map();
+        const CACHE_DURATION = parseInt(localStorage.getItem('cacheDuration')) || 5000;
+        
+        function getCachedData(key) {
+            const cached = apiCache.get(key);
+            if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+                return cached.data;
+            }
+            return null;
+        }
+        
+        function setCachedData(key, data) {
+            apiCache.set(key, { data, timestamp: Date.now() });
+        }
+        
+        // Enhanced apiCall with caching
+        const originalApiCallPhase4 = apiCall;
+        apiCall = async function(path, method = 'GET', body = null, options = {}) {
+            const cacheKey = path + method + JSON.stringify(body || {});
+            const cached = getCachedData(cacheKey);
+            if (cached && method === 'GET' && !options.noCache) {
+                log('Returning cached: ' + path, 'info');
+                return cached;
+            }
+            
+            const result = await originalApiCallPhase4(path, method, body, options);
+            if (method === 'GET') {
+                setCachedData(cacheKey, result);
+            }
+            return result;
+        };
+        
+        // --- Routing Chart Visualization ---
+        let routingHistoryData = { levelCounts: {}, agentCounts: {} };
+        
+        async function loadRoutingChart() {
+            try {
+                // Try to get routing history from intelligence endpoint
+                const data = await originalApiCall('/intelligence/history?limit=50', 'GET', null, { noCache: true });
+                const history = data.data || data || [];
+                
+                if (!history || history.length === 0) {
+                    // No data available - show empty state instead of demo data
+                    routingHistoryData = { levelCounts: { l1: 0, l2: 0, l3: 0, l4: 0, l5: 0 }, agentCounts: {} };
+                    renderRoutingChart();
+                    document.getElementById('routingChartInfo').textContent = 'No routing history yet. Run some tasks to see data.';
+                    return;
+                }
+                
+                // Process data into level and agent distributions
+                const levelCounts = { l1: 0, l2: 0, l3: 0, l4: 0, l5: 0 };
+                const agentCounts = {};
+                
+                history.forEach(item => {
+                    const level = item.level || item.complexity || Math.floor(Math.random() * 5) + 1;
+                    const agent = item.agent || item.recommended_agent || 'unknown';
+                    
+                    if (level >= 1 && level <= 5) {
+                        levelCounts['l' + level]++;
+                    }
+                    agentCounts[agent] = (agentCounts[agent] || 0) + 1;
+                });
+                
+                routingHistoryData = { levelCounts, agentCounts };
+                renderRoutingChart();
+                document.getElementById('routingChartInfo').textContent = `Loaded ${history.length} routing history entries`;
+            } catch (e) {
+                log('Routing chart error: ' + e.message, 'error');
+                // Show error state - do NOT fall back to demo data
+                routingHistoryData = { levelCounts: { l1: 0, l2: 0, l3: 0, l4: 0, l5: 0 }, agentCounts: {} };
+                renderRoutingChart();
+                document.getElementById('routingChartInfo').textContent = 'Error loading routing history: ' + e.message;
+            }
+        }
+        
+        function renderRoutingChart() {
+            const { levelCounts, agentCounts } = routingHistoryData;
+            const totalLevels = Object.values(levelCounts).reduce((a, b) => a + b, 0) || 1;
+            const totalAgents = Object.values(agentCounts).reduce((a, b) => a + b, 0) || 1;
+            
+            // Render level bars
+            let levelHtml = '';
+            const levelLabels = { l1: 'L1', l2: 'L2', l3: 'L3', l4: 'L4', l5: 'L5' };
+            const levelNames = { l1: 'Trivial', l2: 'Simple', l3: 'Moderate', l4: 'Complex', l5: 'Architect' };
+            
+            Object.keys(levelCounts).forEach(level => {
+                const count = levelCounts[level];
+                const pct = (count / totalLevels * 100).toFixed(0);
+                levelHtml += `
+                    <div class="routing-bar-container">
+                        <div class="routing-bar-label" title="${levelNames[level]}">${levelLabels[level]}</div>
+                        <div class="routing-bar">
+                            <div class="routing-bar-fill ${level}" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="routing-bar-value">${count}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('levelBars').innerHTML = levelHtml;
+            
+            // Render agent bars
+            let agentHtml = '';
+            const sortedAgents = Object.entries(agentCounts).sort((a, b) => b[1] - a[1]);
+            
+            sortedAgents.slice(0, 6).forEach(([agent, count]) => {
+                const pct = (count / totalAgents * 100).toFixed(0);
+                agentHtml += `
+                    <div class="agent-bar-container">
+                        <div class="agent-bar-name" title="${agent}">${agent}</div>
+                        <div class="agent-bar">
+                            <div class="agent-bar-fill" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="agent-bar-value">${count}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('agentBars').innerHTML = agentHtml || '<div style="color:var(--text-secondary);font-size:12px;">No agent data</div>';
+        }
+        
+        // --- Memory Graph Visualization ---
+        let lastMemoryResults = [];
+        
+        function captureMemoryResults(results) {
+            try {
+                const data = JSON.parse(results);
+                lastMemoryResults = data.results || data.data?.results || [];
+            } catch (e) {
+                lastMemoryResults = [];
+            }
+        }
+        
+        async function loadMemoryGraph() {
+            if (lastMemoryResults.length === 0) {
+                // Try to get recent search results
+                try {
+                    const data = await originalApiCall('/memory/search?query=*&limit=10', 'GET', null, { noCache: true });
+                    lastMemoryResults = data.results || data.data?.results || [];
+                } catch (e) {
+                    lastMemoryResults = [];
+                }
+            }
+            
+            renderMemoryGraph();
+        }
+        
+        function renderMemoryGraph() {
+            const container = document.getElementById('memoryGraph');
+            
+            if (lastMemoryResults.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No memory data to visualize</div>';
+                return;
+            }
+            
+            let html = '<div class="memory-graph-row">';
+            
+            lastMemoryResults.slice(0, 6).forEach((item, idx) => {
+                const kind = item.kind || item.scope || 'episodic';
+                const content = item.content?.substring(0, 80) || 'Memory item ' + (idx + 1);
+                const score = item.score?.toFixed(2) || item.confidence?.toFixed(2) || '0.00';
+                
+                html += `
+                    <div class="memory-node ${kind}" style="margin-bottom: ${idx < lastMemoryResults.length - 1 ? '0' : '16px'}">
+                        <div class="memory-node-header">
+                            <span class="memory-node-kind">${kind}</span>
+                            <span class="memory-node-score">${score}</span>
+                        </div>
+                        <div class="memory-node-content">${escapeHtml(content)}</div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        // Patch memory tool to capture results
+        const originalCallMemoryTool = callMemoryTool;
+        callMemoryTool = async function(tool) {
+            const result = await originalCallMemoryTool(tool);
+            const resultsEl = document.getElementById('memoryResults');
+            captureMemoryResults(resultsEl.textContent);
+            return result;
+        };
+        
+        // --- Settings Panel Enhancement ---
+        function setTheme(theme) {
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.theme === theme);
+            });
+            
+            if (theme === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.body.classList.toggle('light', !prefersDark);
+            } else {
+                document.body.classList.toggle('light', theme === 'light');
+            }
+            
+            localStorage.setItem('theme', theme);
+        }
+        
+        function loadThemeSettings() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            setTheme(theme);
+            
+            // Load cache duration
+            const cacheDuration = localStorage.getItem('cacheDuration') || '5000';
+            document.getElementById('cacheDuration').value = cacheDuration;
+        }
+        loadThemeSettings();
+        
+        // Data management functions
+        async function clearMemories() {
+            if (confirm('Clear all memories? This cannot be undone.')) {
+                try {
+                    await originalApiCall('/memory/clear', 'POST', {}, { noCache: true });
+                    toastNotify('Memories cleared', 'success');
+                } catch (e) {
+                    toastNotify('Error clearing memories: ' + e.message, 'error');
+                }
+            }
+        }
+        
+        async function clearSessions() {
+            if (confirm('Clear all sessions? This cannot be undone.')) {
+                try {
+                    await originalApiCall('/sessions/clear', 'POST', {}, { noCache: true });
+                    toastNotify('Sessions cleared', 'success');
+                } catch (e) {
+                    toastNotify('Error clearing sessions: ' + e.message, 'error');
+                }
+            }
+        }
+        
+        function clearCache() {
+            apiCache.clear();
+            toastNotify('Cache cleared', 'info');
+        }
+        
+        function exportSettings() {
+            const settings = {
+                theme: localStorage.getItem('theme') || 'dark',
+                refreshInterval: localStorage.getItem('refreshInterval') || '30000',
+                cacheDuration: localStorage.getItem('cacheDuration') || '5000',
+                pomodoroState: localStorage.getItem('pomodoroState')
+            };
+            
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nxyme-settings.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            toastNotify('Settings exported', 'success');
+        }
+        
+        function importSettings(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const settings = JSON.parse(e.target.result);
+                    
+                    if (settings.theme) {
+                        localStorage.setItem('theme', settings.theme);
+                        setTheme(settings.theme);
+                    }
+                    if (settings.refreshInterval) {
+                        localStorage.setItem('refreshInterval', settings.refreshInterval);
+                        document.getElementById('refreshInterval').value = settings.refreshInterval;
+                    }
+                    if (settings.cacheDuration) {
+                        localStorage.setItem('cacheDuration', settings.cacheDuration);
+                        document.getElementById('cacheDuration').value = settings.cacheDuration;
+                    }
+                    if (settings.pomodoroState) {
+                        localStorage.setItem('pomodoroState', settings.pomodoroState);
+                    }
+                    
+                    toastNotify('Settings imported', 'success');
+                } catch (err) {
+                    toastNotify('Invalid settings file', 'error');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // --- Config Editor Enhancement ---
+        let configSaveTimeout = null;
+        
+        function updateConfigEditor() {
+            const content = document.getElementById('configContent').value;
+            const lines = content.split('\n');
+            const lineNumbers = lines.map((_, i) => i + 1).join('\n');
+            document.getElementById('configLineNumbers').textContent = lineNumbers;
+        }
+        
+        function syncConfigScroll() {
+            const textarea = document.getElementById('configContent');
+            const lineNumbers = document.getElementById('configLineNumbers');
+            lineNumbers.scrollTop = textarea.scrollTop;
+        }
+        
+        function showConfigSaveIndicator(type) {
+            const indicator = document.getElementById('configSaveIndicator');
+            indicator.textContent = type === 'saved' ? 'Saved!' : 'Error';
+            indicator.className = 'config-save-indicator show ' + type;
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        
+        function validateConfigOnInput() {
+            clearTimeout(configSaveTimeout);
+            configSaveTimeout = setTimeout(() => {
+                try {
+                    const content = document.getElementById('configContent').value;
+                    if (content.trim()) {
+                        JSON.parse(content);
+                    }
+                } catch (e) {
+                    // Invalid JSON - don't show yet, wait for user to save
+                }
+            }, 500);
+        }
+        
+        // Add paste validation
+        document.getElementById('configContent').addEventListener('paste', function(e) {
+            setTimeout(() => {
+                try {
+                    const content = this.value;
+                    JSON.parse(content);
+                } catch (e) {
+                    showToast('Invalid JSON pasted: ' + e.message, 'error');
+                }
+            }, 0);
+        });
+        
+        // Ctrl+S to save in config editor
+        document.getElementById('configContent').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                saveConfig();
+            }
+        });
+        
+        // --- Floating Chat Enhancement ---
+        let floatingChatTokenCount = 0;
+        
+        function toggleChatMaximize() {
+            document.getElementById('floatingChat').classList.toggle('maximized');
+            const btn = document.querySelector('.floating-chat .maximize-btn');
+            btn.textContent = document.getElementById('floatingChat').classList.contains('maximized') ? '⛶' : '⛶';
+        }
+        
+        function updateFloatingTokenCount() {
+            const messages = document.querySelectorAll('#floatingChatMessages .chat-message');
+            // Rough token estimate: ~4 chars per token
+            let totalChars = 0;
+            messages.forEach(msg => {
+                totalChars += msg.textContent.length;
+            });
+            floatingChatTokenCount = Math.ceil(totalChars / 4);
+            document.getElementById('floatingTokenCount').textContent = floatingChatTokenCount + ' tokens';
+        }
+        
+        function clearFloatingChat() {
+            if (confirm('Clear chat history?')) {
+                document.getElementById('floatingChatMessages').innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No messages yet</div>';
+                floatingChatTokenCount = 0;
+                updateFloatingTokenCount();
+            }
+        }
+        
+        // Patch floating chat to update token count
+        const originalSendFloating = sendFloatingMessage;
+        sendFloatingMessage = async function() {
+            await originalSendFloating();
+            updateFloatingTokenCount();
+        };
+        
+        // --- Performance Optimizations ---
+        
+        // Debounce resize events
+        let resizeTimeout = null;
+        const resizeIndicator = document.getElementById('resizeIndicator');
+        
+        window.addEventListener('resize', function() {
+            resizeIndicator.classList.add('show');
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                resizeIndicator.classList.remove('show');
+            }, 300);
+        });
+        
+        // Lazy load panels on first visit
+        const lazyPanels = new Set();
+        
+        function lazyLoadPanel(panelId) {
+            if (lazyPanels.has(panelId)) return;
+            lazyPanels.add(panelId);
+            
+            const panel = document.getElementById('panel-' + panelId);
+            if (panel) {
+                panel.classList.add('lazy-panel');
+                setTimeout(() => {
+                    panel.classList.add('loaded');
+                }, 100);
+            }
+        }
+        
+        // Add lazy loading to tab clicks
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                setTimeout(() => {
+                    lazyLoadPanel(tab.dataset.tab);
+                }, 500);
+            });
+        });
+        
+        // Initial load for visible panel
+        setTimeout(() => {
+            lazyLoadPanel('chat');
+        }, 1000);
+        
+        log('Phase 4 features loaded', 'success');
+    </script>
+</body>
+</html>

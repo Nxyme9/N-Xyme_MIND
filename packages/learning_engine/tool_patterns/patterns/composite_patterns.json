@@ -1,0 +1,60 @@
+{
+  "code_modification": {
+    "name": "code_modification",
+    "tool_sequence": [
+      "read",
+      "edit",
+      "lsp_diagnostics",
+      "write"
+    ],
+    "frequency": 1293,
+    "success_rate": 1.0,
+    "avg_duration_ms": 0.0,
+    "task_types": [
+      "implementation",
+      "fix"
+    ]
+  },
+  "code_exploration": {
+    "name": "code_exploration",
+    "tool_sequence": [
+      "grep",
+      "read",
+      "grep"
+    ],
+    "frequency": 47,
+    "success_rate": 1.0,
+    "avg_duration_ms": 0.0,
+    "task_types": [
+      "research",
+      "debug"
+    ]
+  },
+  "documentation_lookup": {
+    "name": "documentation_lookup",
+    "tool_sequence": [
+      "websearch",
+      "read",
+      "codesearch"
+    ],
+    "frequency": 470,
+    "success_rate": 1.0,
+    "avg_duration_ms": 0.0,
+    "task_types": [
+      "research"
+    ]
+  },
+  "file_search": {
+    "name": "file_search",
+    "tool_sequence": [
+      "glob",
+      "read"
+    ],
+    "frequency": 6275,
+    "success_rate": 1.0,
+    "avg_duration_ms": 0.0,
+    "task_types": [
+      "research"
+    ]
+  }
+}
