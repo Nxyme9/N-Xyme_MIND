@@ -1,0 +1,24 @@
+{
+  "enabled": true,
+  "default_mode": "race",
+  
+  "providers": {
+    "openrouter": {
+      "enabled": true,
+      "max_keys": 10,
+      "rate_limit_rpm": 20,
+      "token_limit_tpm": 50000
+    },
+    "opencode": {
+      "enabled": true,
+      "max_keys": 6,
+      "rate_limit_rpm": 120,
+      "token_limit_tpm": 300000
+    }
+  },
+  
+  "fallback_chain": ["openrouter", "opencode"],
+  
+  "learning_enabled": true,
+  "learning_db_path": "configs/api-keys/nx_rotator_learning.db"
+}

@@ -1,0 +1,58 @@
+# Feature Flags for ML Experiments
+# 
+# Usage:
+#   from packages.learning_engine.config import FeatureFlags
+#   
+#   if FeatureFlags.is_enabled("llm_routing"):
+#       # Use new routing logic
+
+enabled_features:
+  # Memory experiments
+  mem0_graph_memory: true       # Mem0 graph-based memory
+  memoryos_tiered_storage: true # MemoryOS-style tiered storage
+  tiered_compaction: false       # 3-tier compaction (50%/80%/persist)
+  
+  # LLM experiments  
+  multi_model_routing: true      # Router: fast vs smart model
+  kv_cache_persistence: false    # KV cache save/restore
+  llama_cpp_fallback: false      # Fallback to llama-cpp-python
+  
+  # Training experiments
+  lora_finetuning: false         # LoRA fine-tuning
+  agent_trajectory_collection: true # Collect 500+ trajectories
+  
+  # Context experiments
+  extended_context_128k: true     # 128k context via Modelfile
+  context_caching: true         # Full context caching
+
+  # Tunnel experiments
+  tunnel_enabled: true            # NxRotator tunnel for 6x throughput
+  tunnel_race_mode: true          # RACE mode (first key wins)
+
+# Experiment groups
+experiment_groups:
+  wave2_memory:
+    - tiered_compaction
+    - memoryos_tiered_storage
+  
+  wave3_training:
+    - lora_finetuning
+    - agent_trajectory_collection
+    
+  wave4_optimization:
+    - kv_cache_persistence
+    - llama_cpp_fallback
+
+# Rollout configuration
+rollout:
+  default_percentage: 10          # Default 10% rollout
+  increase_on_success: true       # Auto-increase if metrics improve
+  decrease_on_failure: true       # Auto-decrease if metrics degrade
+  metrics_threshold: 0.05         # 5% improvement required
+  eval_interval_seconds: 300      # Check every 5 min
+
+# Monitoring
+monitoring:
+  log_feature_flags: true         # Log which flags are active
+  track_metrics: true             # Track performance per flag
+  alert_on_regression: true       # Alert if metrics degrade

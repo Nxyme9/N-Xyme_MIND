@@ -1,0 +1,45 @@
+# KV Cache Configuration for GGUF Models
+# 
+# Usage with llama-cpp-python:
+# 
+# from llama_cpp import Llama
+# 
+# ll = Llama(
+#     model_path="models/qwen2.5-coder-7b-q4_k_m.gguf",
+#     n_gpu_layers=35,
+#     n_ctx=131072,
+#     n_threads=8,
+#     kv_cache_quantization=True,
+# )
+# 
+# # Save KV cache state
+# state = ll.state()
+# with open("cache/session.bin", "wb") as f:
+#     f.write(state)
+# 
+# # Load KV cache state  
+# with open("cache/session.bin", "rb") as f:
+#     state = f.read()
+# ll.load_state(state)
+
+# llama-server equivalent:
+# llama-server -m models/qwen2.5-coder-7b-q4_k_m.gguf \
+#   --ctx-size 131072 \
+#   --gpu-layers 35 \
+#   --slot-save-path /path/to/cache \
+#   --cache-type q4_0
+
+# Cache file sizes:
+# - Q4_0: ~1GB per 100k tokens
+# - Q8_0: ~2GB per 100k tokens
+
+enabled: true
+cache_type: q4_0
+max_cache_size_mb: 4096
+cache_dir: cache/kv_cache
+slot_save_path: cache/slots
+save_interval_seconds: 300
+save_on_context_swap: true
+save_on_session_end: true
+restore_on_startup: false
+restore_latest: true

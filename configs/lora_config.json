@@ -1,0 +1,47 @@
+{
+  "description": "LoRA training configuration for Qwen2.5-0.5B tool-calling",
+  "model": {
+    "name": "Qwen/Qwen2.5-0.5B-Instruct",
+    "max_seq_length": 2048,
+    "dtype": "bf16"
+  },
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "dropout": 0.05,
+    "bias": "none",
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "task_type": "CAUSAL_LM",
+    "use_rslora": false,
+    "use_dora": false
+  },
+  "training": {
+    "per_device_train_batch_size": 4,
+    "gradient_accumulation_steps": 4,
+    "warmup_steps": 10,
+    "warmup_ratio": 0.1,
+    "num_train_epochs": 3,
+    "learning_rate": 1e-4,
+    "fp16": true,
+    "bf16": true,
+    "logging_steps": 10,
+    "save_steps": 999999,
+    "eval_steps": 999999,
+    "optim": "adamw_8bit",
+    "weight_decay": 0.01,
+    "lr_scheduler_type": "cosine",
+    "seed": 3407,
+    "max_grad_norm": 1.0,
+    "dataloader_num_workers": 4
+  },
+  "vram_requirement": "4-5GB",
+  "notes": "Research-backed: r=16, alpha=32, lr=1e-4 for 0.5B models. NOT r=64, lr=2e-5"
+}
