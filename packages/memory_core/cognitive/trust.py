@@ -11,7 +11,6 @@ Key innovation: Score memories by competence/trust, not just relevance.
 
 from __future__ import annotations
 
-import json
 import logging
 import sqlite3
 from dataclasses import dataclass, field

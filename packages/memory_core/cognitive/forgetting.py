@@ -20,12 +20,11 @@ Decay actions by threshold:
 
 from __future__ import annotations
 
-import json
 import logging
 import math
 import sqlite3
 from dataclasses import dataclass
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
@@ -37,10 +36,10 @@ SEMANTIC_RELEVANCE_WEIGHT = 0.35  # Weight for semantic relevance
 ACCESS_FREQUENCY_WEIGHT = 0.35  # Weight for access frequency
 TEMPORAL_WEIGHT = 0.30  # Weight for temporal age
 
-# Thresholds
-THRESHOLD_ACTIVE = 0.6
-THRESHOLD_DORMANT = 0.3
-THRESHOLD_ARCHIVED = 0.1
+# Thresholds - Made less aggressive to prevent premature deletion
+THRESHOLD_ACTIVE = 0.4  # Was 0.6 - Active memories
+THRESHOLD_DORMANT = 0.2  # Was 0.3 - Dormant memories
+THRESHOLD_ARCHIVED = 0.05  # Was 0.1 - Archived memories
 
 # Ebbinghaus forgetting curve parameters
 EBBINGHAUS_STABILITY_INITIAL = 1.0  # Initial memory stability
@@ -141,7 +140,9 @@ class AdaptiveDecay:
         recency_score = 0.5
         if last_accessed:
             try:
-                last_access = datetime.fromisoformat(last_accessed.replace("Z", "+00:00"))
+                last_access = datetime.fromisoformat(
+                    last_accessed.replace("Z", "+00:00")
+                )
                 days_since_access = (
                     datetime.now(timezone.utc) - last_access
                 ).total_seconds() / 86400
@@ -160,11 +161,11 @@ class AdaptiveDecay:
 
         # Weighted combination (FadeMem-style)
         overall = (
-            TEMPORAL_WEIGHT * temporal +
-            SEMANTIC_RELEVANCE_WEIGHT * quality +
-            ACCESS_FREQUENCY_WEIGHT * ((access_freq_score + recency_score) / 2) +
-            0.15 * centrality_score +
-            0.10 * cross_session
+            TEMPORAL_WEIGHT * temporal
+            + SEMANTIC_RELEVANCE_WEIGHT * quality
+            + ACCESS_FREQUENCY_WEIGHT * ((access_freq_score + recency_score) / 2)
+            + 0.15 * centrality_score
+            + 0.10 * cross_session
         )
 
         # Normalize to 0-1 range
