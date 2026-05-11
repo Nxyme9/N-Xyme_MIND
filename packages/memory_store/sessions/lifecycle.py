@@ -6,8 +6,10 @@ Provides session lifecycle hooks for memory integration:
 - Session state management
 """
 
+import fcntl
 import json
 import logging
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -112,8 +114,17 @@ def update_session_state(
             pass
 
     SESSION_STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(SESSION_STATE_PATH, "w") as f:
-        json.dump(state, f, indent=2)
+    temp_path = SESSION_STATE_PATH.with_suffix(".json.tmp")
+    with open(temp_path, "w") as tf:
+        json.dump(state, tf, indent=2)
+    with open(SESSION_STATE_PATH) as sf, open(temp_path) as tf:
+        fcntl.flock(sf.fileno(), fcntl.LOCK_EX)
+        try:
+            fcntl.flock(tf.fileno(), fcntl.LOCK_EX)
+            os.replace(temp_path, SESSION_STATE_PATH)
+        finally:
+            fcntl.flock(sf.fileno(), fcntl.LOCK_UN)
+            fcntl.flock(tf.fileno(), fcntl.LOCK_UN)
 
 
 def update_active_context(session_summary: dict):

@@ -7,6 +7,7 @@ Updates session-state.json, activeContext.md, and session-log.jsonl.
 
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import threading
@@ -82,11 +83,19 @@ class SessionWriter:
         self._initialized = True
 
     def _write_state(self, data: dict[str, Any]) -> None:
-        """Write state atomically (write to temp, then rename)."""
+        """Write state atomically with file locking (write to temp, then rename)."""
         temp_path = self.state_path.with_suffix(".json.tmp")
-        with open(temp_path, "w") as f:
-            json.dump(data, f, indent=2)
-        os.replace(temp_path, self.state_path)
+        with open(temp_path, "w") as tf:
+            json.dump(data, tf, indent=2)
+        # Lock both files for atomic swap
+        with open(self.state_path) as sf, open(temp_path) as tf:
+            fcntl.flock(sf.fileno(), fcntl.LOCK_EX)
+            try:
+                fcntl.flock(tf.fileno(), fcntl.LOCK_EX)
+                os.replace(temp_path, self.state_path)
+            finally:
+                fcntl.flock(sf.fileno(), fcntl.LOCK_UN)
+                fcntl.flock(tf.fileno(), fcntl.LOCK_UN)
 
     def _read_state(self) -> dict[str, Any]:
         """Read current state, return defaults if missing/invalid."""
@@ -164,10 +173,14 @@ class SessionWriter:
             pass  # Non-blocking - don't fail on context write
 
     def _append_to_log(self, completion: TaskCompletion) -> None:
-        """Append completion event to JSONL log."""
+        """Append completion event to JSONL log with file locking."""
         try:
             with open(self.log_path, "a") as f:
-                f.write(json.dumps(asdict(completion)) + "\n")
+                fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+                try:
+                    f.write(json.dumps(asdict(completion)) + "\n")
+                finally:
+                    fcntl.flock(f.fileno(), fcntl.LOCK_UN)
         except IOError:
             pass  # Non-blocking - don't fail on log write
 

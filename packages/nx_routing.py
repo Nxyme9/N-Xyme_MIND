@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import json
 import logging
 import os
 import sqlite3
@@ -198,6 +199,48 @@ _Q_TABLE = {
     "momus": {"L1": 0.4, "L2": 0.5, "L3": 0.6, "L4": 0.7, "L5": 0.8},
     "hybrid": {"L1": 0.9, "L2": 0.95, "L3": 0.85, "L4": 0.6, "L5": 0.3},
 }
+
+_Q_WEIGHTS_PATH = Path("data/qlearning/weights.json")
+_Q_SAVE_INTERVAL = 10
+_q_dirty_count = 0
+
+
+def _load_q_weights():
+    """Load Q-table weights from JSON file. Handles missing/corrupted files."""
+    global _Q_TABLE
+    if not _Q_WEIGHTS_PATH.exists():
+        return
+    try:
+        with open(_Q_WEIGHTS_PATH) as f:
+            loaded = json.load(f)
+        for agent, levels in loaded.items():
+            if agent in _Q_TABLE:
+                _Q_TABLE[agent].update(levels)
+            else:
+                _Q_TABLE[agent] = levels
+        logger.info(f"Loaded Q-weights from {_Q_WEIGHTS_PATH}")
+    except (json.JSONDecodeError, OSError, ValueError) as e:
+        logger.warning(f"Corrupted Q-weights file, reinitializing: {e}")
+
+
+def _save_q_weights():
+    """Save Q-table weights to JSON atomically (temp + rename)."""
+    global _q_dirty_count
+    _Q_WEIGHTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    temp = _Q_WEIGHTS_PATH.with_suffix(".tmp")
+    with open(temp, "w") as f:
+        json.dump(_Q_TABLE, f, indent=2)
+    temp.rename(_Q_WEIGHTS_PATH)
+    _q_dirty_count = 0
+
+
+def get_q_weight(agent: str, level: int) -> float:
+    """Get Q-weight for an agent at a given complexity level."""
+    level_key = f"L{level}"
+    return _Q_TABLE.get(agent, {}).get(level_key, 0.5)
+
+
+_load_q_weights()
 
 # Decision tracking - actual counter instead of static calculation
 _decision_count = 0
@@ -437,6 +480,11 @@ def record_outcome(
     conn.close()
 
     _update_q_value(agent, level, success)
+
+    global _q_dirty_count
+    _q_dirty_count += 1
+    if _q_dirty_count >= _Q_SAVE_INTERVAL:
+        _save_q_weights()
 
     try:
         from packages.learning_engine.bridges.outcome_to_memory_bridge import (

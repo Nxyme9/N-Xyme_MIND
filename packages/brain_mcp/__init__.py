@@ -604,38 +604,6 @@ async def tools_list_route(request: Request) -> JSONResponse:
     )
 
 
-@mcp.custom_route("/health", methods=["GET"])
-async def health_check_route(request: Request) -> JSONResponse:
-    return JSONResponse(
-        {
-            "status": "healthy",
-            "service": "nx-brain-mcp",
-            "version": "1.0.0",
-        }
-    )
-
-
-@mcp.custom_route("/memory_stats", methods=["GET"])
-async def memory_stats_route(request: Request) -> JSONResponse:
-    try:
-        from packages.brain_mcp.namespaces import memory as memory_ns
-
-        stats = memory_ns.memory_get_memory_stats()
-        return JSONResponse(stats)
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
-
-
-@mcp.custom_route("/tools_list", methods=["GET"])
-async def tools_list_route(request: Request) -> JSONResponse:
-    return JSONResponse(
-        {
-            "service": "nx-brain-mcp",
-            "tools": list(_tool_health.keys()),
-        }
-    )
-
-
 @mcp.custom_route("/memory_search", methods=["GET"])
 async def memory_search_route(request: Request) -> JSONResponse:
     try:

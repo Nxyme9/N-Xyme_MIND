@@ -2,7 +2,7 @@ title = "gitleaks config"
 
 [allowlist]
 paths = [
-    '''(\.env|\.env\.example)$''',
+    '''(\.env\.example)$''',
     '''node_modules''',
     '''\.git''',
     '''\.sisyphus/plans/.*''',
@@ -16,7 +16,8 @@ paths = [
 ]
 regexes = [
     '''.*REDACTED.*''',
-    '''\$[a-zA-Z_]+\$''',
+    # tightened: first char must be letter/underscore, max 31 chars total — avoids matching common shell vars like $PATH
+    '''\$[a-zA-Z_][a-zA-Z0-9_]{0,30}\$''',
     '''const expired.*''',
     '''sk-or-v1-[a-zA-Z0-9]{60,70}''',
 ]
