@@ -1,0 +1,12 @@
+{
+  "proxies": [
+    {
+      "id": "direct-001",
+      "host": "",
+      "port": 0,
+      "type": "none",
+      "username": null,
+      "password": null
+    }
+  ]
+}

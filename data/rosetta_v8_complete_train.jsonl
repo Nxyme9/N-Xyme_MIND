@@ -1,0 +1,1155 @@
+{"text": "search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Please search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Can you search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Could you search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "search memory for user preferences\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"user preferences\" }}[/TOOL_CALL]"}
+{"text": "Please search memory for user preferences\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"user preferences\" }}[/TOOL_CALL]"}
+{"text": "Can you search memory for user preferences\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"user preferences\" }}[/TOOL_CALL]"}
+{"text": "Could you search memory for user preferences\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"user preferences\" }}[/TOOL_CALL]"}
+{"text": "search memory for recent sessions\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"recent sessions\" }}[/TOOL_CALL]"}
+{"text": "Please search memory for recent sessions\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"recent sessions\" }}[/TOOL_CALL]"}
+{"text": "Can you search memory for recent sessions\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"recent sessions\" }}[/TOOL_CALL]"}
+{"text": "Could you search memory for recent sessions\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"recent sessions\" }}[/TOOL_CALL]"}
+{"text": "write to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Please write to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Can you write to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Could you write to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "write to memory: task completed successfully\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"task completed successfully\" }}[/TOOL_CALL]"}
+{"text": "Please write to memory: task completed successfully\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"task completed successfully\" }}[/TOOL_CALL]"}
+{"text": "Can you write to memory: task completed successfully\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"task completed successfully\" }}[/TOOL_CALL]"}
+{"text": "Could you write to memory: task completed successfully\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"task completed successfully\" }}[/TOOL_CALL]"}
+{"text": "write to memory: error in authentication\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"error in authentication\" }}[/TOOL_CALL]"}
+{"text": "Please write to memory: error in authentication\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"error in authentication\" }}[/TOOL_CALL]"}
+{"text": "Can you write to memory: error in authentication\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"error in authentication\" }}[/TOOL_CALL]"}
+{"text": "Could you write to memory: error in authentication\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"error in authentication\" }}[/TOOL_CALL]"}
+{"text": "get memory statistics\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get memory statistics\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get memory statistics\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get memory statistics\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "get memory stats\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get memory stats\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get memory stats\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get memory stats\n[TOOL_CALL]{tool => \"memory_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "get the active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get the active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get the active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get the active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "get active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get active context\n[TOOL_CALL]{tool => \"get_active_context\", args => { }}[/TOOL_CALL]"}
+{"text": "get user preferences\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get user preferences\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user preferences\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get user preferences\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "get user context\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get user context\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user context\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get user context\n[TOOL_CALL]{tool => \"get_user_context\", args => { }}[/TOOL_CALL]"}
+{"text": "list available bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list available bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list available bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list available bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "list bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list bmad workflows\n[TOOL_CALL]{tool => \"get_bmad_workflows\", args => { }}[/TOOL_CALL]"}
+{"text": "get list of bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get list of bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get list of bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get list of bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "get bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get bmad agents\n[TOOL_CALL]{tool => \"context_get_bmad_agents\", args => { }}[/TOOL_CALL]"}
+{"text": "route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Please route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Can you route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Could you route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "route task to hephaestus\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"implement feature\" }}[/TOOL_CALL]"}
+{"text": "Please route task to hephaestus\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"implement feature\" }}[/TOOL_CALL]"}
+{"text": "Can you route task to hephaestus\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"implement feature\" }}[/TOOL_CALL]"}
+{"text": "Could you route task to hephaestus\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"implement feature\" }}[/TOOL_CALL]"}
+{"text": "record this outcome: success\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"test task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Please record this outcome: success\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"test task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Can you record this outcome: success\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"test task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Could you record this outcome: success\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"test task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "record outcome: failed\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"deploy\" --success \"False\" }}[/TOOL_CALL]"}
+{"text": "Please record outcome: failed\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"deploy\" --success \"False\" }}[/TOOL_CALL]"}
+{"text": "Can you record outcome: failed\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"deploy\" --success \"False\" }}[/TOOL_CALL]"}
+{"text": "Could you record outcome: failed\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"deploy\" --success \"False\" }}[/TOOL_CALL]"}
+{"text": "show learning statistics\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show learning statistics\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show learning statistics\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show learning statistics\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "get learning stats\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get learning stats\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get learning stats\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get learning stats\n[TOOL_CALL]{tool => \"get_learning_stats\", args => { }}[/TOOL_CALL]"}
+{"text": "check git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Please check git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you check git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you check git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "show git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show git status\n[TOOL_CALL]{tool => \"git_status\", args => { }}[/TOOL_CALL]"}
+{"text": "show recent git commits\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show recent git commits\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show recent git commits\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show recent git commits\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "show git log\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show git log\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show git log\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show git log\n[TOOL_CALL]{tool => \"git_log\", args => { }}[/TOOL_CALL]"}
+{"text": "show changes in git\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show changes in git\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show changes in git\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show changes in git\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "show git diff\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show git diff\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show git diff\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show git diff\n[TOOL_CALL]{tool => \"git_diff\", args => { }}[/TOOL_CALL]"}
+{"text": "search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Please search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Can you search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Could you search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "search github code for login handler\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"login handler\" }}[/TOOL_CALL]"}
+{"text": "Please search github code for login handler\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"login handler\" }}[/TOOL_CALL]"}
+{"text": "Can you search github code for login handler\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"login handler\" }}[/TOOL_CALL]"}
+{"text": "Could you search github code for login handler\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"login handler\" }}[/TOOL_CALL]"}
+{"text": "list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Please list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Can you list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Could you list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "list issues for microsoft/vscode\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"microsoft\" --repo \"vscode\" }}[/TOOL_CALL]"}
+{"text": "Please list issues for microsoft/vscode\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"microsoft\" --repo \"vscode\" }}[/TOOL_CALL]"}
+{"text": "Can you list issues for microsoft/vscode\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"microsoft\" --repo \"vscode\" }}[/TOOL_CALL]"}
+{"text": "Could you list issues for microsoft/vscode\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"microsoft\" --repo \"vscode\" }}[/TOOL_CALL]"}
+{"text": "get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Please get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Can you get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Could you get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "get file from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Please get file from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Can you get file from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Could you get file from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "search repositories for react\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"react\" }}[/TOOL_CALL]"}
+{"text": "Please search repositories for react\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"react\" }}[/TOOL_CALL]"}
+{"text": "Can you search repositories for react\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"react\" }}[/TOOL_CALL]"}
+{"text": "Could you search repositories for react\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"react\" }}[/TOOL_CALL]"}
+{"text": "search repos for python\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"python\" }}[/TOOL_CALL]"}
+{"text": "Please search repos for python\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"python\" }}[/TOOL_CALL]"}
+{"text": "Can you search repos for python\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"python\" }}[/TOOL_CALL]"}
+{"text": "Could you search repos for python\n[TOOL_CALL]{tool => \"github_search_repos\", args => { --query \"python\" }}[/TOOL_CALL]"}
+{"text": "create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Bug report\" }}[/TOOL_CALL]"}
+{"text": "Please create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Bug report\" }}[/TOOL_CALL]"}
+{"text": "Can you create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Bug report\" }}[/TOOL_CALL]"}
+{"text": "Could you create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Bug report\" }}[/TOOL_CALL]"}
+{"text": "create issue for feature request\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Feature request\" }}[/TOOL_CALL]"}
+{"text": "Please create issue for feature request\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Feature request\" }}[/TOOL_CALL]"}
+{"text": "Can you create issue for feature request\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Feature request\" }}[/TOOL_CALL]"}
+{"text": "Could you create issue for feature request\n[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"Feature request\" }}[/TOOL_CALL]"}
+{"text": "create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"PR title\" }}[/TOOL_CALL]"}
+{"text": "Please create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"PR title\" }}[/TOOL_CALL]"}
+{"text": "Can you create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"PR title\" }}[/TOOL_CALL]"}
+{"text": "Could you create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"PR title\" }}[/TOOL_CALL]"}
+{"text": "create PR with changes\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"Add feature\" }}[/TOOL_CALL]"}
+{"text": "Please create pr with changes\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"Add feature\" }}[/TOOL_CALL]"}
+{"text": "Can you create pr with changes\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"Add feature\" }}[/TOOL_CALL]"}
+{"text": "Could you create pr with changes\n[TOOL_CALL]{tool => \"github_create_pr\", args => { --title \"Add feature\" }}[/TOOL_CALL]"}
+{"text": "fork this repository\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Please fork this repository\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Can you fork this repository\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Could you fork this repository\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "fork the repo\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Please fork the repo\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Can you fork the repo\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "Could you fork the repo\n[TOOL_CALL]{tool => \"github_fork\", args => { --owner \"owner\" --repo \"repo\" }}[/TOOL_CALL]"}
+{"text": "create a new branch\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"feature\" }}[/TOOL_CALL]"}
+{"text": "Please create a new branch\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"feature\" }}[/TOOL_CALL]"}
+{"text": "Can you create a new branch\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"feature\" }}[/TOOL_CALL]"}
+{"text": "Could you create a new branch\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"feature\" }}[/TOOL_CALL]"}
+{"text": "create branch called fix-bug\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"fix-bug\" }}[/TOOL_CALL]"}
+{"text": "Please create branch called fix-bug\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"fix-bug\" }}[/TOOL_CALL]"}
+{"text": "Can you create branch called fix-bug\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"fix-bug\" }}[/TOOL_CALL]"}
+{"text": "Could you create branch called fix-bug\n[TOOL_CALL]{tool => \"github_create_branch\", args => { --owner \"owner\" --repo \"repo\" --branch \"fix-bug\" }}[/TOOL_CALL]"}
+{"text": "fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Please fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Can you fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Could you fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "fetch the github homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Please fetch the github homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Can you fetch the github homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Could you fetch the github homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "get markdown from url\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Please get markdown from url\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Can you get markdown from url\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Could you get markdown from url\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "get markdown for docs\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://docs.python.org\" }}[/TOOL_CALL]"}
+{"text": "Please get markdown for docs\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://docs.python.org\" }}[/TOOL_CALL]"}
+{"text": "Can you get markdown for docs\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://docs.python.org\" }}[/TOOL_CALL]"}
+{"text": "Could you get markdown for docs\n[TOOL_CALL]{tool => \"fetch_markdown\", args => { --url \"https://docs.python.org\" }}[/TOOL_CALL]"}
+{"text": "fetch html content\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Please fetch html content\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Can you fetch html content\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Could you fetch html content\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "get html from page\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com/page\" }}[/TOOL_CALL]"}
+{"text": "Please get html from page\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com/page\" }}[/TOOL_CALL]"}
+{"text": "Can you get html from page\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com/page\" }}[/TOOL_CALL]"}
+{"text": "Could you get html from page\n[TOOL_CALL]{tool => \"fetch_html\", args => { --url \"https://example.com/page\" }}[/TOOL_CALL]"}
+{"text": "get json from api\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.example.com/data\" }}[/TOOL_CALL]"}
+{"text": "Please get json from api\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.example.com/data\" }}[/TOOL_CALL]"}
+{"text": "Can you get json from api\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.example.com/data\" }}[/TOOL_CALL]"}
+{"text": "Could you get json from api\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.example.com/data\" }}[/TOOL_CALL]"}
+{"text": "fetch json data\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.github.com/users\" }}[/TOOL_CALL]"}
+{"text": "Please fetch json data\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.github.com/users\" }}[/TOOL_CALL]"}
+{"text": "Can you fetch json data\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.github.com/users\" }}[/TOOL_CALL]"}
+{"text": "Could you fetch json data\n[TOOL_CALL]{tool => \"fetch_json\", args => { --url \"https://api.github.com/users\" }}[/TOOL_CALL]"}
+{"text": "query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Please query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Can you query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Could you query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "query context7 for python\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/python/cpython\" --query \"async\" }}[/TOOL_CALL]"}
+{"text": "Please query context7 for python\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/python/cpython\" --query \"async\" }}[/TOOL_CALL]"}
+{"text": "Can you query context7 for python\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/python/cpython\" --query \"async\" }}[/TOOL_CALL]"}
+{"text": "Could you query context7 for python\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/python/cpython\" --query \"async\" }}[/TOOL_CALL]"}
+{"text": "resolve library id for react\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"react\" }}[/TOOL_CALL]"}
+{"text": "Please resolve library id for react\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"react\" }}[/TOOL_CALL]"}
+{"text": "Can you resolve library id for react\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"react\" }}[/TOOL_CALL]"}
+{"text": "Could you resolve library id for react\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"react\" }}[/TOOL_CALL]"}
+{"text": "resolve library for qwen\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"qwen\" }}[/TOOL_CALL]"}
+{"text": "Please resolve library for qwen\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"qwen\" }}[/TOOL_CALL]"}
+{"text": "Can you resolve library for qwen\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"qwen\" }}[/TOOL_CALL]"}
+{"text": "Could you resolve library for qwen\n[TOOL_CALL]{tool => \"context7_resolve_library\", args => { --libraryName \"qwen\" }}[/TOOL_CALL]"}
+{"text": "think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"analyze the problem\" }}[/TOOL_CALL]"}
+{"text": "Please think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"analyze the problem\" }}[/TOOL_CALL]"}
+{"text": "Can you think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"analyze the problem\" }}[/TOOL_CALL]"}
+{"text": "Could you think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"analyze the problem\" }}[/TOOL_CALL]"}
+{"text": "think through this logically\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"logical analysis\" }}[/TOOL_CALL]"}
+{"text": "Please think through this logically\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"logical analysis\" }}[/TOOL_CALL]"}
+{"text": "Can you think through this logically\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"logical analysis\" }}[/TOOL_CALL]"}
+{"text": "Could you think through this logically\n[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"logical analysis\" }}[/TOOL_CALL]"}
+{"text": "navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Please navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Can you navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Could you navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "navigate to python.org\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Please navigate to python.org\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Can you navigate to python.org\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "Could you navigate to python.org\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://python.org\" }}[/TOOL_CALL]"}
+{"text": "click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Please click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Can you click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Could you click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "click submit button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#submit\" }}[/TOOL_CALL]"}
+{"text": "Please click submit button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#submit\" }}[/TOOL_CALL]"}
+{"text": "Can you click submit button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#submit\" }}[/TOOL_CALL]"}
+{"text": "Could you click submit button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#submit\" }}[/TOOL_CALL]"}
+{"text": "fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"testuser\" }}[/TOOL_CALL]"}
+{"text": "Please fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"testuser\" }}[/TOOL_CALL]"}
+{"text": "Can you fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"testuser\" }}[/TOOL_CALL]"}
+{"text": "Could you fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"testuser\" }}[/TOOL_CALL]"}
+{"text": "fill email field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#email\" --value \"test@example.com\" }}[/TOOL_CALL]"}
+{"text": "Please fill email field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#email\" --value \"test@example.com\" }}[/TOOL_CALL]"}
+{"text": "Can you fill email field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#email\" --value \"test@example.com\" }}[/TOOL_CALL]"}
+{"text": "Could you fill email field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#email\" --value \"test@example.com\" }}[/TOOL_CALL]"}
+{"text": "get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"title\" }}[/TOOL_CALL]"}
+{"text": "Please get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"title\" }}[/TOOL_CALL]"}
+{"text": "Can you get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"title\" }}[/TOOL_CALL]"}
+{"text": "Could you get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"title\" }}[/TOOL_CALL]"}
+{"text": "get page content\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"#content\" }}[/TOOL_CALL]"}
+{"text": "Please get page content\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"#content\" }}[/TOOL_CALL]"}
+{"text": "Can you get page content\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"#content\" }}[/TOOL_CALL]"}
+{"text": "Could you get page content\n[TOOL_CALL]{tool => \"browser_get_text\", args => { --selector \"#content\" }}[/TOOL_CALL]"}
+{"text": "take a screenshot\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Please take a screenshot\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you take a screenshot\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you take a screenshot\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "screenshot the page\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Please screenshot the page\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you screenshot the page\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you screenshot the page\n[TOOL_CALL]{tool => \"browser_screenshot\", args => { }}[/TOOL_CALL]"}
+{"text": "read the README.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --filePath \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Please read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --filePath \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Can you read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --filePath \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Could you read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --filePath \"README.md\" }}[/TOOL_CALL]"}
+{"text": "read main.py\n[TOOL_CALL]{tool => \"read\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Please read main.py\n[TOOL_CALL]{tool => \"read\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Can you read main.py\n[TOOL_CALL]{tool => \"read\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Could you read main.py\n[TOOL_CALL]{tool => \"read\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"hello world\" --filePath \"test.txt\" }}[/TOOL_CALL]"}
+{"text": "Please write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"hello world\" --filePath \"test.txt\" }}[/TOOL_CALL]"}
+{"text": "Can you write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"hello world\" --filePath \"test.txt\" }}[/TOOL_CALL]"}
+{"text": "Could you write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"hello world\" --filePath \"test.txt\" }}[/TOOL_CALL]"}
+{"text": "write to output.log\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"log output\" --filePath \"output.log\" }}[/TOOL_CALL]"}
+{"text": "Please write to output.log\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"log output\" --filePath \"output.log\" }}[/TOOL_CALL]"}
+{"text": "Can you write to output.log\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"log output\" --filePath \"output.log\" }}[/TOOL_CALL]"}
+{"text": "Could you write to output.log\n[TOOL_CALL]{tool => \"write_file\", args => { --content \"log output\" --filePath \"output.log\" }}[/TOOL_CALL]"}
+{"text": "list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "list files\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list files\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list files\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list files\n[TOOL_CALL]{tool => \"list_directory\", args => { }}[/TOOL_CALL]"}
+{"text": "query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" }}[/TOOL_CALL]"}
+{"text": "Please query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" }}[/TOOL_CALL]"}
+{"text": "Can you query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" }}[/TOOL_CALL]"}
+{"text": "Could you query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" }}[/TOOL_CALL]"}
+{"text": "query users table\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users WHERE active=1\" }}[/TOOL_CALL]"}
+{"text": "Please query users table\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users WHERE active=1\" }}[/TOOL_CALL]"}
+{"text": "Can you query users table\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users WHERE active=1\" }}[/TOOL_CALL]"}
+{"text": "Could you query users table\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users WHERE active=1\" }}[/TOOL_CALL]"}
+{"text": "list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "show tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { }}[/TOOL_CALL]"}
+{"text": "get sample rows from users table\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"10\" --table \"users\" }}[/TOOL_CALL]"}
+{"text": "Please get sample rows from users table\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"10\" --table \"users\" }}[/TOOL_CALL]"}
+{"text": "Can you get sample rows from users table\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"10\" --table \"users\" }}[/TOOL_CALL]"}
+{"text": "Could you get sample rows from users table\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"10\" --table \"users\" }}[/TOOL_CALL]"}
+{"text": "sample data from orders\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"5\" --table \"orders\" }}[/TOOL_CALL]"}
+{"text": "Please sample data from orders\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"5\" --table \"orders\" }}[/TOOL_CALL]"}
+{"text": "Can you sample data from orders\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"5\" --table \"orders\" }}[/TOOL_CALL]"}
+{"text": "Could you sample data from orders\n[TOOL_CALL]{tool => \"sqlite_sample_table\", args => { --limit \"5\" --table \"orders\" }}[/TOOL_CALL]"}
+{"text": "run type check\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run type check\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run type check\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run type check\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "typecheck the code\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Please typecheck the code\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you typecheck the code\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you typecheck the code\n[TOOL_CALL]{tool => \"run_typecheck\", args => { }}[/TOOL_CALL]"}
+{"text": "run linter\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run linter\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run linter\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run linter\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "run lint check\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run lint check\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run lint check\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run lint check\n[TOOL_CALL]{tool => \"run_lint\", args => { }}[/TOOL_CALL]"}
+{"text": "run formatter check\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run formatter check\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run formatter check\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run formatter check\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "check code format\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Please check code format\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you check code format\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you check code format\n[TOOL_CALL]{tool => \"run_format\", args => { }}[/TOOL_CALL]"}
+{"text": "run tests\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run tests\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run tests\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run tests\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "run test suite\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Please run test suite\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you run test suite\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you run test suite\n[TOOL_CALL]{tool => \"run_tests\", args => { }}[/TOOL_CALL]"}
+{"text": "scan for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Please scan for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you scan for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you scan for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "check for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Please check for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you check for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you check for secrets\n[TOOL_CALL]{tool => \"run_secrets_scan\", args => { }}[/TOOL_CALL]"}
+{"text": "check system health\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Please check system health\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you check system health\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you check system health\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "get health status\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get health status\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get health status\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get health status\n[TOOL_CALL]{tool => \"get_health\", args => { }}[/TOOL_CALL]"}
+{"text": "list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Please list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "show sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show sessions\n[TOOL_CALL]{tool => \"session_list\", args => { }}[/TOOL_CALL]"}
+{"text": "get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Please get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Can you get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Could you get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "get session 456 info\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Please get session 456 info\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Can you get session 456 info\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Could you get session 456 info\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"456\" }}[/TOOL_CALL]"}
+{"text": "read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Please read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Can you read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Could you read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "read session 789 messages\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"789\" }}[/TOOL_CALL]"}
+{"text": "Please read session 789 messages\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"789\" }}[/TOOL_CALL]"}
+{"text": "Can you read session 789 messages\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"789\" }}[/TOOL_CALL]"}
+{"text": "Could you read session 789 messages\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"789\" }}[/TOOL_CALL]"}
+{"text": "search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Please search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Can you search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Could you search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "search sessions for bug\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"bug\" }}[/TOOL_CALL]"}
+{"text": "Please search sessions for bug\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"bug\" }}[/TOOL_CALL]"}
+{"text": "Can you search sessions for bug\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"bug\" }}[/TOOL_CALL]"}
+{"text": "Could you search sessions for bug\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"bug\" }}[/TOOL_CALL]"}
+{"text": "search knowledge base\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Please search knowledge base\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Can you search knowledge base\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Could you search knowledge base\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "search knowledge for config\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"config\" }}[/TOOL_CALL]"}
+{"text": "Please search knowledge for config\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"config\" }}[/TOOL_CALL]"}
+{"text": "Can you search knowledge for config\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"config\" }}[/TOOL_CALL]"}
+{"text": "Could you search knowledge for config\n[TOOL_CALL]{tool => \"knowledge_search\", args => { --query \"config\" }}[/TOOL_CALL]"}
+{"text": "write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"important info\" }}[/TOOL_CALL]"}
+{"text": "Please write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"important info\" }}[/TOOL_CALL]"}
+{"text": "Can you write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"important info\" }}[/TOOL_CALL]"}
+{"text": "Could you write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"important info\" }}[/TOOL_CALL]"}
+{"text": "write knowledge: setting saved\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"setting saved\" }}[/TOOL_CALL]"}
+{"text": "Please write knowledge: setting saved\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"setting saved\" }}[/TOOL_CALL]"}
+{"text": "Can you write knowledge: setting saved\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"setting saved\" }}[/TOOL_CALL]"}
+{"text": "Could you write knowledge: setting saved\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"setting saved\" }}[/TOOL_CALL]"}
+{"text": "get mind state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get mind state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get mind state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get mind state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "get brain state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get brain state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get brain state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get brain state\n[TOOL_CALL]{tool => \"brain_get_mind_state\", args => { }}[/TOOL_CALL]"}
+{"text": "update mind state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --active_tasks \"['task1']\" }}[/TOOL_CALL]"}
+{"text": "Please update mind state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --active_tasks \"['task1']\" }}[/TOOL_CALL]"}
+{"text": "Can you update mind state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --active_tasks \"['task1']\" }}[/TOOL_CALL]"}
+{"text": "Could you update mind state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --active_tasks \"['task1']\" }}[/TOOL_CALL]"}
+{"text": "update brain state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --phase \"planning\" }}[/TOOL_CALL]"}
+{"text": "Please update brain state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --phase \"planning\" }}[/TOOL_CALL]"}
+{"text": "Can you update brain state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --phase \"planning\" }}[/TOOL_CALL]"}
+{"text": "Could you update brain state\n[TOOL_CALL]{tool => \"brain_update_mind_state\", args => { --phase \"planning\" }}[/TOOL_CALL]"}
+{"text": "get session history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get session history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get session history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get session history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "get brain history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get brain history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get brain history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get brain history\n[TOOL_CALL]{tool => \"brain_get_session_history\", args => { }}[/TOOL_CALL]"}
+{"text": "get active context from brain\n[TOOL_CALL]{tool => \"brain_context_get_active\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get active context from brain\n[TOOL_CALL]{tool => \"brain_context_get_active\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get active context from brain\n[TOOL_CALL]{tool => \"brain_context_get_active\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get active context from brain\n[TOOL_CALL]{tool => \"brain_context_get_active\", args => { }}[/TOOL_CALL]"}
+{"text": "get user context from brain\n[TOOL_CALL]{tool => \"brain_context_get_user\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get user context from brain\n[TOOL_CALL]{tool => \"brain_context_get_user\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user context from brain\n[TOOL_CALL]{tool => \"brain_context_get_user\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get user context from brain\n[TOOL_CALL]{tool => \"brain_context_get_user\", args => { }}[/TOOL_CALL]"}
+{"text": "get constraints from brain\n[TOOL_CALL]{tool => \"brain_context_get_constraints\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get constraints from brain\n[TOOL_CALL]{tool => \"brain_context_get_constraints\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get constraints from brain\n[TOOL_CALL]{tool => \"brain_context_get_constraints\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get constraints from brain\n[TOOL_CALL]{tool => \"brain_context_get_constraints\", args => { }}[/TOOL_CALL]"}
+{"text": "delegate task to hephaestus\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"hephaestus\" --task \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Please delegate task to hephaestus\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"hephaestus\" --task \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Can you delegate task to hephaestus\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"hephaestus\" --task \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "Could you delegate task to hephaestus\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"hephaestus\" --task \"fix bug\" }}[/TOOL_CALL]"}
+{"text": "delegate to oracle\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"oracle\" --task \"review code\" }}[/TOOL_CALL]"}
+{"text": "Please delegate to oracle\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"oracle\" --task \"review code\" }}[/TOOL_CALL]"}
+{"text": "Can you delegate to oracle\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"oracle\" --task \"review code\" }}[/TOOL_CALL]"}
+{"text": "Could you delegate to oracle\n[TOOL_CALL]{tool => \"agent_delegate_task\", args => { --agent \"oracle\" --task \"review code\" }}[/TOOL_CALL]"}
+{"text": "get agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "show agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show agent status\n[TOOL_CALL]{tool => \"agent_get_status\", args => { }}[/TOOL_CALL]"}
+{"text": "grep for function definitions\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"def \" }}[/TOOL_CALL]"}
+{"text": "Please grep for function definitions\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"def \" }}[/TOOL_CALL]"}
+{"text": "Can you grep for function definitions\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"def \" }}[/TOOL_CALL]"}
+{"text": "Could you grep for function definitions\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"def \" }}[/TOOL_CALL]"}
+{"text": "grep for imports\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"import \" }}[/TOOL_CALL]"}
+{"text": "Please grep for imports\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"import \" }}[/TOOL_CALL]"}
+{"text": "Can you grep for imports\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"import \" }}[/TOOL_CALL]"}
+{"text": "Could you grep for imports\n[TOOL_CALL]{tool => \"grep\", args => { --pattern \"import \" }}[/TOOL_CALL]"}
+{"text": "glob for python files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.py\" }}[/TOOL_CALL]"}
+{"text": "Please glob for python files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.py\" }}[/TOOL_CALL]"}
+{"text": "Can you glob for python files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.py\" }}[/TOOL_CALL]"}
+{"text": "Could you glob for python files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.py\" }}[/TOOL_CALL]"}
+{"text": "find all js files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.js\" }}[/TOOL_CALL]"}
+{"text": "Please find all js files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.js\" }}[/TOOL_CALL]"}
+{"text": "Can you find all js files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.js\" }}[/TOOL_CALL]"}
+{"text": "Could you find all js files\n[TOOL_CALL]{tool => \"glob\", args => { --pattern \"*.js\" }}[/TOOL_CALL]"}
+{"text": "check for errors in auth.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"auth.py\" }}[/TOOL_CALL]"}
+{"text": "Please check for errors in auth.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"auth.py\" }}[/TOOL_CALL]"}
+{"text": "Can you check for errors in auth.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"auth.py\" }}[/TOOL_CALL]"}
+{"text": "Could you check for errors in auth.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"auth.py\" }}[/TOOL_CALL]"}
+{"text": "check errors in main.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Please check errors in main.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Can you check errors in main.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "Could you check errors in main.py\n[TOOL_CALL]{tool => \"lsp_diagnostics\", args => { --filePath \"main.py\" }}[/TOOL_CALL]"}
+{"text": "go to definition of get_user\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" }}[/TOOL_CALL]"}
+{"text": "Please go to definition of get_user\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" }}[/TOOL_CALL]"}
+{"text": "Can you go to definition of get_user\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" }}[/TOOL_CALL]"}
+{"text": "Could you go to definition of get_user\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" }}[/TOOL_CALL]"}
+{"text": "go to definition of login\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"main.py\" --line \"20\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Please go to definition of login\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"main.py\" --line \"20\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Can you go to definition of login\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"main.py\" --line \"20\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Could you go to definition of login\n[TOOL_CALL]{tool => \"lsp_goto_definition\", args => { --filePath \"main.py\" --line \"20\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "find all references to User class\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"models.py\" --line \"1\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Please find all references to user class\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"models.py\" --line \"1\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Can you find all references to user class\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"models.py\" --line \"1\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Could you find all references to user class\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"models.py\" --line \"1\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "find references to auth\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"auth.py\" --line \"5\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Please find references to auth\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"auth.py\" --line \"5\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Can you find references to auth\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"auth.py\" --line \"5\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "Could you find references to auth\n[TOOL_CALL]{tool => \"lsp_find_references\", args => { --filePath \"auth.py\" --line \"5\" --character \"0\" }}[/TOOL_CALL]"}
+{"text": "rename function to get_current_user\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" --newName \"get_current_user\" }}[/TOOL_CALL]"}
+{"text": "Please rename function to get_current_user\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" --newName \"get_current_user\" }}[/TOOL_CALL]"}
+{"text": "Can you rename function to get_current_user\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" --newName \"get_current_user\" }}[/TOOL_CALL]"}
+{"text": "Could you rename function to get_current_user\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"auth.py\" --line \"10\" --character \"5\" --newName \"get_current_user\" }}[/TOOL_CALL]"}
+{"text": "rename variable to user_id\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"main.py\" --line \"15\" --character \"0\" --newName \"user_id\" }}[/TOOL_CALL]"}
+{"text": "Please rename variable to user_id\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"main.py\" --line \"15\" --character \"0\" --newName \"user_id\" }}[/TOOL_CALL]"}
+{"text": "Can you rename variable to user_id\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"main.py\" --line \"15\" --character \"0\" --newName \"user_id\" }}[/TOOL_CALL]"}
+{"text": "Could you rename variable to user_id\n[TOOL_CALL]{tool => \"lsp_rename\", args => { --filePath \"main.py\" --line \"15\" --character \"0\" --newName \"user_id\" }}[/TOOL_CALL]"}
+{"text": "smart search for security patterns\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"security patterns\" }}[/TOOL_CALL]"}
+{"text": "Please smart search for security patterns\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"security patterns\" }}[/TOOL_CALL]"}
+{"text": "Can you smart search for security patterns\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"security patterns\" }}[/TOOL_CALL]"}
+{"text": "Could you smart search for security patterns\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"security patterns\" }}[/TOOL_CALL]"}
+{"text": "smart search for auth\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Please smart search for auth\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Can you smart search for auth\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "Could you smart search for auth\n[TOOL_CALL]{tool => \"athena_smart_search\", args => { --query \"authentication\" }}[/TOOL_CALL]"}
+{"text": "search notion\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"project\" }}[/TOOL_CALL]"}
+{"text": "Please search notion\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"project\" }}[/TOOL_CALL]"}
+{"text": "Can you search notion\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"project\" }}[/TOOL_CALL]"}
+{"text": "Could you search notion\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"project\" }}[/TOOL_CALL]"}
+{"text": "search notion for spec\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"spec\" }}[/TOOL_CALL]"}
+{"text": "Please search notion for spec\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"spec\" }}[/TOOL_CALL]"}
+{"text": "Can you search notion for spec\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"spec\" }}[/TOOL_CALL]"}
+{"text": "Could you search notion for spec\n[TOOL_CALL]{tool => \"notion_search\", args => { --query \"spec\" }}[/TOOL_CALL]"}
+{"text": "get notion page\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Please get notion page\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Can you get notion page\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Could you get notion page\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "get page 456\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Please get page 456\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Can you get page 456\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Could you get page 456\n[TOOL_CALL]{tool => \"notion_get_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "create notion page\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"New Page\" }}[/TOOL_CALL]"}
+{"text": "Please create notion page\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"New Page\" }}[/TOOL_CALL]"}
+{"text": "Can you create notion page\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"New Page\" }}[/TOOL_CALL]"}
+{"text": "Could you create notion page\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"New Page\" }}[/TOOL_CALL]"}
+{"text": "create page for spec\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"Spec Document\" }}[/TOOL_CALL]"}
+{"text": "Please create page for spec\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"Spec Document\" }}[/TOOL_CALL]"}
+{"text": "Can you create page for spec\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"Spec Document\" }}[/TOOL_CALL]"}
+{"text": "Could you create page for spec\n[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"Spec Document\" }}[/TOOL_CALL]"}
+{"text": "update notion page\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Please update notion page\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Can you update notion page\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "Could you update notion page\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"abc123\" }}[/TOOL_CALL]"}
+{"text": "update page status\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Please update page status\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Can you update page status\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "Could you update page status\n[TOOL_CALL]{tool => \"notion_update_page\", args => { --page_id \"456\" }}[/TOOL_CALL]"}
+{"text": "send telegram message\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello\" }}[/TOOL_CALL]"}
+{"text": "Please send telegram message\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello\" }}[/TOOL_CALL]"}
+{"text": "Can you send telegram message\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello\" }}[/TOOL_CALL]"}
+{"text": "Could you send telegram message\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello\" }}[/TOOL_CALL]"}
+{"text": "send message to chat\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Update complete\" }}[/TOOL_CALL]"}
+{"text": "Please send message to chat\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Update complete\" }}[/TOOL_CALL]"}
+{"text": "Can you send message to chat\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Update complete\" }}[/TOOL_CALL]"}
+{"text": "Could you send message to chat\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Update complete\" }}[/TOOL_CALL]"}
+{"text": "get telegram messages\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get telegram messages\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get telegram messages\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get telegram messages\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "get messages from telegram\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get messages from telegram\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get messages from telegram\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get messages from telegram\n[TOOL_CALL]{tool => \"telegram_get_messages\", args => { }}[/TOOL_CALL]"}
+{"text": "get bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Please get bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you get bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you get bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "show bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Please show bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you show bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you show bot info\n[TOOL_CALL]{tool => \"telegram_get_bot_info\", args => { }}[/TOOL_CALL]"}
+{"text": "search the web for ai news\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"ai news\" }}[/TOOL_CALL]"}
+{"text": "Please search the web for ai news\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"ai news\" }}[/TOOL_CALL]"}
+{"text": "Can you search the web for ai news\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"ai news\" }}[/TOOL_CALL]"}
+{"text": "Could you search the web for ai news\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"ai news\" }}[/TOOL_CALL]"}
+{"text": "search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Please search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Can you search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Could you search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "search for python async examples\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"python async examples\" --language \"['Python']\" }}[/TOOL_CALL]"}
+{"text": "Please search for python async examples\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"python async examples\" --language \"['Python']\" }}[/TOOL_CALL]"}
+{"text": "Can you search for python async examples\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"python async examples\" --language \"['Python']\" }}[/TOOL_CALL]"}
+{"text": "Could you search for python async examples\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"python async examples\" --language \"['Python']\" }}[/TOOL_CALL]"}
+{"text": "search code for react hooks\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"useState hooks\" --language \"['TypeScript', 'TSX']\" }}[/TOOL_CALL]"}
+{"text": "Please search code for react hooks\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"useState hooks\" --language \"['TypeScript', 'TSX']\" }}[/TOOL_CALL]"}
+{"text": "Can you search code for react hooks\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"useState hooks\" --language \"['TypeScript', 'TSX']\" }}[/TOOL_CALL]"}
+{"text": "Could you search code for react hooks\n[TOOL_CALL]{tool => \"codesearch\", args => { --query \"useState hooks\" --language \"['TypeScript', 'TSX']\" }}[/TOOL_CALL]"}
+{"text": "ask a question\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"What is the best approach?\" }}[/TOOL_CALL]"}
+{"text": "Please ask a question\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"What is the best approach?\" }}[/TOOL_CALL]"}
+{"text": "Can you ask a question\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"What is the best approach?\" }}[/TOOL_CALL]"}
+{"text": "Could you ask a question\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"What is the best approach?\" }}[/TOOL_CALL]"}
+{"text": "ask about the issue\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"How to fix this bug?\" }}[/TOOL_CALL]"}
+{"text": "Please ask about the issue\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"How to fix this bug?\" }}[/TOOL_CALL]"}
+{"text": "Can you ask about the issue\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"How to fix this bug?\" }}[/TOOL_CALL]"}
+{"text": "Could you ask about the issue\n[TOOL_CALL]{tool => \"ask_question\", args => { --question \"How to fix this bug?\" }}[/TOOL_CALL]"}
+{"text": "mark task as done\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Please mark task as done\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you mark task as done\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you mark task as done\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "mark as completed\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Please mark as completed\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Can you mark as completed\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "Could you mark as completed\n[TOOL_CALL]{tool => \"done\", args => { }}[/TOOL_CALL]"}
+{"text": "warm session pool\n[TOOL_CALL]{tool => brain_session_warm_pool, args => { }}[/TOOL_CALL]"}
+{"text": "score complexity\n[TOOL_CALL]{tool => brain_intelligence_score_complexity, args => { }}[/TOOL_CALL]"}
+{"text": "Can you record delegate outcome\n[TOOL_CALL]{tool => delegate_nx_delegate_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "delegate task\n[TOOL_CALL]{tool => delegate_nx_delegate, args => { }}[/TOOL_CALL]"}
+{"text": "get notion blocks\n[TOOL_CALL]{tool => notion_API-get-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update notion block\n[TOOL_CALL]{tool => notion_API-update-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check coverage\n[TOOL_CALL]{tool => quality_run_coverage_trend, args => { }}[/TOOL_CALL]"}
+{"text": "fetch html\n[TOOL_CALL]{tool => fetch_fetch_html, args => { }}[/TOOL_CALL]"}
+{"text": "Please fill browser form\n[TOOL_CALL]{tool => brain_browser_fill, args => { }}[/TOOL_CALL]"}
+{"text": "get session\n[TOOL_CALL]{tool => brain_session_get, args => { }}[/TOOL_CALL]"}
+{"text": "Please register trigger\n[TOOL_CALL]{tool => brain_trigger_register, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search notion\n[TOOL_CALL]{tool => notion_API-post-search, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp find refs\n[TOOL_CALL]{tool => lsp_find_references, args => { }}[/TOOL_CALL]"}
+{"text": "orchestrate workflow\n[TOOL_CALL]{tool => brain_catalyst_orchestrate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you session info\n[TOOL_CALL]{tool => session_info, args => { }}[/TOOL_CALL]"}
+{"text": "Can you review pull request\n[TOOL_CALL]{tool => github_create_pull_request_review, args => { }}[/TOOL_CALL]"}
+{"text": "Please get page property\n[TOOL_CALL]{tool => notion_API-retrieve-a-page-property, args => { }}[/TOOL_CALL]"}
+{"text": "search users github\n[TOOL_CALL]{tool => github_search_users, args => { }}[/TOOL_CALL]"}
+{"text": "Please web search exa\n[TOOL_CALL]{tool => websearch_web_search_exa, args => { }}[/TOOL_CALL]"}
+{"text": "Can you look at image\n[TOOL_CALL]{tool => look_at, args => { }}[/TOOL_CALL]"}
+{"text": "get pr reviews\n[TOOL_CALL]{tool => github_get_pull_request_reviews, args => { }}[/TOOL_CALL]"}
+{"text": "get telegram messages\n[TOOL_CALL]{tool => telegram_get_messages, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fill browser form\n[TOOL_CALL]{tool => brain_browser_fill, args => { }}[/TOOL_CALL]"}
+{"text": "merge pull request\n[TOOL_CALL]{tool => github_merge_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Please run sast\n[TOOL_CALL]{tool => quality_run_sast, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create database\n[TOOL_CALL]{tool => notion_API-create-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Please evaluate browser\n[TOOL_CALL]{tool => brain_browser_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search memories\n[TOOL_CALL]{tool => brain_memory_search_memories, args => { }}[/TOOL_CALL]"}
+{"text": "Please search repos\n[TOOL_CALL]{tool => github_search_repositories, args => { }}[/TOOL_CALL]"}
+{"text": "resolve library id\n[TOOL_CALL]{tool => context_resolve_library_id, args => { }}[/TOOL_CALL]"}
+{"text": "get full injected context\n[TOOL_CALL]{tool => brain_get_full_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you query database\n[TOOL_CALL]{tool => notion_API-query-data-source, args => { }}[/TOOL_CALL]"}
+{"text": "Can you use skill\n[TOOL_CALL]{tool => skill, args => { }}[/TOOL_CALL]"}
+{"text": "update database\n[TOOL_CALL]{tool => notion_API-update-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp symbols\n[TOOL_CALL]{tool => lsp_symbols, args => { }}[/TOOL_CALL]"}
+{"text": "Can you query docs\n[TOOL_CALL]{tool => context_query_docs, args => { }}[/TOOL_CALL]"}
+{"text": "Please get cross session context\n[TOOL_CALL]{tool => brain_get_cross_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get orchestrator status\n[TOOL_CALL]{tool => brain_catalyst_get_orchestrator_status, args => { }}[/TOOL_CALL]"}
+{"text": "Can you navigate playwright\n[TOOL_CALL]{tool => playwright_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "retrieve notion block\n[TOOL_CALL]{tool => notion_API-retrieve-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "fill browser form\n[TOOL_CALL]{tool => brain_browser_fill, args => { }}[/TOOL_CALL]"}
+{"text": "Please get user profile\n[TOOL_CALL]{tool => brain_context_get_user_profile, args => { }}[/TOOL_CALL]"}
+{"text": "update issue\n[TOOL_CALL]{tool => github_update_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please list available agents\n[TOOL_CALL]{tool => brain_intelligence_available_agents, args => { }}[/TOOL_CALL]"}
+{"text": "search code github\n[TOOL_CALL]{tool => github_search_code, args => { }}[/TOOL_CALL]"}
+{"text": "Please write file\n[TOOL_CALL]{tool => write, args => { }}[/TOOL_CALL]"}
+{"text": "Please click browser\n[TOOL_CALL]{tool => brain_browser_click, args => { }}[/TOOL_CALL]"}
+{"text": "search repos\n[TOOL_CALL]{tool => github_search_repositories, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp rename\n[TOOL_CALL]{tool => lsp_rename, args => { }}[/TOOL_CALL]"}
+{"text": "Can you log task completion\n[TOOL_CALL]{tool => brain_mind_log_task_completion, args => { }}[/TOOL_CALL]"}
+{"text": "Please review pull request\n[TOOL_CALL]{tool => github_create_pull_request_review, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get style context\n[TOOL_CALL]{tool => brain_context_get_style_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get learning status\n[TOOL_CALL]{tool => brain_learning_status, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch json\n[TOOL_CALL]{tool => fetch_fetch_json, args => { }}[/TOOL_CALL]"}
+{"text": "playwright fill\n[TOOL_CALL]{tool => playwright_fill, args => { }}[/TOOL_CALL]"}
+{"text": "Can you return session\n[TOOL_CALL]{tool => brain_session_return, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user preferences\n[TOOL_CALL]{tool => brain_fingerprint_get_user_preferences, args => { }}[/TOOL_CALL]"}
+{"text": "list issues\n[TOOL_CALL]{tool => github_list_issues, args => { }}[/TOOL_CALL]"}
+{"text": "auto write memory\n[TOOL_CALL]{tool => brain_memory_auto_write, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get session history\n[TOOL_CALL]{tool => brain_mind_get_session_history, args => { }}[/TOOL_CALL]"}
+{"text": "create github file\n[TOOL_CALL]{tool => github_create_or_update_file, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get notion user\n[TOOL_CALL]{tool => notion_API-get-user, args => { }}[/TOOL_CALL]"}
+{"text": "Can you warm session pool\n[TOOL_CALL]{tool => brain_session_warm_pool, args => { }}[/TOOL_CALL]"}
+{"text": "sqlite query\n[TOOL_CALL]{tool => sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "list templates\n[TOOL_CALL]{tool => notion_API-list-data-source-templates, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create github file\n[TOOL_CALL]{tool => github_create_or_update_file, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get archive context\n[TOOL_CALL]{tool => brain_context_get_archive_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please delete notion block\n[TOOL_CALL]{tool => notion_API-delete-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list sqlite tables\n[TOOL_CALL]{tool => brain_sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp find refs\n[TOOL_CALL]{tool => lsp_find_references, args => { }}[/TOOL_CALL]"}
+{"text": "Please send telegram message\n[TOOL_CALL]{tool => telegram_send_message, args => { }}[/TOOL_CALL]"}
+{"text": "update global context\n[TOOL_CALL]{tool => brain_update_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you scan for secrets\n[TOOL_CALL]{tool => quality_run_secrets_scan, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright fill\n[TOOL_CALL]{tool => playwright_fill, args => { }}[/TOOL_CALL]"}
+{"text": "edit file\n[TOOL_CALL]{tool => edit, args => { }}[/TOOL_CALL]"}
+{"text": "Can you navigate browser\n[TOOL_CALL]{tool => brain_browser_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get learning outcomes\n[TOOL_CALL]{tool => brain_learning_get_outcomes, args => { }}[/TOOL_CALL]"}
+{"text": "Please run type check\n[TOOL_CALL]{tool => quality_run_typecheck, args => { }}[/TOOL_CALL]"}
+{"text": "Can you patch notion blocks\n[TOOL_CALL]{tool => notion_API-patch-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "get notion user\n[TOOL_CALL]{tool => notion_API-get-user, args => { }}[/TOOL_CALL]"}
+{"text": "get page property\n[TOOL_CALL]{tool => notion_API-retrieve-a-page-property, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search issues\n[TOOL_CALL]{tool => github_search_issues, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search sessions\n[TOOL_CALL]{tool => session_search, args => { }}[/TOOL_CALL]"}
+{"text": "list triggers\n[TOOL_CALL]{tool => brain_trigger_list, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check agent calls\n[TOOL_CALL]{tool => quality_run_agent_call_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list commits\n[TOOL_CALL]{tool => github_list_commits, args => { }}[/TOOL_CALL]"}
+{"text": "Please route task for learning\n[TOOL_CALL]{tool => brain_learning_route_task, args => { }}[/TOOL_CALL]"}
+{"text": "Please update notion block\n[TOOL_CALL]{tool => notion_API-update-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright close\n[TOOL_CALL]{tool => playwright_close, args => { }}[/TOOL_CALL]"}
+{"text": "playwright get text\n[TOOL_CALL]{tool => playwright_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "Can you execute trigger\n[TOOL_CALL]{tool => brain_trigger_execute, args => { }}[/TOOL_CALL]"}
+{"text": "Can you send telegram message\n[TOOL_CALL]{tool => telegram_send_message, args => { }}[/TOOL_CALL]"}
+{"text": "Please list commits\n[TOOL_CALL]{tool => github_list_commits, args => { }}[/TOOL_CALL]"}
+{"text": "web search\n[TOOL_CALL]{tool => websearch, args => { }}[/TOOL_CALL]"}
+{"text": "browser screenshot\n[TOOL_CALL]{tool => brain_browser_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "get bmad agents\n[TOOL_CALL]{tool => brain_context_get_bmad_agents, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get pr reviews\n[TOOL_CALL]{tool => github_get_pull_request_reviews, args => { }}[/TOOL_CALL]"}
+{"text": "Please retrieve database\n[TOOL_CALL]{tool => notion_API-retrieve-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Can you delete notion block\n[TOOL_CALL]{tool => notion_API-delete-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list templates\n[TOOL_CALL]{tool => notion_API-list-data-source-templates, args => { }}[/TOOL_CALL]"}
+{"text": "Can you retrieve database\n[TOOL_CALL]{tool => notion_API-retrieve-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright screenshot\n[TOOL_CALL]{tool => playwright_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "Can you ast grep search\n[TOOL_CALL]{tool => ast_grep_search, args => { }}[/TOOL_CALL]"}
+{"text": "Can you describe sqlite table\n[TOOL_CALL]{tool => brain_sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "Can you set context\n[TOOL_CALL]{tool => brain_mind_set_context, args => { }}[/TOOL_CALL]"}
+{"text": "record delegate outcome\n[TOOL_CALL]{tool => delegate_nx_delegate_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "Please get session\n[TOOL_CALL]{tool => brain_session_get, args => { }}[/TOOL_CALL]"}
+{"text": "Please check system registry health\n[TOOL_CALL]{tool => brain_system_health_check_registry, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list workflows\n[TOOL_CALL]{tool => brain_catalyst_list_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Please write to memory\n[TOOL_CALL]{tool => brain_memory_memory_write, args => { }}[/TOOL_CALL]"}
+{"text": "Please get recommendations\n[TOOL_CALL]{tool => brain_learning_get_recommendations, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch json\n[TOOL_CALL]{tool => fetch_fetch_json, args => { }}[/TOOL_CALL]"}
+{"text": "Please create issue github\n[TOOL_CALL]{tool => github_create_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get notion blocks\n[TOOL_CALL]{tool => notion_API-get-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "Please create github file\n[TOOL_CALL]{tool => github_create_or_update_file, args => { }}[/TOOL_CALL]"}
+{"text": "Can you query sqlite\n[TOOL_CALL]{tool => brain_sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "get learning outcomes\n[TOOL_CALL]{tool => brain_learning_get_outcomes, args => { }}[/TOOL_CALL]"}
+{"text": "run type check\n[TOOL_CALL]{tool => quality_run_typecheck, args => { }}[/TOOL_CALL]"}
+{"text": "call skill mcp\n[TOOL_CALL]{tool => skill_mcp, args => { }}[/TOOL_CALL]"}
+{"text": "Please code search\n[TOOL_CALL]{tool => codesearch, args => { }}[/TOOL_CALL]"}
+{"text": "Please list sessions\n[TOOL_CALL]{tool => session_list, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get bot info\n[TOOL_CALL]{tool => telegram_get_bot_info, args => { }}[/TOOL_CALL]"}
+{"text": "Please create comment\n[TOOL_CALL]{tool => notion_API-create-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "add comment\n[TOOL_CALL]{tool => github_add_issue_comment, args => { }}[/TOOL_CALL]"}
+{"text": "Please read file\n[TOOL_CALL]{tool => read, args => { }}[/TOOL_CALL]"}
+{"text": "run all gates\n[TOOL_CALL]{tool => quality_run_all_gates, args => { }}[/TOOL_CALL]"}
+{"text": "Please check coverage\n[TOOL_CALL]{tool => quality_run_coverage_trend, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get memory stats\n[TOOL_CALL]{tool => brain_memory_get_memory_stats, args => { }}[/TOOL_CALL]"}
+{"text": "Please update database\n[TOOL_CALL]{tool => notion_API-update-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "get pr files\n[TOOL_CALL]{tool => github_get_pull_request_files, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp rename\n[TOOL_CALL]{tool => lsp_rename, args => { }}[/TOOL_CALL]"}
+{"text": "Please recall previous session\n[TOOL_CALL]{tool => brain_memory_recall_session, args => { }}[/TOOL_CALL]"}
+{"text": "Please search users github\n[TOOL_CALL]{tool => github_search_users, args => { }}[/TOOL_CALL]"}
+{"text": "Please edit file\n[TOOL_CALL]{tool => edit, args => { }}[/TOOL_CALL]"}
+{"text": "Please navigate playwright\n[TOOL_CALL]{tool => playwright_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "Please get full injected context\n[TOOL_CALL]{tool => brain_get_full_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "fetch json\n[TOOL_CALL]{tool => fetch_fetch_json, args => { }}[/TOOL_CALL]"}
+{"text": "Please glob files\n[TOOL_CALL]{tool => glob, args => { }}[/TOOL_CALL]"}
+{"text": "Can you inject context\n[TOOL_CALL]{tool => brain_context_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "get browser text\n[TOOL_CALL]{tool => brain_browser_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "get active workflow\n[TOOL_CALL]{tool => brain_mind_get_active_workflow, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright get content\n[TOOL_CALL]{tool => playwright_get_content, args => { }}[/TOOL_CALL]"}
+{"text": "Please get global context\n[TOOL_CALL]{tool => brain_get_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you push files github\n[TOOL_CALL]{tool => github_push_files, args => { }}[/TOOL_CALL]"}
+{"text": "fetch text\n[TOOL_CALL]{tool => fetch_fetch_txt, args => { }}[/TOOL_CALL]"}
+{"text": "query sqlite\n[TOOL_CALL]{tool => brain_sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "Please get pull request\n[TOOL_CALL]{tool => github_get_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Can you rank memories\n[TOOL_CALL]{tool => brain_memory_rank_memories, args => { }}[/TOOL_CALL]"}
+{"text": "Please record pattern\n[TOOL_CALL]{tool => brain_fingerprint_record_pattern, args => { }}[/TOOL_CALL]"}
+{"text": "get orchestrator status\n[TOOL_CALL]{tool => brain_catalyst_get_orchestrator_status, args => { }}[/TOOL_CALL]"}
+{"text": "get user preferences\n[TOOL_CALL]{tool => brain_fingerprint_get_user_preferences, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check delegate health\n[TOOL_CALL]{tool => delegate_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get project manifest\n[TOOL_CALL]{tool => brain_mind_get_project_manifest, args => { }}[/TOOL_CALL]"}
+{"text": "Please list workflows\n[TOOL_CALL]{tool => brain_catalyst_list_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Please ask question\n[TOOL_CALL]{tool => question, args => { }}[/TOOL_CALL]"}
+{"text": "Please check delegate health\n[TOOL_CALL]{tool => delegate_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "set context\n[TOOL_CALL]{tool => brain_mind_set_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you web search exa\n[TOOL_CALL]{tool => websearch_web_search_exa, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get mind state\n[TOOL_CALL]{tool => brain_mind_get_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp goto definition\n[TOOL_CALL]{tool => lsp_goto_definition, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright evaluate\n[TOOL_CALL]{tool => playwright_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "search sessions\n[TOOL_CALL]{tool => session_search, args => { }}[/TOOL_CALL]"}
+{"text": "log tool sequence\n[TOOL_CALL]{tool => brain_log_tool_sequence, args => { }}[/TOOL_CALL]"}
+{"text": "execute trigger\n[TOOL_CALL]{tool => brain_trigger_execute, args => { }}[/TOOL_CALL]"}
+{"text": "Can you resolve library id\n[TOOL_CALL]{tool => context_resolve_library_id, args => { }}[/TOOL_CALL]"}
+{"text": "Please list tables sqlite\n[TOOL_CALL]{tool => sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright click\n[TOOL_CALL]{tool => playwright_click, args => { }}[/TOOL_CALL]"}
+{"text": "Please run bash\n[TOOL_CALL]{tool => bash, args => { }}[/TOOL_CALL]"}
+{"text": "use skill\n[TOOL_CALL]{tool => skill, args => { }}[/TOOL_CALL]"}
+{"text": "Please get pr status\n[TOOL_CALL]{tool => github_get_pull_request_status, args => { }}[/TOOL_CALL]"}
+{"text": "Can you retrieve notion block\n[TOOL_CALL]{tool => notion_API-retrieve-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check brain system health\n[TOOL_CALL]{tool => brain_system_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "write to memory\n[TOOL_CALL]{tool => brain_memory_memory_write, args => { }}[/TOOL_CALL]"}
+{"text": "Can you log tool sequence\n[TOOL_CALL]{tool => brain_log_tool_sequence, args => { }}[/TOOL_CALL]"}
+{"text": "Can you add comment\n[TOOL_CALL]{tool => github_add_issue_comment, args => { }}[/TOOL_CALL]"}
+{"text": "Please get project manifest\n[TOOL_CALL]{tool => brain_mind_get_project_manifest, args => { }}[/TOOL_CALL]"}
+{"text": "delete notion block\n[TOOL_CALL]{tool => notion_API-delete-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Please inject memory context\n[TOOL_CALL]{tool => brain_memory_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "playwright click\n[TOOL_CALL]{tool => playwright_click, args => { }}[/TOOL_CALL]"}
+{"text": "get notion users\n[TOOL_CALL]{tool => notion_API-get-users, args => { }}[/TOOL_CALL]"}
+{"text": "create branch\n[TOOL_CALL]{tool => github_create_branch, args => { }}[/TOOL_CALL]"}
+{"text": "Please ast grep replace\n[TOOL_CALL]{tool => ast_grep_replace, args => { }}[/TOOL_CALL]"}
+{"text": "Can you peek telegram\n[TOOL_CALL]{tool => telegram_peek_messages, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check placeholders\n[TOOL_CALL]{tool => quality_run_placehoder_check, args => { }}[/TOOL_CALL]"}
+{"text": "get session context\n[TOOL_CALL]{tool => brain_fingerprint_get_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please inject context\n[TOOL_CALL]{tool => brain_context_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "get session history\n[TOOL_CALL]{tool => brain_mind_get_session_history, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run lint\n[TOOL_CALL]{tool => quality_run_lint, args => { }}[/TOOL_CALL]"}
+{"text": "Please orchestrate workflow\n[TOOL_CALL]{tool => brain_catalyst_orchestrate, args => { }}[/TOOL_CALL]"}
+{"text": "navigate browser\n[TOOL_CALL]{tool => brain_browser_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run type check\n[TOOL_CALL]{tool => quality_run_typecheck, args => { }}[/TOOL_CALL]"}
+{"text": "describe sqlite table\n[TOOL_CALL]{tool => brain_sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "Please run task\n[TOOL_CALL]{tool => task, args => { }}[/TOOL_CALL]"}
+{"text": "session info\n[TOOL_CALL]{tool => session_info, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get browser text\n[TOOL_CALL]{tool => brain_browser_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "Please get notion users\n[TOOL_CALL]{tool => notion_API-get-users, args => { }}[/TOOL_CALL]"}
+{"text": "Can you call skill mcp\n[TOOL_CALL]{tool => skill_mcp, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright fill\n[TOOL_CALL]{tool => playwright_fill, args => { }}[/TOOL_CALL]"}
+{"text": "Please read session\n[TOOL_CALL]{tool => session_read, args => { }}[/TOOL_CALL]"}
+{"text": "Please navigate browser\n[TOOL_CALL]{tool => brain_browser_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "get issue\n[TOOL_CALL]{tool => github_get_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please get routing history\n[TOOL_CALL]{tool => brain_intelligence_get_routing_history, args => { }}[/TOOL_CALL]"}
+{"text": "get mind state\n[TOOL_CALL]{tool => brain_mind_get_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "Please get session context\n[TOOL_CALL]{tool => brain_fingerprint_get_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please web search\n[TOOL_CALL]{tool => websearch, args => { }}[/TOOL_CALL]"}
+{"text": "Please get notion self\n[TOOL_CALL]{tool => notion_API-get-self, args => { }}[/TOOL_CALL]"}
+{"text": "Can you find context for task\n[TOOL_CALL]{tool => brain_memory_find_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get github file\n[TOOL_CALL]{tool => github_get_file_contents, args => { }}[/TOOL_CALL]"}
+{"text": "Can you write to memory\n[TOOL_CALL]{tool => brain_memory_memory_write, args => { }}[/TOOL_CALL]"}
+{"text": "Please execute trigger\n[TOOL_CALL]{tool => brain_trigger_execute, args => { }}[/TOOL_CALL]"}
+{"text": "Please run lint\n[TOOL_CALL]{tool => quality_run_lint, args => { }}[/TOOL_CALL]"}
+{"text": "fetch markdown\n[TOOL_CALL]{tool => fetch_fetch_markdown, args => { }}[/TOOL_CALL]"}
+{"text": "sample table sqlite\n[TOOL_CALL]{tool => sqlite_sample_table, args => { }}[/TOOL_CALL]"}
+{"text": "patch notion page\n[TOOL_CALL]{tool => notion_API-patch-page, args => { }}[/TOOL_CALL]"}
+{"text": "run task\n[TOOL_CALL]{tool => task, args => { }}[/TOOL_CALL]"}
+{"text": "Can you browser screenshot\n[TOOL_CALL]{tool => brain_browser_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "recall previous session\n[TOOL_CALL]{tool => brain_memory_recall_session, args => { }}[/TOOL_CALL]"}
+{"text": "Please get pr files\n[TOOL_CALL]{tool => github_get_pull_request_files, args => { }}[/TOOL_CALL]"}
+{"text": "Please patch notion blocks\n[TOOL_CALL]{tool => notion_API-patch-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get notion self\n[TOOL_CALL]{tool => notion_API-get-self, args => { }}[/TOOL_CALL]"}
+{"text": "Please run all gates\n[TOOL_CALL]{tool => quality_run_all_gates, args => { }}[/TOOL_CALL]"}
+{"text": "write file\n[TOOL_CALL]{tool => write, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get injected context\n[TOOL_CALL]{tool => brain_orchestration_get_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp goto definition\n[TOOL_CALL]{tool => lsp_goto_definition, args => { }}[/TOOL_CALL]"}
+{"text": "Can you recall previous session\n[TOOL_CALL]{tool => brain_memory_recall_session, args => { }}[/TOOL_CALL]"}
+{"text": "ast grep replace\n[TOOL_CALL]{tool => ast_grep_replace, args => { }}[/TOOL_CALL]"}
+{"text": "get project manifest\n[TOOL_CALL]{tool => brain_mind_get_project_manifest, args => { }}[/TOOL_CALL]"}
+{"text": "read file\n[TOOL_CALL]{tool => read, args => { }}[/TOOL_CALL]"}
+{"text": "get style context\n[TOOL_CALL]{tool => brain_context_get_style_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please query docs\n[TOOL_CALL]{tool => context_query_docs, args => { }}[/TOOL_CALL]"}
+{"text": "Can you web search\n[TOOL_CALL]{tool => websearch, args => { }}[/TOOL_CALL]"}
+{"text": "Please list templates\n[TOOL_CALL]{tool => notion_API-list-data-source-templates, args => { }}[/TOOL_CALL]"}
+{"text": "Please search issues\n[TOOL_CALL]{tool => github_search_issues, args => { }}[/TOOL_CALL]"}
+{"text": "create issue github\n[TOOL_CALL]{tool => github_create_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please get injected context\n[TOOL_CALL]{tool => brain_orchestration_get_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please get user preferences\n[TOOL_CALL]{tool => brain_fingerprint_get_user_preferences, args => { }}[/TOOL_CALL]"}
+{"text": "Can you glob files\n[TOOL_CALL]{tool => glob, args => { }}[/TOOL_CALL]"}
+{"text": "Please peek telegram\n[TOOL_CALL]{tool => telegram_peek_messages, args => { }}[/TOOL_CALL]"}
+{"text": "lsp rename\n[TOOL_CALL]{tool => lsp_rename, args => { }}[/TOOL_CALL]"}
+{"text": "run sast\n[TOOL_CALL]{tool => quality_run_sast, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get full injected context\n[TOOL_CALL]{tool => brain_get_full_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "check dependencies\n[TOOL_CALL]{tool => quality_run_deps_check, args => { }}[/TOOL_CALL]"}
+{"text": "list commits\n[TOOL_CALL]{tool => github_list_commits, args => { }}[/TOOL_CALL]"}
+{"text": "list available agents\n[TOOL_CALL]{tool => brain_intelligence_available_agents, args => { }}[/TOOL_CALL]"}
+{"text": "fetch youtube transcript\n[TOOL_CALL]{tool => fetch_fetch_youtube_transcript, args => { }}[/TOOL_CALL]"}
+{"text": "update notion block\n[TOOL_CALL]{tool => notion_API-update-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "get archive context\n[TOOL_CALL]{tool => brain_context_get_archive_context, args => { }}[/TOOL_CALL]"}
+{"text": "find context for task\n[TOOL_CALL]{tool => brain_memory_find_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you merge pull request\n[TOOL_CALL]{tool => github_merge_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get pr status\n[TOOL_CALL]{tool => github_get_pull_request_status, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run format check\n[TOOL_CALL]{tool => quality_run_format, args => { }}[/TOOL_CALL]"}
+{"text": "search notion\n[TOOL_CALL]{tool => notion_API-post-search, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch markdown\n[TOOL_CALL]{tool => fetch_fetch_markdown, args => { }}[/TOOL_CALL]"}
+{"text": "Please create branch\n[TOOL_CALL]{tool => github_create_branch, args => { }}[/TOOL_CALL]"}
+{"text": "code search\n[TOOL_CALL]{tool => codesearch, args => { }}[/TOOL_CALL]"}
+{"text": "Please get learning status\n[TOOL_CALL]{tool => brain_learning_status, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list issues\n[TOOL_CALL]{tool => github_list_issues, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get bmad agents\n[TOOL_CALL]{tool => brain_context_get_bmad_agents, args => { }}[/TOOL_CALL]"}
+{"text": "Please search memories\n[TOOL_CALL]{tool => brain_memory_search_memories, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright close\n[TOOL_CALL]{tool => playwright_close, args => { }}[/TOOL_CALL]"}
+{"text": "Please push files github\n[TOOL_CALL]{tool => github_push_files, args => { }}[/TOOL_CALL]"}
+{"text": "Please scan for secrets\n[TOOL_CALL]{tool => quality_run_secrets_scan, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user profile\n[TOOL_CALL]{tool => brain_context_get_user_profile, args => { }}[/TOOL_CALL]"}
+{"text": "get bot info\n[TOOL_CALL]{tool => telegram_get_bot_info, args => { }}[/TOOL_CALL]"}
+{"text": "Can you write file\n[TOOL_CALL]{tool => write, args => { }}[/TOOL_CALL]"}
+{"text": "ast grep search\n[TOOL_CALL]{tool => ast_grep_search, args => { }}[/TOOL_CALL]"}
+{"text": "route task\n[TOOL_CALL]{tool => brain_intelligence_route, args => { }}[/TOOL_CALL]"}
+{"text": "Can you grep search\n[TOOL_CALL]{tool => grep, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get telegram messages\n[TOOL_CALL]{tool => telegram_get_messages, args => { }}[/TOOL_CALL]"}
+{"text": "Please check placeholders\n[TOOL_CALL]{tool => quality_run_placehoder_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please fork repo\n[TOOL_CALL]{tool => github_fork_repository, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp prepare rename\n[TOOL_CALL]{tool => lsp_prepare_rename, args => { }}[/TOOL_CALL]"}
+{"text": "Please clear triggers\n[TOOL_CALL]{tool => brain_trigger_clear, args => { }}[/TOOL_CALL]"}
+{"text": "Please get session pool stats\n[TOOL_CALL]{tool => brain_session_pool_stats, args => { }}[/TOOL_CALL]"}
+{"text": "review pull request\n[TOOL_CALL]{tool => github_create_pull_request_review, args => { }}[/TOOL_CALL]"}
+{"text": "Can you delegate task with id\n[TOOL_CALL]{tool => delegate_nx_delegate_with_id, args => { }}[/TOOL_CALL]"}
+{"text": "Please get product context\n[TOOL_CALL]{tool => brain_context_get_product_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get bmad workflows\n[TOOL_CALL]{tool => brain_context_get_bmad_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright click\n[TOOL_CALL]{tool => playwright_click, args => { }}[/TOOL_CALL]"}
+{"text": "retrieve database\n[TOOL_CALL]{tool => notion_API-retrieve-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "check delegate health\n[TOOL_CALL]{tool => delegate_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update pr branch\n[TOOL_CALL]{tool => github_update_pull_request_branch, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run task\n[TOOL_CALL]{tool => task, args => { }}[/TOOL_CALL]"}
+{"text": "Can you code search\n[TOOL_CALL]{tool => codesearch, args => { }}[/TOOL_CALL]"}
+{"text": "web search exa\n[TOOL_CALL]{tool => websearch_web_search_exa, args => { }}[/TOOL_CALL]"}
+{"text": "get bmad workflows\n[TOOL_CALL]{tool => brain_context_get_bmad_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Please score complexity\n[TOOL_CALL]{tool => brain_intelligence_score_complexity, args => { }}[/TOOL_CALL]"}
+{"text": "Please record delegate outcome\n[TOOL_CALL]{tool => delegate_nx_delegate_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch markdown\n[TOOL_CALL]{tool => fetch_fetch_markdown, args => { }}[/TOOL_CALL]"}
+{"text": "Please check trigger\n[TOOL_CALL]{tool => brain_trigger_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run sast\n[TOOL_CALL]{tool => quality_run_sast, args => { }}[/TOOL_CALL]"}
+{"text": "Please get session history\n[TOOL_CALL]{tool => brain_mind_get_session_history, args => { }}[/TOOL_CALL]"}
+{"text": "update pr branch\n[TOOL_CALL]{tool => github_update_pull_request_branch, args => { }}[/TOOL_CALL]"}
+{"text": "Please return session\n[TOOL_CALL]{tool => brain_session_return, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch html\n[TOOL_CALL]{tool => fetch_fetch_html, args => { }}[/TOOL_CALL]"}
+{"text": "lsp symbols\n[TOOL_CALL]{tool => lsp_symbols, args => { }}[/TOOL_CALL]"}
+{"text": "Please list triggers\n[TOOL_CALL]{tool => brain_trigger_list, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search repos\n[TOOL_CALL]{tool => github_search_repositories, args => { }}[/TOOL_CALL]"}
+{"text": "Please get issue\n[TOOL_CALL]{tool => github_get_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please describe sqlite table\n[TOOL_CALL]{tool => brain_sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "Can you describe table sqlite\n[TOOL_CALL]{tool => sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "Please get user context\n[TOOL_CALL]{tool => brain_context_get_user_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get pull request\n[TOOL_CALL]{tool => github_get_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright get text\n[TOOL_CALL]{tool => playwright_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "Please grep search\n[TOOL_CALL]{tool => grep, args => { }}[/TOOL_CALL]"}
+{"text": "check system registry health\n[TOOL_CALL]{tool => brain_system_health_check_registry, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update database\n[TOOL_CALL]{tool => notion_API-update-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp prepare rename\n[TOOL_CALL]{tool => lsp_prepare_rename, args => { }}[/TOOL_CALL]"}
+{"text": "Please sample table sqlite\n[TOOL_CALL]{tool => sqlite_sample_table, args => { }}[/TOOL_CALL]"}
+{"text": "Can you retrieve notion page\n[TOOL_CALL]{tool => notion_API-retrieve-a-page, args => { }}[/TOOL_CALL]"}
+{"text": "Please add comment\n[TOOL_CALL]{tool => github_add_issue_comment, args => { }}[/TOOL_CALL]"}
+{"text": "Please get memory stats\n[TOOL_CALL]{tool => brain_memory_get_memory_stats, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get session context\n[TOOL_CALL]{tool => brain_fingerprint_get_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "get comment\n[TOOL_CALL]{tool => notion_API-retrieve-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "Please list sessions\n[TOOL_CALL]{tool => brain_session_list_mcp, args => { }}[/TOOL_CALL]"}
+{"text": "Please get telegram messages\n[TOOL_CALL]{tool => telegram_get_messages, args => { }}[/TOOL_CALL]"}
+{"text": "Please get mind state\n[TOOL_CALL]{tool => brain_mind_get_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "check agent calls\n[TOOL_CALL]{tool => quality_run_agent_call_check, args => { }}[/TOOL_CALL]"}
+{"text": "search issues\n[TOOL_CALL]{tool => github_search_issues, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run tests\n[TOOL_CALL]{tool => quality_run_tests, args => { }}[/TOOL_CALL]"}
+{"text": "Please get notion user\n[TOOL_CALL]{tool => notion_API-get-user, args => { }}[/TOOL_CALL]"}
+{"text": "Please create database\n[TOOL_CALL]{tool => notion_API-create-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "web fetch\n[TOOL_CALL]{tool => webfetch, args => { }}[/TOOL_CALL]"}
+{"text": "get routing history\n[TOOL_CALL]{tool => brain_intelligence_get_routing_history, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch youtube transcript\n[TOOL_CALL]{tool => fetch_fetch_youtube_transcript, args => { }}[/TOOL_CALL]"}
+{"text": "look at image\n[TOOL_CALL]{tool => look_at, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get comment\n[TOOL_CALL]{tool => notion_API-retrieve-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "Please list pull requests\n[TOOL_CALL]{tool => github_list_pull_requests, args => { }}[/TOOL_CALL]"}
+{"text": "Please patch notion page\n[TOOL_CALL]{tool => notion_API-patch-page, args => { }}[/TOOL_CALL]"}
+{"text": "peek telegram\n[TOOL_CALL]{tool => telegram_peek_messages, args => { }}[/TOOL_CALL]"}
+{"text": "get learning status\n[TOOL_CALL]{tool => brain_learning_status, args => { }}[/TOOL_CALL]"}
+{"text": "playwright close\n[TOOL_CALL]{tool => playwright_close, args => { }}[/TOOL_CALL]"}
+{"text": "check coverage\n[TOOL_CALL]{tool => quality_run_coverage_trend, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update mind state\n[TOOL_CALL]{tool => brain_mind_update_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "Please update mind state\n[TOOL_CALL]{tool => brain_mind_update_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create repo\n[TOOL_CALL]{tool => github_create_repository, args => { }}[/TOOL_CALL]"}
+{"text": "lsp prepare rename\n[TOOL_CALL]{tool => lsp_prepare_rename, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run all gates\n[TOOL_CALL]{tool => quality_run_all_gates, args => { }}[/TOOL_CALL]"}
+{"text": "Please get archive context\n[TOOL_CALL]{tool => brain_context_get_archive_context, args => { }}[/TOOL_CALL]"}
+{"text": "lsp goto definition\n[TOOL_CALL]{tool => lsp_goto_definition, args => { }}[/TOOL_CALL]"}
+{"text": "lsp diagnostics\n[TOOL_CALL]{tool => lsp_diagnostics, args => { }}[/TOOL_CALL]"}
+{"text": "check trigger\n[TOOL_CALL]{tool => brain_trigger_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get active context\n[TOOL_CALL]{tool => brain_context_get_active_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list triggers\n[TOOL_CALL]{tool => brain_trigger_list, args => { }}[/TOOL_CALL]"}
+{"text": "Please get browser text\n[TOOL_CALL]{tool => brain_browser_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "create database\n[TOOL_CALL]{tool => notion_API-create-a-database, args => { }}[/TOOL_CALL]"}
+{"text": "Can you edit file\n[TOOL_CALL]{tool => edit, args => { }}[/TOOL_CALL]"}
+{"text": "get memory stats\n[TOOL_CALL]{tool => brain_memory_get_memory_stats, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright get content\n[TOOL_CALL]{tool => playwright_get_content, args => { }}[/TOOL_CALL]"}
+{"text": "list sqlite tables\n[TOOL_CALL]{tool => brain_sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "get pull request\n[TOOL_CALL]{tool => github_get_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "check brain system health\n[TOOL_CALL]{tool => brain_system_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please create repo\n[TOOL_CALL]{tool => github_create_repository, args => { }}[/TOOL_CALL]"}
+{"text": "push files github\n[TOOL_CALL]{tool => github_push_files, args => { }}[/TOOL_CALL]"}
+{"text": "Please record learning outcome\n[TOOL_CALL]{tool => brain_learning_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get global context\n[TOOL_CALL]{tool => brain_get_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "query database\n[TOOL_CALL]{tool => notion_API-query-data-source, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list available agents\n[TOOL_CALL]{tool => brain_intelligence_available_agents, args => { }}[/TOOL_CALL]"}
+{"text": "grep search\n[TOOL_CALL]{tool => grep, args => { }}[/TOOL_CALL]"}
+{"text": "Please search notion\n[TOOL_CALL]{tool => notion_API-post-search, args => { }}[/TOOL_CALL]"}
+{"text": "Can you read file\n[TOOL_CALL]{tool => read, args => { }}[/TOOL_CALL]"}
+{"text": "Can you click browser\n[TOOL_CALL]{tool => brain_browser_click, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get pr files\n[TOOL_CALL]{tool => github_get_pull_request_files, args => { }}[/TOOL_CALL]"}
+{"text": "get session pool stats\n[TOOL_CALL]{tool => brain_session_pool_stats, args => { }}[/TOOL_CALL]"}
+{"text": "Please search code github\n[TOOL_CALL]{tool => github_search_code, args => { }}[/TOOL_CALL]"}
+{"text": "Please get learning outcomes\n[TOOL_CALL]{tool => brain_learning_get_outcomes, args => { }}[/TOOL_CALL]"}
+{"text": "Please get github file\n[TOOL_CALL]{tool => github_get_file_contents, args => { }}[/TOOL_CALL]"}
+{"text": "move page notion\n[TOOL_CALL]{tool => notion_API-move-page, args => { }}[/TOOL_CALL]"}
+{"text": "Please check brain system health\n[TOOL_CALL]{tool => brain_system_health_check, args => { }}[/TOOL_CALL]"}
+{"text": "Can you lsp diagnostics\n[TOOL_CALL]{tool => lsp_diagnostics, args => { }}[/TOOL_CALL]"}
+{"text": "Can you route task for learning\n[TOOL_CALL]{tool => brain_learning_route_task, args => { }}[/TOOL_CALL]"}
+{"text": "run tests\n[TOOL_CALL]{tool => quality_run_tests, args => { }}[/TOOL_CALL]"}
+{"text": "Please look at image\n[TOOL_CALL]{tool => look_at, args => { }}[/TOOL_CALL]"}
+{"text": "log task completion\n[TOOL_CALL]{tool => brain_mind_log_task_completion, args => { }}[/TOOL_CALL]"}
+{"text": "record pattern\n[TOOL_CALL]{tool => brain_fingerprint_record_pattern, args => { }}[/TOOL_CALL]"}
+{"text": "Please get pr comments\n[TOOL_CALL]{tool => github_get_pull_request_comments, args => { }}[/TOOL_CALL]"}
+{"text": "Can you run bash\n[TOOL_CALL]{tool => bash, args => { }}[/TOOL_CALL]"}
+{"text": "Can you read session\n[TOOL_CALL]{tool => session_read, args => { }}[/TOOL_CALL]"}
+{"text": "Please playwright screenshot\n[TOOL_CALL]{tool => playwright_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "Please log task completion\n[TOOL_CALL]{tool => brain_mind_log_task_completion, args => { }}[/TOOL_CALL]"}
+{"text": "patch notion blocks\n[TOOL_CALL]{tool => notion_API-patch-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "Please call skill mcp\n[TOOL_CALL]{tool => skill_mcp, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check system registry health\n[TOOL_CALL]{tool => brain_system_health_check_registry, args => { }}[/TOOL_CALL]"}
+{"text": "Please create pull request\n[TOOL_CALL]{tool => github_create_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Can you clear triggers\n[TOOL_CALL]{tool => brain_trigger_clear, args => { }}[/TOOL_CALL]"}
+{"text": "create repo\n[TOOL_CALL]{tool => github_create_repository, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check dependencies\n[TOOL_CALL]{tool => quality_run_deps_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please get comment\n[TOOL_CALL]{tool => notion_API-retrieve-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "get cross session context\n[TOOL_CALL]{tool => brain_get_cross_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get cross session context\n[TOOL_CALL]{tool => brain_get_cross_session_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright get text\n[TOOL_CALL]{tool => playwright_get_text, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get issue\n[TOOL_CALL]{tool => github_get_issue, args => { }}[/TOOL_CALL]"}
+{"text": "run lint\n[TOOL_CALL]{tool => quality_run_lint, args => { }}[/TOOL_CALL]"}
+{"text": "Can you web fetch\n[TOOL_CALL]{tool => webfetch, args => { }}[/TOOL_CALL]"}
+{"text": "record learning outcome\n[TOOL_CALL]{tool => brain_learning_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "Can you ast grep replace\n[TOOL_CALL]{tool => ast_grep_replace, args => { }}[/TOOL_CALL]"}
+{"text": "route task for learning\n[TOOL_CALL]{tool => brain_learning_route_task, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get session pool stats\n[TOOL_CALL]{tool => brain_session_pool_stats, args => { }}[/TOOL_CALL]"}
+{"text": "rank memories\n[TOOL_CALL]{tool => brain_memory_rank_memories, args => { }}[/TOOL_CALL]"}
+{"text": "Can you patch notion page\n[TOOL_CALL]{tool => notion_API-patch-page, args => { }}[/TOOL_CALL]"}
+{"text": "Please get bmad agents\n[TOOL_CALL]{tool => brain_context_get_bmad_agents, args => { }}[/TOOL_CALL]"}
+{"text": "query docs\n[TOOL_CALL]{tool => context_query_docs, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search code github\n[TOOL_CALL]{tool => github_search_code, args => { }}[/TOOL_CALL]"}
+{"text": "Please get active workflow\n[TOOL_CALL]{tool => brain_mind_get_active_workflow, args => { }}[/TOOL_CALL]"}
+{"text": "lsp find refs\n[TOOL_CALL]{tool => lsp_find_references, args => { }}[/TOOL_CALL]"}
+{"text": "Please ast grep search\n[TOOL_CALL]{tool => ast_grep_search, args => { }}[/TOOL_CALL]"}
+{"text": "delegate task with id\n[TOOL_CALL]{tool => delegate_nx_delegate_with_id, args => { }}[/TOOL_CALL]"}
+{"text": "Please update issue\n[TOOL_CALL]{tool => github_update_issue, args => { }}[/TOOL_CALL]"}
+{"text": "run format check\n[TOOL_CALL]{tool => quality_run_format, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update issue\n[TOOL_CALL]{tool => github_update_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please retrieve notion page\n[TOOL_CALL]{tool => notion_API-retrieve-a-page, args => { }}[/TOOL_CALL]"}
+{"text": "Can you orchestrate workflow\n[TOOL_CALL]{tool => brain_catalyst_orchestrate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create org repo\n[TOOL_CALL]{tool => github_create_org_repository, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fork repo\n[TOOL_CALL]{tool => github_fork_repository, args => { }}[/TOOL_CALL]"}
+{"text": "retrieve notion page\n[TOOL_CALL]{tool => notion_API-retrieve-a-page, args => { }}[/TOOL_CALL]"}
+{"text": "clear triggers\n[TOOL_CALL]{tool => brain_trigger_clear, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get active workflow\n[TOOL_CALL]{tool => brain_mind_get_active_workflow, args => { }}[/TOOL_CALL]"}
+{"text": "Please session info\n[TOOL_CALL]{tool => session_info, args => { }}[/TOOL_CALL]"}
+{"text": "Please set context\n[TOOL_CALL]{tool => brain_mind_set_context, args => { }}[/TOOL_CALL]"}
+{"text": "check security paths\n[TOOL_CALL]{tool => quality_run_security_paths, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get pr comments\n[TOOL_CALL]{tool => github_get_pull_request_comments, args => { }}[/TOOL_CALL]"}
+{"text": "Please delegate task\n[TOOL_CALL]{tool => delegate_nx_delegate, args => { }}[/TOOL_CALL]"}
+{"text": "get github file\n[TOOL_CALL]{tool => github_get_file_contents, args => { }}[/TOOL_CALL]"}
+{"text": "Can you search users github\n[TOOL_CALL]{tool => github_search_users, args => { }}[/TOOL_CALL]"}
+{"text": "Can you sqlite query\n[TOOL_CALL]{tool => sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "navigate playwright\n[TOOL_CALL]{tool => playwright_navigate, args => { }}[/TOOL_CALL]"}
+{"text": "Please get notion blocks\n[TOOL_CALL]{tool => notion_API-get-block-children, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create branch\n[TOOL_CALL]{tool => github_create_branch, args => { }}[/TOOL_CALL]"}
+{"text": "return session\n[TOOL_CALL]{tool => brain_session_return, args => { }}[/TOOL_CALL]"}
+{"text": "get user context\n[TOOL_CALL]{tool => brain_context_get_user_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you detect catalyst state\n[TOOL_CALL]{tool => brain_catalyst_detect_state, args => { }}[/TOOL_CALL]"}
+{"text": "Please delegate task with id\n[TOOL_CALL]{tool => delegate_nx_delegate_with_id, args => { }}[/TOOL_CALL]"}
+{"text": "Can you evaluate browser\n[TOOL_CALL]{tool => brain_browser_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "Please move page notion\n[TOOL_CALL]{tool => notion_API-move-page, args => { }}[/TOOL_CALL]"}
+{"text": "Please find context for task\n[TOOL_CALL]{tool => brain_memory_find_context, args => { }}[/TOOL_CALL]"}
+{"text": "send telegram message\n[TOOL_CALL]{tool => telegram_send_message, args => { }}[/TOOL_CALL]"}
+{"text": "register trigger\n[TOOL_CALL]{tool => brain_trigger_register, args => { }}[/TOOL_CALL]"}
+{"text": "Please get active context\n[TOOL_CALL]{tool => brain_context_get_active_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please query database\n[TOOL_CALL]{tool => notion_API-query-data-source, args => { }}[/TOOL_CALL]"}
+{"text": "create comment\n[TOOL_CALL]{tool => notion_API-create-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list tables sqlite\n[TOOL_CALL]{tool => sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "Please list sqlite tables\n[TOOL_CALL]{tool => brain_sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch readable\n[TOOL_CALL]{tool => fetch_fetch_readable, args => { }}[/TOOL_CALL]"}
+{"text": "Please warm session pool\n[TOOL_CALL]{tool => brain_session_warm_pool, args => { }}[/TOOL_CALL]"}
+{"text": "fork repo\n[TOOL_CALL]{tool => github_fork_repository, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch youtube transcript\n[TOOL_CALL]{tool => fetch_fetch_youtube_transcript, args => { }}[/TOOL_CALL]"}
+{"text": "get pr comments\n[TOOL_CALL]{tool => github_get_pull_request_comments, args => { }}[/TOOL_CALL]"}
+{"text": "list workflows\n[TOOL_CALL]{tool => brain_catalyst_list_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list sessions\n[TOOL_CALL]{tool => session_list, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check security paths\n[TOOL_CALL]{tool => quality_run_security_paths, args => { }}[/TOOL_CALL]"}
+{"text": "Please use skill\n[TOOL_CALL]{tool => skill, args => { }}[/TOOL_CALL]"}
+{"text": "Can you check trigger\n[TOOL_CALL]{tool => brain_trigger_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please search sessions\n[TOOL_CALL]{tool => session_search, args => { }}[/TOOL_CALL]"}
+{"text": "create org repo\n[TOOL_CALL]{tool => github_create_org_repository, args => { }}[/TOOL_CALL]"}
+{"text": "get recommendations\n[TOOL_CALL]{tool => brain_learning_get_recommendations, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp diagnostics\n[TOOL_CALL]{tool => lsp_diagnostics, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list pull requests\n[TOOL_CALL]{tool => github_list_pull_requests, args => { }}[/TOOL_CALL]"}
+{"text": "get user profile\n[TOOL_CALL]{tool => brain_context_get_user_profile, args => { }}[/TOOL_CALL]"}
+{"text": "Please get pr reviews\n[TOOL_CALL]{tool => github_get_pull_request_reviews, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch readable\n[TOOL_CALL]{tool => fetch_fetch_readable, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get notion users\n[TOOL_CALL]{tool => notion_API-get-users, args => { }}[/TOOL_CALL]"}
+{"text": "Please detect catalyst state\n[TOOL_CALL]{tool => brain_catalyst_detect_state, args => { }}[/TOOL_CALL]"}
+{"text": "Please fetch text\n[TOOL_CALL]{tool => fetch_fetch_txt, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get session\n[TOOL_CALL]{tool => brain_session_get, args => { }}[/TOOL_CALL]"}
+{"text": "Please log tool sequence\n[TOOL_CALL]{tool => brain_log_tool_sequence, args => { }}[/TOOL_CALL]"}
+{"text": "get global context\n[TOOL_CALL]{tool => brain_get_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you record learning outcome\n[TOOL_CALL]{tool => brain_learning_record_outcome, args => { }}[/TOOL_CALL]"}
+{"text": "get injected context\n[TOOL_CALL]{tool => brain_orchestration_get_injected_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please sqlite query\n[TOOL_CALL]{tool => sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "Please update pr branch\n[TOOL_CALL]{tool => github_update_pull_request_branch, args => { }}[/TOOL_CALL]"}
+{"text": "Please check agent calls\n[TOOL_CALL]{tool => quality_run_agent_call_check, args => { }}[/TOOL_CALL]"}
+{"text": "playwright get content\n[TOOL_CALL]{tool => playwright_get_content, args => { }}[/TOOL_CALL]"}
+{"text": "Can you update global context\n[TOOL_CALL]{tool => brain_update_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "inject context\n[TOOL_CALL]{tool => brain_context_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you ask question\n[TOOL_CALL]{tool => question, args => { }}[/TOOL_CALL]"}
+{"text": "Can you register trigger\n[TOOL_CALL]{tool => brain_trigger_register, args => { }}[/TOOL_CALL]"}
+{"text": "Can you sample table sqlite\n[TOOL_CALL]{tool => sqlite_sample_table, args => { }}[/TOOL_CALL]"}
+{"text": "list sessions\n[TOOL_CALL]{tool => session_list, args => { }}[/TOOL_CALL]"}
+{"text": "Please browser screenshot\n[TOOL_CALL]{tool => brain_browser_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create comment\n[TOOL_CALL]{tool => notion_API-create-a-comment, args => { }}[/TOOL_CALL]"}
+{"text": "Can you list sessions\n[TOOL_CALL]{tool => brain_session_list_mcp, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch html\n[TOOL_CALL]{tool => fetch_fetch_html, args => { }}[/TOOL_CALL]"}
+{"text": "Can you auto write memory\n[TOOL_CALL]{tool => brain_memory_auto_write, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get user context\n[TOOL_CALL]{tool => brain_context_get_user_context, args => { }}[/TOOL_CALL]"}
+{"text": "get notion self\n[TOOL_CALL]{tool => notion_API-get-self, args => { }}[/TOOL_CALL]"}
+{"text": "Can you score complexity\n[TOOL_CALL]{tool => brain_intelligence_score_complexity, args => { }}[/TOOL_CALL]"}
+{"text": "Please list issues\n[TOOL_CALL]{tool => github_list_issues, args => { }}[/TOOL_CALL]"}
+{"text": "Can you inject memory context\n[TOOL_CALL]{tool => brain_memory_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "ask question\n[TOOL_CALL]{tool => question, args => { }}[/TOOL_CALL]"}
+{"text": "glob files\n[TOOL_CALL]{tool => glob, args => { }}[/TOOL_CALL]"}
+{"text": "Please merge pull request\n[TOOL_CALL]{tool => github_merge_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "get pr status\n[TOOL_CALL]{tool => github_get_pull_request_status, args => { }}[/TOOL_CALL]"}
+{"text": "Please get bot info\n[TOOL_CALL]{tool => telegram_get_bot_info, args => { }}[/TOOL_CALL]"}
+{"text": "click browser\n[TOOL_CALL]{tool => brain_browser_click, args => { }}[/TOOL_CALL]"}
+{"text": "create pull request\n[TOOL_CALL]{tool => github_create_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "Please get style context\n[TOOL_CALL]{tool => brain_context_get_style_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please update global context\n[TOOL_CALL]{tool => brain_update_global_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please lsp symbols\n[TOOL_CALL]{tool => lsp_symbols, args => { }}[/TOOL_CALL]"}
+{"text": "read session\n[TOOL_CALL]{tool => session_read, args => { }}[/TOOL_CALL]"}
+{"text": "update mind state\n[TOOL_CALL]{tool => brain_mind_update_mind_state, args => { }}[/TOOL_CALL]"}
+{"text": "Please create org repo\n[TOOL_CALL]{tool => github_create_org_repository, args => { }}[/TOOL_CALL]"}
+{"text": "Please check security paths\n[TOOL_CALL]{tool => quality_run_security_paths, args => { }}[/TOOL_CALL]"}
+{"text": "Please retrieve notion block\n[TOOL_CALL]{tool => notion_API-retrieve-a-block, args => { }}[/TOOL_CALL]"}
+{"text": "Please auto write memory\n[TOOL_CALL]{tool => brain_memory_auto_write, args => { }}[/TOOL_CALL]"}
+{"text": "Can you move page notion\n[TOOL_CALL]{tool => notion_API-move-page, args => { }}[/TOOL_CALL]"}
+{"text": "detect catalyst state\n[TOOL_CALL]{tool => brain_catalyst_detect_state, args => { }}[/TOOL_CALL]"}
+{"text": "list pull requests\n[TOOL_CALL]{tool => github_list_pull_requests, args => { }}[/TOOL_CALL]"}
+{"text": "Can you record pattern\n[TOOL_CALL]{tool => brain_fingerprint_record_pattern, args => { }}[/TOOL_CALL]"}
+{"text": "Please describe table sqlite\n[TOOL_CALL]{tool => sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "inject memory context\n[TOOL_CALL]{tool => brain_memory_inject_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please get bmad workflows\n[TOOL_CALL]{tool => brain_context_get_bmad_workflows, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get page property\n[TOOL_CALL]{tool => notion_API-retrieve-a-page-property, args => { }}[/TOOL_CALL]"}
+{"text": "Please route task\n[TOOL_CALL]{tool => brain_intelligence_route, args => { }}[/TOOL_CALL]"}
+{"text": "Can you playwright evaluate\n[TOOL_CALL]{tool => playwright_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "Can you fetch text\n[TOOL_CALL]{tool => fetch_fetch_txt, args => { }}[/TOOL_CALL]"}
+{"text": "Please run format check\n[TOOL_CALL]{tool => quality_run_format, args => { }}[/TOOL_CALL]"}
+{"text": "evaluate browser\n[TOOL_CALL]{tool => brain_browser_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "playwright screenshot\n[TOOL_CALL]{tool => playwright_screenshot, args => { }}[/TOOL_CALL]"}
+{"text": "fetch readable\n[TOOL_CALL]{tool => fetch_fetch_readable, args => { }}[/TOOL_CALL]"}
+{"text": "playwright evaluate\n[TOOL_CALL]{tool => playwright_evaluate, args => { }}[/TOOL_CALL]"}
+{"text": "Please query sqlite\n[TOOL_CALL]{tool => brain_sqlite_query, args => { }}[/TOOL_CALL]"}
+{"text": "search memories\n[TOOL_CALL]{tool => brain_memory_search_memories, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create pull request\n[TOOL_CALL]{tool => github_create_pull_request, args => { }}[/TOOL_CALL]"}
+{"text": "run bash\n[TOOL_CALL]{tool => bash, args => { }}[/TOOL_CALL]"}
+{"text": "scan for secrets\n[TOOL_CALL]{tool => quality_run_secrets_scan, args => { }}[/TOOL_CALL]"}
+{"text": "list tables sqlite\n[TOOL_CALL]{tool => sqlite_list_tables, args => { }}[/TOOL_CALL]"}
+{"text": "Can you delegate task\n[TOOL_CALL]{tool => delegate_nx_delegate, args => { }}[/TOOL_CALL]"}
+{"text": "get active context\n[TOOL_CALL]{tool => brain_context_get_active_context, args => { }}[/TOOL_CALL]"}
+{"text": "Please web fetch\n[TOOL_CALL]{tool => webfetch, args => { }}[/TOOL_CALL]"}
+{"text": "Please check dependencies\n[TOOL_CALL]{tool => quality_run_deps_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please run tests\n[TOOL_CALL]{tool => quality_run_tests, args => { }}[/TOOL_CALL]"}
+{"text": "Can you route task\n[TOOL_CALL]{tool => brain_intelligence_route, args => { }}[/TOOL_CALL]"}
+{"text": "get product context\n[TOOL_CALL]{tool => brain_context_get_product_context, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get product context\n[TOOL_CALL]{tool => brain_context_get_product_context, args => { }}[/TOOL_CALL]"}
+{"text": "describe table sqlite\n[TOOL_CALL]{tool => sqlite_describe_table, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get recommendations\n[TOOL_CALL]{tool => brain_learning_get_recommendations, args => { }}[/TOOL_CALL]"}
+{"text": "Can you get routing history\n[TOOL_CALL]{tool => brain_intelligence_get_routing_history, args => { }}[/TOOL_CALL]"}
+{"text": "Please get orchestrator status\n[TOOL_CALL]{tool => brain_catalyst_get_orchestrator_status, args => { }}[/TOOL_CALL]"}
+{"text": "check placeholders\n[TOOL_CALL]{tool => quality_run_placehoder_check, args => { }}[/TOOL_CALL]"}
+{"text": "Please resolve library id\n[TOOL_CALL]{tool => context_resolve_library_id, args => { }}[/TOOL_CALL]"}
+{"text": "Can you create issue github\n[TOOL_CALL]{tool => github_create_issue, args => { }}[/TOOL_CALL]"}
+{"text": "Please rank memories\n[TOOL_CALL]{tool => brain_memory_rank_memories, args => { }}[/TOOL_CALL]"}
+{"text": "list sessions\n[TOOL_CALL]{tool => brain_session_list_mcp, args => { }}[/TOOL_CALL]"}

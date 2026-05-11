@@ -1,0 +1,36 @@
+{
+  "nodes": [
+    {
+      "id": "task1",
+      "node_type": "Task",
+      "label": "Test Task",
+      "properties": {},
+      "created_at": "2026-04-08T04:30:35.929029+00:00",
+      "last_accessed": "2026-04-08T04:30:35.929031+00:00"
+    },
+    {
+      "id": "agent1",
+      "node_type": null,
+      "label": "",
+      "properties": {},
+      "created_at": "2026-04-08T04:30:35.929169+00:00",
+      "last_accessed": "2026-04-08T04:30:35.929174+00:00"
+    },
+    {
+      "id": "mem_1777308235405",
+      "content": "test memory",
+      "kind": "episodic",
+      "timestamp": "2026-04-27T16:43:55.405Z"
+    }
+  ],
+  "edges": [
+    {
+      "source": "task1",
+      "target": "agent1",
+      "edge_type": "performed_by",
+      "weight": 1,
+      "properties": {},
+      "created_at": "2026-04-08T04:30:35.929151+00:00"
+    }
+  ]
+}

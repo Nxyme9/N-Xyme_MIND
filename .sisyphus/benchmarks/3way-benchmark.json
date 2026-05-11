@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-04-09T10:52:39.622439",
+  "rounds": 1,
+  "systems": {
+    "vanilla": {
+      "system": "vanilla",
+      "total_tasks": 5,
+      "successes": 2,
+      "success_rate": 0.4,
+      "avg_latency_ms": 19575.2,
+      "min_latency_ms": 11487,
+      "max_latency_ms": 30000
+    },
+    "omo": {
+      "system": "omo",
+      "total_tasks": 5,
+      "successes": 1,
+      "success_rate": 0.2,
+      "avg_latency_ms": 28088.8,
+      "min_latency_ms": 11851,
+      "max_latency_ms": 60000
+    }
+  },
+  "quality_gates": {
+    "gates": {
+      "typecheck": {
+        "name": "typecheck",
+        "passed": true,
+        "elapsed_ms": 61,
+        "exit_code": 0
+      },
+      "lint": {
+        "name": "lint",
+        "passed": true,
+        "elapsed_ms": 25,
+        "exit_code": 0
+      },
+      "secrets": {
+        "name": "secrets",
+        "passed": true,
+        "elapsed_ms": 32,
+        "exit_code": 0
+      }
+    },
+    "passed": 3,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "git_status": {
+    "changed_files": 252,
+    "has_changes": true
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "workflow_name": "bmad-generate-project-context",
+  "phase": "create",
+  "success": true,
+  "timestamp": "2026-04-12T03:24:45.711518",
+  "delegation_stats": {
+    "agents_spawned": 3,
+    "max_depth": 0,
+    "parallel_count": 0,
+    "sequential_count": 0,
+    "agent_types": {
+      "explore": 3
+    }
+  },
+  "quality_stats": {
+    "gates_passed": 0,
+    "gates_failed": 0,
+    "files_validated": 0,
+    "errors": []
+  },
+  "performance_stats": {
+    "total_duration_ms": 31723,
+    "step_times": {
+      "step-01-discover": 20.383731842041016,
+      "step-02-generate": 0.4199552536010742,
+      "step-03-complete": 10.919252872467041
+    },
+    "steps_completed": 3,
+    "steps_failed": 0
+  },
+  "benchmark_report": "# Catalyst Orchestration Benchmark Report\n**Date:** 2026-04-12T03:24:45.711447\n**Workflow:** bmad-generate-project-context\n**Phase:** create\n\n## Summary\n- **Status:** SUCCESS\n- **Duration:** 31723ms\n- **Quality Score:** 0.0%\n\n## Delegation Metrics\n- Agents Spawned: 3\n- Agent Types: {'explore': 3}\n\n## Quality Gates\n- Gates Passed: 0\n- Gates Failed: 0\n- Files Validated: 0\n\n## Steps\n| Step | Status |\n|------|--------|\n| step-01-discover | PASS |\n| step-02-generate | PASS |\n| step-03-complete | PASS |\n"
+}

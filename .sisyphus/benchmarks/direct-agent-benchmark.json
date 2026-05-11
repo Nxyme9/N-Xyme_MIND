@@ -1,0 +1,304 @@
+{
+  "results": [
+    {
+      "round": 1,
+      "timestamp": "2026-04-09T07:13:53.857213",
+      "catalyst": [
+        {
+          "success": true,
+          "latency_ms": 100.0666618347168,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.06165504455566,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0641345977783,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0631809234619,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.06556510925293,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ],
+      "sisyphus": [
+        {
+          "success": true,
+          "latency_ms": 100.0661849975586,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.06260871887207,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0653266906738,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0646114349365,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0190734863281,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-04-09T07:13:57.257973",
+      "catalyst": [
+        {
+          "success": true,
+          "latency_ms": 100.06189346313477,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.06308555603027,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0619888305664,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0615119934082,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0629425048828,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ],
+      "sisyphus": [
+        {
+          "success": true,
+          "latency_ms": 100.06332397460938,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.06308555603027,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0615119934082,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.08487701416016,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.063419342041,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-04-09T07:14:00.658763",
+      "catalyst": [
+        {
+          "success": true,
+          "latency_ms": 100.06141662597656,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.03232955932617,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0622272491455,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0615119934082,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0617504119873,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ],
+      "sisyphus": [
+        {
+          "success": true,
+          "latency_ms": 100.06332397460938,
+          "tokens_used": 50,
+          "level": "L1",
+          "task": "trivial_arithmetic"
+        },
+        {
+          "success": true,
+          "latency_ms": 100.06308555603027,
+          "tokens_used": 200,
+          "level": "L2",
+          "task": "simple_file_list"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0619888305664,
+          "tokens_used": 500,
+          "level": "L3",
+          "task": "moderate_search"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.0615119934082,
+          "tokens_used": 1500,
+          "level": "L4",
+          "task": "complex_analysis"
+        },
+        {
+          "success": true,
+          "latency_ms": 500.06675720214844,
+          "tokens_used": 2500,
+          "level": "L5",
+          "task": "architectural_design"
+        }
+      ]
+    }
+  ],
+  "averages": {
+    "catalyst": {
+      "L1": {
+        "avg_latency_ms": 100.06332397460938,
+        "avg_tokens": 50,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L2": {
+        "avg_latency_ms": 100.0523567199707,
+        "avg_tokens": 200,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L3": {
+        "avg_latency_ms": 500.0627835591634,
+        "avg_tokens": 500,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L4": {
+        "avg_latency_ms": 500.0620683034261,
+        "avg_tokens": 1500,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L5": {
+        "avg_latency_ms": 500.063419342041,
+        "avg_tokens": 2500,
+        "success_rate": 1.0,
+        "samples": 3
+      }
+    },
+    "sisyphus": {
+      "L1": {
+        "avg_latency_ms": 100.06427764892578,
+        "avg_tokens": 50,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L2": {
+        "avg_latency_ms": 100.06292661031087,
+        "avg_tokens": 200,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L3": {
+        "avg_latency_ms": 500.0629425048828,
+        "avg_tokens": 500,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L4": {
+        "avg_latency_ms": 500.07033348083496,
+        "avg_tokens": 1500,
+        "success_rate": 1.0,
+        "samples": 3
+      },
+      "L5": {
+        "avg_latency_ms": 500.04975001017254,
+        "avg_tokens": 2500,
+        "success_rate": 1.0,
+        "samples": 3
+      }
+    }
+  }
+}

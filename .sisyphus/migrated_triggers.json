@@ -1,0 +1,198 @@
+{
+  "version": "1.0.0",
+  "migration_timestamp": "2026-04-14T22:17:11.389920",
+  "triggers": [
+    {
+      "name": "fix-typo",
+      "pattern": "fix.*typo|typo.*fix|correct.*spelling|spelling.*error",
+      "level": 1,
+      "agent": "sisyphus-junior",
+      "priority": 10,
+      "migrated_at": "2026-04-14T22:17:11.389860"
+    },
+    {
+      "name": "update-version",
+      "pattern": "update.*version|bump.*version|version.*bump|upgrade.*version",
+      "level": 1,
+      "agent": "sisyphus-junior",
+      "priority": 10,
+      "migrated_at": "2026-04-14T22:17:11.389867"
+    },
+    {
+      "name": "fix-auth-bug",
+      "pattern": "fix.*bug.*auth|fix.*bug.*security|fix.*bug.*middleware|bug.*auth|bug.*security|bug.*middleware|auth.*error|security.*issue",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 10,
+      "migrated_at": "2026-04-14T22:17:11.389869"
+    },
+    {
+      "name": "security-fix",
+      "pattern": "vulnerability|exploit|patch.*security|security.*fix|cve",
+      "level": 4,
+      "agent": "oracle",
+      "priority": 10,
+      "migrated_at": "2026-04-14T22:17:11.389871"
+    },
+    {
+      "name": "debug",
+      "pattern": "debug|trace|log.*error|stack.*trace|exception|crash",
+      "level": 2,
+      "agent": "hephaestus",
+      "priority": 9,
+      "migrated_at": "2026-04-14T22:17:11.389872"
+    },
+    {
+      "name": "rewrite",
+      "pattern": "rewrite.*entire|migrate.*entire|redesign.*entire|overhaul|restructure.*entire|complete.*rewrite",
+      "level": 5,
+      "agent": "metis",
+      "priority": 9,
+      "migrated_at": "2026-04-14T22:17:11.389873"
+    },
+    {
+      "name": "fix-bug",
+      "pattern": "fix.*bug|bug.*fix|debug|fix.*error|error.*fix|troubleshoot|resolve.*issue",
+      "level": 2,
+      "agent": "hephaestus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389874"
+    },
+    {
+      "name": "add-auth",
+      "pattern": "add.*auth|implement.*auth|jwt|authentication|middleware|oauth|sso|login.*system",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389874"
+    },
+    {
+      "name": "architecture",
+      "pattern": "architecture|system.*design|design.*system|architectural.*decision|tech.*stack",
+      "level": 4,
+      "agent": "prometheus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389875"
+    },
+    {
+      "name": "devops",
+      "pattern": "deploy|ci.*cd|docker|kubernetes|pipeline|infrastructure|terraform",
+      "level": 4,
+      "agent": "prometheus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389876"
+    },
+    {
+      "name": "add-feature",
+      "pattern": "add.*feature|implement.*feature|create.*feature|new.*feature|build.*feature",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 7,
+      "migrated_at": "2026-04-14T22:17:11.389877"
+    },
+    {
+      "name": "add-endpoint",
+      "pattern": "add.*endpoint|create.*route|api.*endpoint|new.*api|rest.*endpoint|graphql.*resolver",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 7,
+      "migrated_at": "2026-04-14T22:17:11.389878"
+    },
+    {
+      "name": "api-backend",
+      "pattern": "build.*api|api.*backend|backend.*api|new.*api.*backend",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389879"
+    },
+    {
+      "name": "data-model",
+      "pattern": "database|schema|model|migration|query|sql|orm",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 7,
+      "migrated_at": "2026-04-14T22:17:11.389879"
+    },
+    {
+      "name": "performance-fix",
+      "pattern": "slow|latency|bottleneck|optimize.*performance|memory.*leak|slow.*query|performance.*tuning",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389880"
+    },
+    {
+      "name": "code-review",
+      "pattern": "pr.*review|pull.*request.*review|review.*pull|lint|format|review.*code.*changes",
+      "level": 3,
+      "agent": "oracle",
+      "priority": 8,
+      "migrated_at": "2026-04-14T22:17:11.389881"
+    },
+    {
+      "name": "new-feature",
+      "pattern": "build.*from.*scratch|new.*module|new.*service|create.*system|implement.*system",
+      "level": 4,
+      "agent": "prometheus",
+      "priority": 7,
+      "migrated_at": "2026-04-14T22:17:11.389882"
+    },
+    {
+      "name": "refactor",
+      "pattern": "refactor|restructure|reorganize|clean.*up|code.*quality|improve.*code",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 6,
+      "migrated_at": "2026-04-14T22:17:11.389883"
+    },
+    {
+      "name": "ui-frontend",
+      "pattern": "ui|frontend|css|html|react|vue|component|styling|layout",
+      "level": 3,
+      "agent": "hephaestus",
+      "priority": 6,
+      "migrated_at": "2026-04-14T22:17:11.389884"
+    },
+    {
+      "name": "testing",
+      "pattern": "test|unit.*test|integration.*test|e2e|coverage|mock|fixture",
+      "level": 2,
+      "agent": "hephaestus",
+      "priority": 6,
+      "migrated_at": "2026-04-14T22:17:11.389884"
+    },
+    {
+      "name": "research",
+      "pattern": "research|find.*pattern|explore.*codebase|how.*does.*work|understand.*code|analyze.*code",
+      "level": 2,
+      "agent": "explore",
+      "priority": 6,
+      "migrated_at": "2026-04-14T22:17:11.389885"
+    },
+    {
+      "name": "documentation",
+      "pattern": "docs|readme|tutorial|guide|api.*doc|comment|update.*doc|write.*doc",
+      "level": 1,
+      "agent": "sisyphus-junior",
+      "priority": 7,
+      "migrated_at": "2026-04-14T22:17:11.389886"
+    },
+    {
+      "name": "config",
+      "pattern": "update.*config|change.*config|modify.*config|setup.*config|configure.*settings",
+      "level": 2,
+      "agent": "hephaestus",
+      "priority": 5,
+      "migrated_at": "2026-04-14T22:17:11.389887"
+    },
+    {
+      "name": "review",
+      "pattern": "review.*quality|quality.*review|quality.*check|code.*quality.*check",
+      "level": 3,
+      "agent": "oracle",
+      "priority": 9,
+      "migrated_at": "2026-04-14T22:17:11.389888"
+    }
+  ]
+}

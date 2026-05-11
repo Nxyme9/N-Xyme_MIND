@@ -1,0 +1,37 @@
+{
+  "workflow_name": "bmad-create-product-brief",
+  "phase": "create",
+  "success": true,
+  "timestamp": "2026-04-10T12:49:43.833826",
+  "delegation_stats": {
+    "agents_spawned": 7,
+    "max_depth": 0,
+    "parallel_count": 0,
+    "sequential_count": 0,
+    "agent_types": {
+      "explore": 5,
+      "hephaestus": 2
+    }
+  },
+  "quality_stats": {
+    "gates_passed": 0,
+    "gates_failed": 0,
+    "files_validated": 0,
+    "errors": []
+  },
+  "performance_stats": {
+    "total_duration_ms": 48689,
+    "step_times": {
+      "step-01-init": 22.82654571533203,
+      "step-01b-continue": 18.621679306030273,
+      "step-02-vision": 0.3056797981262207,
+      "step-03-users": 0.3410830497741699,
+      "step-04-metrics": 0.34278368949890137,
+      "step-05-scope": 0.3670237064361572,
+      "step-06-complete": 5.879700422286987
+    },
+    "steps_completed": 7,
+    "steps_failed": 0
+  },
+  "benchmark_report": "# Catalyst Orchestration Benchmark Report\n**Date:** 2026-04-10T12:49:43.833759\n**Workflow:** bmad-create-product-brief\n**Phase:** create\n\n## Summary\n- **Status:** SUCCESS\n- **Duration:** 48689ms\n- **Quality Score:** 0.0%\n\n## Delegation Metrics\n- Agents Spawned: 7\n- Agent Types: {'explore': 5, 'hephaestus': 2}\n\n## Quality Gates\n- Gates Passed: 0\n- Gates Failed: 0\n- Files Validated: 0\n\n## Steps\n| Step | Status |\n|------|--------|\n| step-01-init | PASS |\n| step-01b-continue | PASS |\n| step-02-vision | PASS |\n| step-03-users | PASS |\n| step-04-metrics | PASS |\n| step-05-scope | PASS |\n| step-06-complete | PASS |\n"
+}

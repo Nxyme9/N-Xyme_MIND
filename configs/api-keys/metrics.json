@@ -1,0 +1,23 @@
+{
+  "total_requests": 1,
+  "total_tokens": 41,
+  "total_errors": 0,
+  "total_rotations": 0,
+  "by_key": {
+    "openrouter-001": {
+      "requests": 1,
+      "tokens": 41,
+      "errors": 0
+    }
+  },
+  "by_model": {
+    "nvidia/nemotron-3-super-120b-a12b:free": {
+      "requests": 1,
+      "tokens": 41,
+      "errors": 0
+    }
+  },
+  "request_history": "deque([{'timestamp': '2026-04-13T17:50:08.131344', 'key': 'openrouter-001', 'model': 'nvidia/nemotron-3-super-120b-a12b:free', 'status': 200}], maxlen=1000)",
+  "error_history": "deque([], maxlen=100)",
+  "uptime_start": "2026-04-13T17:50:04.242981"
+}

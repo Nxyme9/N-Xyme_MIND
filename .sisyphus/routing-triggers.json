@@ -1,0 +1,53 @@
+{
+  "triggers": [
+    {
+      "pattern": "fix.*bug|fix.*error|fix.*crash",
+      "level": 2,
+      "agent": "hephaestus",
+      "confidence": 0.8,
+      "reason": "Bug fix - single file change"
+    },
+    {
+      "pattern": "search.*code|find.*file|locate.*function",
+      "level": 1,
+      "agent": "explore",
+      "confidence": 0.9,
+      "reason": "Code search - exploration task"
+    },
+    {
+      "pattern": "implement.*feature|add.*feature|create.*new",
+      "level": 3,
+      "agent": "hephaestus",
+      "confidence": 0.7,
+      "reason": "Feature implementation - multi-file"
+    },
+    {
+      "pattern": "review.*code|audit|analyze",
+      "level": 3,
+      "agent": "oracle",
+      "confidence": 0.8,
+      "reason": "Code review - needs architecture insight"
+    },
+    {
+      "pattern": "refactor|restructure|reorganize",
+      "level": 4,
+      "agent": "hephaestus",
+      "confidence": 0.6,
+      "reason": "Refactoring - complex multi-file change"
+    },
+    {
+      "pattern": "design.*architecture|system.*design",
+      "level": 5,
+      "agent": "metis",
+      "confidence": 0.7,
+      "reason": "Architecture design - needs planning"
+    },
+    {
+      "pattern": "typo|fix.*spelling|rename.*variable",
+      "level": 1,
+      "agent": "sisyphus-junior",
+      "confidence": 0.9,
+      "reason": "Trivial fix - single line change"
+    }
+  ]
+}

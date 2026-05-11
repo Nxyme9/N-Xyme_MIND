@@ -1,0 +1,110 @@
+{
+  "code_implementation": {
+    "id": "code_implementation",
+    "name": "Code Implementation",
+    "description": "Template for implementing code changes",
+    "category": "implementation",
+    "template": "I need you to implement the following task:\n\nTASK: {task_description}\n\nEXPECTED OUTCOME:\n- {expected_outcome}\n\nREQUIRED TOOLS: {required_tools}\n\nMUST DO:\n- {must_do}\n\nMUST NOT DO:\n- {must_not_do}\n\nCONTEXT:\n- Working directory: {working_directory}\n- Existing patterns: {existing_patterns}\n- Test location: {test_location}\n\nPlease implement this task following the above requirements.",
+    "variables": [
+      "task_description",
+      "expected_outcome",
+      "required_tools",
+      "must_do",
+      "must_not_do",
+      "working_directory",
+      "existing_patterns",
+      "test_location"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.19,
+    "usage_count": 2
+  },
+  "bug_fix": {
+    "id": "bug_fix",
+    "name": "Bug Fix",
+    "description": "Template for fixing bugs",
+    "category": "fix",
+    "template": "I need you to fix the following bug:\n\nBUG DESCRIPTION: {bug_description}\n\nEXPECTED BEHAVIOR: {expected_behavior}\n\nINVESTIGATION:\n- First, investigate the root cause\n- Check existing error handling patterns\n- Verify the fix doesn't break existing functionality\n\nFIX REQUIREMENTS:\n- Minimal changes to fix the issue\n- Follow existing code patterns\n- Add tests if applicable\n- Run existing tests to verify\n\nCONTEXT:\n- Error message: {error_message}\n- Affected files: {affected_files}\n- Related code: {related_code}\n\nPlease fix this bug following the above requirements.",
+    "variables": [
+      "bug_description",
+      "expected_behavior",
+      "error_message",
+      "affected_files",
+      "related_code"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.0,
+    "usage_count": 0
+  },
+  "code_review": {
+    "id": "code_review",
+    "name": "Code Review",
+    "description": "Template for reviewing code",
+    "category": "review",
+    "template": "Please review the following code:\n\nCODE TO REVIEW: {code_snippet}\n\nREVIEW CRITERIA:\n- Code quality and readability\n- Security vulnerabilities\n- Performance implications\n- Test coverage\n- Documentation\n\nREVIEW FORMAT:\n1. Overall assessment\n2. Strengths\n3. Issues found (with severity)\n4. Recommendations\n5. Specific line-by-line comments\n\nCONTEXT:\n- Purpose: {code_purpose}\n- Requirements: {requirements}\n- Constraints: {constraints}\n\nPlease provide a comprehensive review.",
+    "variables": [
+      "code_snippet",
+      "code_purpose",
+      "requirements",
+      "constraints"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.0,
+    "usage_count": 0
+  },
+  "research_task": {
+    "id": "research_task",
+    "name": "Research Task",
+    "description": "Template for research and investigation",
+    "category": "research",
+    "template": "I need you to research the following:\n\nRESEARCH TOPIC: {research_topic}\n\nRESEARCH GOALS:\n- {research_goals}\n\nSEARCH SCOPE:\n- {search_scope}\n\nOUTPUT FORMAT:\n- Summary of findings\n- Key patterns identified\n- Recommendations\n- References to existing code\n\nCONTEXT:\n- Project structure: {project_structure}\n- Existing patterns: {existing_patterns}\n- Constraints: {constraints}\n\nPlease conduct thorough research and provide actionable findings.",
+    "variables": [
+      "research_topic",
+      "research_goals",
+      "search_scope",
+      "project_structure",
+      "existing_patterns",
+      "constraints"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.0,
+    "usage_count": 0
+  },
+  "test_writing": {
+    "id": "test_writing",
+    "name": "Test Writing",
+    "description": "Template for writing tests",
+    "category": "testing",
+    "template": "I need you to write tests for the following:\n\nCODE TO TEST: {code_to_test}\n\nTEST REQUIREMENTS:\n- {test_requirements}\n\nTEST TYPES:\n- Unit tests for individual functions\n- Integration tests for component interactions\n- Edge case coverage\n- Error handling verification\n\nTEST FRAMEWORK: {test_framework}\nTEST LOCATION: {test_location}\n\nCONTEXT:\n- Existing test patterns: {existing_test_patterns}\n- Mock requirements: {mock_requirements}\n- Coverage target: {coverage_target}\n\nPlease write comprehensive tests following the above requirements.",
+    "variables": [
+      "code_to_test",
+      "test_requirements",
+      "test_framework",
+      "test_location",
+      "existing_test_patterns",
+      "mock_requirements",
+      "coverage_target"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.0,
+    "usage_count": 0
+  },
+  "documentation": {
+    "id": "documentation",
+    "name": "Documentation",
+    "description": "Template for writing documentation",
+    "category": "documentation",
+    "template": "I need you to write documentation for:\n\nTOPIC: {documentation_topic}\n\nDOCUMENTATION TYPE: {doc_type}\n\nTARGET AUDIENCE: {target_audience}\n\nDOCUMENTATION STRUCTURE:\n- Overview\n- Installation/Setup\n- Usage Examples\n- API Reference\n- Troubleshooting\n\nCONTEXT:\n- Code location: {code_location}\n- Existing docs: {existing_docs}\n- Style guide: {style_guide}\n\nPlease write clear, comprehensive documentation.",
+    "variables": [
+      "documentation_topic",
+      "doc_type",
+      "target_audience",
+      "code_location",
+      "existing_docs",
+      "style_guide"
+    ],
+    "version": "1.0",
+    "effectiveness": 0.0,
+    "usage_count": 0
+  }
+}

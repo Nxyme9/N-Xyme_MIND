@@ -1,0 +1,278 @@
+{
+  "timestamp": "2026-04-14 09:30:40",
+  "total_tests": 31,
+  "total_success": 29,
+  "total_time_ms": 6272.77,
+  "results": {
+    "memory": [
+      {
+        "avg_ms": 0,
+        "min_ms": 0,
+        "max_ms": 0,
+        "runs": 3,
+        "success": false,
+        "result": "{'error': \"memory_auto_write() got an unexpected keyword argument 'task'\"}"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'error', 'message': \"module 'packages.memory_store.mcp_server' has no attribute 'rank_mem"
+      }
+    ],
+    "fingerprint": [
+      {
+        "avg_ms": 0.1,
+        "min_ms": 0.1,
+        "max_ms": 0.11,
+        "runs": 3,
+        "success": true,
+        "result": "{'current_task': 'benchmark test', 'context': '', 'sessions_found': 0, 'status': 'success'}"
+      },
+      {
+        "avg_ms": 0.39,
+        "min_ms": 0.38,
+        "max_ms": 0.42,
+        "runs": 3,
+        "success": true,
+        "result": "{'style': {'tool': 'get_style_context', 'exists': False, 'content': '', 'error': \"No module named 'n"
+      }
+    ],
+    "tool_patterns": [
+      {
+        "avg_ms": 0.83,
+        "min_ms": 0.8,
+        "max_ms": 0.87,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'patterns_identified': 4, 'tool_pairs_analyzed': 10, 'patterns': {'code_modifi"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "['read', 'edit', 'lsp_diagnostics', 'write']"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'total_patterns': 4, 'total_occurrences': 8085, 'patterns': [{'name': 'file_se"
+      }
+    ],
+    "outcome_logger": [
+      {
+        "avg_ms": 0.19,
+        "min_ms": 0.18,
+        "max_ms": 0.19,
+        "runs": 3,
+        "success": true,
+        "result": "[DelegationOutcome(task_id='42316fbf-9236-4c83-bf6d-235a4867c888', task_description='add a feature',"
+      },
+      {
+        "avg_ms": 0.09,
+        "min_ms": 0.09,
+        "max_ms": 0.1,
+        "runs": 3,
+        "success": true,
+        "result": "{'explore': {'total': 138, 'success_rate': 1.0, 'avg_latency_ms': 0.05, 'successes': 138}, 'hephaest"
+      }
+    ],
+    "intent_vectors": [
+      {
+        "avg_ms": 1.66,
+        "min_ms": 1.65,
+        "max_ms": 1.67,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'entries_count': 81, 'index_ready': True}"
+      },
+      {
+        "avg_ms": 0.02,
+        "min_ms": 0.01,
+        "max_ms": 0.02,
+        "runs": 3,
+        "success": true,
+        "result": "[{'query': 'test routing', 'agent': 'explore', 'score': 0.9480746984481812, 'success_rate': 1.0, 'av"
+      },
+      {
+        "avg_ms": 0.01,
+        "min_ms": 0.01,
+        "max_ms": 0.02,
+        "runs": 3,
+        "success": true,
+        "result": "['hephaestus', 'explore', 'explore']"
+      }
+    ],
+    "intent_predictor": [
+      {
+        "avg_ms": 0.03,
+        "min_ms": 0.03,
+        "max_ms": 0.03,
+        "runs": 3,
+        "success": true,
+        "result": "[{'agent': 'hephaestus', 'score': 0.8970715641975403, 'reason': 'intent_vector'}, {'agent': 'unknown"
+      },
+      {
+        "avg_ms": 0.02,
+        "min_ms": 0.02,
+        "max_ms": 0.02,
+        "runs": 3,
+        "success": true,
+        "result": "['hephaestus', 'unknown', 'explore']"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": null
+      }
+    ],
+    "pre_warm": [
+      {
+        "avg_ms": 0.1,
+        "min_ms": 0.09,
+        "max_ms": 0.11,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'warmed_agents': ['hephaestus', 'explore'], 'predictions': [{'agent': 'hephaes"
+      },
+      {
+        "avg_ms": 0.03,
+        "min_ms": 0.03,
+        "max_ms": 0.03,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'warmed_agents': ['hephaestus', 'explore', 'oracle']}"
+      }
+    ],
+    "self_learning": [
+      {
+        "avg_ms": 0.66,
+        "min_ms": 0.65,
+        "max_ms": 0.68,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'patterns_identified': 0, 'total_failures': 0, 'patterns': []}"
+      },
+      {
+        "avg_ms": 0.2,
+        "min_ms": 0.2,
+        "max_ms": 0.21,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'agent': 'hephaestus', 'health': 'healthy', 'success_rate': 1.0, 'total_tasks'"
+      },
+      {
+        "avg_ms": 0.21,
+        "min_ms": 0.19,
+        "max_ms": 0.24,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'agent': 'explore', 'health': 'healthy', 'success_rate': 1.0, 'total_tasks': 1"
+      },
+      {
+        "avg_ms": 0.17,
+        "min_ms": 0.17,
+        "max_ms": 0.17,
+        "runs": 3,
+        "success": true,
+        "result": "{'status': 'success', 'agent': 'oracle', 'health': 'healthy', 'success_rate': 1.0, 'total_tasks': 1,"
+      }
+    ],
+    "auto_reflection": [
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": null
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.01,
+        "runs": 3,
+        "success": true,
+        "result": "Reflection(what_tried='complex implementation', what_failed='timeout after 5 minutes', why_it_failed"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "[{'what_tried': 'complex implementation', 'what_failed': 'timeout after 5 minutes', 'why_it_failed':"
+      }
+    ],
+    "orchestration": [
+      {
+        "avg_ms": 0.04,
+        "min_ms": 0.02,
+        "max_ms": 0.05,
+        "runs": 3,
+        "success": true,
+        "result": "task_7142d736"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "{'error': 'Task not found', 'task_id': 'spawn'}"
+      },
+      {
+        "avg_ms": 0.01,
+        "min_ms": 0.01,
+        "max_ms": 0.01,
+        "runs": 3,
+        "success": true,
+        "result": "task_9f52f7a9"
+      }
+    ],
+    "routing_e2e": [
+      {
+        "avg_ms": 0.03,
+        "min_ms": 0.03,
+        "max_ms": 0.04,
+        "runs": 3,
+        "success": true,
+        "result": "['explore', 'hephaestus', 'librarian']"
+      },
+      {
+        "avg_ms": 0,
+        "min_ms": 0,
+        "max_ms": 0,
+        "runs": 3,
+        "success": false,
+        "result": "{'error': \"memory_auto_write() got an unexpected keyword argument 'task'\"}"
+      },
+      {
+        "avg_ms": 0.05,
+        "min_ms": 0.05,
+        "max_ms": 0.05,
+        "runs": 3,
+        "success": true,
+        "result": "task_56bd9064"
+      },
+      {
+        "avg_ms": 0.0,
+        "min_ms": 0.0,
+        "max_ms": 0.0,
+        "runs": 3,
+        "success": true,
+        "result": "{'error': 'Task not found', 'task_id': 'task_7e531762'}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json",
+  "model_fallback": true,
+  "default_run_agent": "sisyphus",
+  "git_master": {
+    "commit_footer": false,
+    "include_co_authored_by": false,
+    "git_env_prefix": "GIT_MASTER=1"
+  },
+  "agents": {
+    "sisyphus": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "primary", "description": "Primary orchestrator — plans, delegates, drives tasks to completion", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "catalyst": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "N-Xyme's personal master orchestrator. CORE DIRECTIVE: Match user's speed — Mach 10 when flowing (fast responses, multiple thoughts), pause when friction detected (silence, restarts, explicit corrections). STATES: FLOW=parallel execution (spawn agents simultaneously), FRICTION=serial clarification (one step at a time, verify), ADAPT=post-friction recovery (small steps, frequent checks). TRIGGERS: 'document'→bmad-document-project, 'generate context'→bmad-generate-project-context, 'what did we do'→recall-agent-history. NEVER push through friction. When in doubt, ask. When stuck, pause.", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "prometheus": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "Strategic planning — interview mode, detailed implementation plans", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "oracle": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "Architecture review — validates design decisions, catches flaws", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "metis": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "Gap analysis — finds missing pieces before work starts", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "momus": { "model": "opencode/minimax-m2.5-free", "variant": "high", "mode": "all", "description": "Adversarial review — red-team analysis, finds edge cases", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "hephaestus": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Implementation agent — writes code, creates files, builds features", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "atlas": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Plan executor — step-by-step implementation from plans", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "explore": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "Codebase search — fast grep, file discovery, pattern matching", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "librarian": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "External research — web search, documentation, stack overflow", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "sisyphus-junior": { "model": "gguf/qwen2.5-0.5b-instruct-q4_k_m", "mode": "subagent", "description": "Light tasks — quick fixes, simple modifications", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "rosetta": { "model": "gguf/rosetta-v13-f16", "mode": "all", "description": "Local tool calling — translates natural language to MCP tool calls (3-6x faster than cloud)", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "multimodal-looker": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "mode": "all", "description": "Vision agent — image, video, audio analysis", "fallback_models": ["opencode/minimax-m2.5-free"] }
+  },
+  "categories": {
+    "visual-engineering": { "model": "opencode/minimax-m2.5-free", "variant": "medium", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "UI/UX, styling, animations, design work" },
+    "deep": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Complex reasoning, research, autonomous implementation (consolidated from ultrabrain, artistry, unspecified-high)" },
+    "quick": { "model": "opencode/minimax-m2.5-free", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Trivial tasks, quick fixes (consolidated from quick, unspecified-low)" },
+    "routing": { "model": "opencode/minimax-m2.5-free", "description": "For delegation and routing only - DO NOT write code", "fallback_models": ["opencode/minimax-m2.5-free"] },
+    "tool-call": { "model": "gguf/rosetta-v13-f16", "description": "Local tool calling - faster than cloud (use for quick tool generation)", "fallback_models": ["gguf/qwen2.5-0.5b-instruct-q4_k_m"] },
+    "writing": { "model": "opencode/minimax-m2.5-free", "variant": "high", "fallback_models": ["opencode/minimax-m2.5-free"], "description": "Documentation, prose, technical writing" }
+  },
+  "background_task": {
+    "defaultConcurrency": 64,
+    "staleTimeoutMs": 300000,
+    "providerConcurrency": { "opencode": 80 },
+    "modelConcurrency": { "opencode/qwen3.6-plus-free": 8, "opencode/mimo-v2-pro-free": 32, "opencode/minimax-m2.5-free": 64, "opencode/kimi-k2.5-free": 32, "opencode/mimo-v2-omni-free": 16 }
+  },
+  "disabled_hooks": [
+    "anthropic-context-window-limit-recovery",
+    "legacy-plugin-toast"
+  ],
+  "experimental": {
+    "aggressive_truncation": true,
+    "truncate_all_tool_outputs": true,
+    "preemptive_compaction": false,
+    "max_tools": 20,
+    "disable_omo_env": true,
+    "dynamic_context_pruning": {
+      "enabled": true,
+      "notification": "minimal",
+      "turn_protection": {
+        "enabled": true,
+        "turns": 3
+      },
+      "protected_tools": ["task", "todowrite", "todoread", "lsp_rename", "session_read", "session_write", "session_search"],
+      "strategies": {
+        "deduplication": { "enabled": true },
+        "supersede_writes": { "enabled": true, "aggressive": false },
+        "purge_errors": { "enabled": true, "turns": 5 }
+      }
+    }
+  }
+}

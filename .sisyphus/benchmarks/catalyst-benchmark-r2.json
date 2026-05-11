@@ -1,0 +1,548 @@
+{
+  "timestamp": "2026-04-09T06:15:18.045095",
+  "rounds": 5,
+  "baseline_stats": {
+    "total_delegations": 448,
+    "success_rate": 0.9910714285714286,
+    "agent_stats": {
+      "hephaestus": {
+        "success": 402,
+        "total": 402,
+        "success_rate": 1.0,
+        "avg_latency_ms": 38.66634349822998
+      },
+      "sisyphus-junior": {
+        "success": 8,
+        "total": 8,
+        "success_rate": 1.0,
+        "avg_latency_ms": 75.0
+      },
+      "prometheus": {
+        "success": 2,
+        "total": 2,
+        "success_rate": 1.0,
+        "avg_latency_ms": 150.0
+      },
+      "metis": {
+        "success": 4,
+        "total": 4,
+        "success_rate": 1.0,
+        "avg_latency_ms": 100.0
+      },
+      "test": {
+        "success": 18,
+        "total": 18,
+        "success_rate": 1.0
+      },
+      "a": {
+        "success": 8,
+        "total": 8,
+        "success_rate": 1.0
+      },
+      "unknown": {
+        "success": 0,
+        "total": 4,
+        "success_rate": 0.0,
+        "avg_latency_ms": 0.4190206527709961
+      },
+      "explore": {
+        "success": 2,
+        "total": 2,
+        "success_rate": 1.0,
+        "avg_latency_ms": 0.5276203155517578
+      }
+    }
+  },
+  "quality_gates": [
+    {
+      "gates": {
+        "typecheck": {
+          "name": "typecheck",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "lint": {
+          "name": "lint",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "format": {
+          "name": "format",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        },
+        "placeholder": {
+          "name": "placeholder",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        }
+      },
+      "passed_count": 4,
+      "total_count": 4,
+      "pass_rate": 1.0
+    },
+    {
+      "gates": {
+        "typecheck": {
+          "name": "typecheck",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 5,
+          "error": null
+        },
+        "lint": {
+          "name": "lint",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "format": {
+          "name": "format",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "placeholder": {
+          "name": "placeholder",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        }
+      },
+      "passed_count": 4,
+      "total_count": 4,
+      "pass_rate": 1.0
+    },
+    {
+      "gates": {
+        "typecheck": {
+          "name": "typecheck",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        },
+        "lint": {
+          "name": "lint",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "format": {
+          "name": "format",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "placeholder": {
+          "name": "placeholder",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        }
+      },
+      "passed_count": 4,
+      "total_count": 4,
+      "pass_rate": 1.0
+    },
+    {
+      "gates": {
+        "typecheck": {
+          "name": "typecheck",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        },
+        "lint": {
+          "name": "lint",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "format": {
+          "name": "format",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "placeholder": {
+          "name": "placeholder",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 3,
+          "error": null
+        }
+      },
+      "passed_count": 4,
+      "total_count": 4,
+      "pass_rate": 1.0
+    },
+    {
+      "gates": {
+        "typecheck": {
+          "name": "typecheck",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 3,
+          "error": null
+        },
+        "lint": {
+          "name": "lint",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "format": {
+          "name": "format",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 1,
+          "error": null
+        },
+        "placeholder": {
+          "name": "placeholder",
+          "passed": true,
+          "exit_code": 0,
+          "elapsed_ms": 2,
+          "error": null
+        }
+      },
+      "passed_count": 4,
+      "total_count": 4,
+      "pass_rate": 1.0
+    }
+  ],
+  "orchestration_metrics": [
+    {
+      "total_delegations": 448,
+      "success_rate": 0.9910714285714286,
+      "agent_stats": {
+        "hephaestus": {
+          "success": 402,
+          "total": 402,
+          "success_rate": 1.0,
+          "avg_latency_ms": 38.66634349822998
+        },
+        "sisyphus-junior": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0,
+          "avg_latency_ms": 75.0
+        },
+        "prometheus": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 150.0
+        },
+        "metis": {
+          "success": 4,
+          "total": 4,
+          "success_rate": 1.0,
+          "avg_latency_ms": 100.0
+        },
+        "test": {
+          "success": 18,
+          "total": 18,
+          "success_rate": 1.0
+        },
+        "a": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0
+        },
+        "unknown": {
+          "success": 0,
+          "total": 4,
+          "success_rate": 0.0,
+          "avg_latency_ms": 0.4190206527709961
+        },
+        "explore": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 0.5276203155517578
+        }
+      }
+    },
+    {
+      "total_delegations": 448,
+      "success_rate": 0.9910714285714286,
+      "agent_stats": {
+        "hephaestus": {
+          "success": 402,
+          "total": 402,
+          "success_rate": 1.0,
+          "avg_latency_ms": 38.66634349822998
+        },
+        "sisyphus-junior": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0,
+          "avg_latency_ms": 75.0
+        },
+        "prometheus": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 150.0
+        },
+        "metis": {
+          "success": 4,
+          "total": 4,
+          "success_rate": 1.0,
+          "avg_latency_ms": 100.0
+        },
+        "test": {
+          "success": 18,
+          "total": 18,
+          "success_rate": 1.0
+        },
+        "a": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0
+        },
+        "unknown": {
+          "success": 0,
+          "total": 4,
+          "success_rate": 0.0,
+          "avg_latency_ms": 0.4190206527709961
+        },
+        "explore": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 0.5276203155517578
+        }
+      }
+    },
+    {
+      "total_delegations": 448,
+      "success_rate": 0.9910714285714286,
+      "agent_stats": {
+        "hephaestus": {
+          "success": 402,
+          "total": 402,
+          "success_rate": 1.0,
+          "avg_latency_ms": 38.66634349822998
+        },
+        "sisyphus-junior": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0,
+          "avg_latency_ms": 75.0
+        },
+        "prometheus": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 150.0
+        },
+        "metis": {
+          "success": 4,
+          "total": 4,
+          "success_rate": 1.0,
+          "avg_latency_ms": 100.0
+        },
+        "test": {
+          "success": 18,
+          "total": 18,
+          "success_rate": 1.0
+        },
+        "a": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0
+        },
+        "unknown": {
+          "success": 0,
+          "total": 4,
+          "success_rate": 0.0,
+          "avg_latency_ms": 0.4190206527709961
+        },
+        "explore": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 0.5276203155517578
+        }
+      }
+    },
+    {
+      "total_delegations": 448,
+      "success_rate": 0.9910714285714286,
+      "agent_stats": {
+        "hephaestus": {
+          "success": 402,
+          "total": 402,
+          "success_rate": 1.0,
+          "avg_latency_ms": 38.66634349822998
+        },
+        "sisyphus-junior": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0,
+          "avg_latency_ms": 75.0
+        },
+        "prometheus": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 150.0
+        },
+        "metis": {
+          "success": 4,
+          "total": 4,
+          "success_rate": 1.0,
+          "avg_latency_ms": 100.0
+        },
+        "test": {
+          "success": 18,
+          "total": 18,
+          "success_rate": 1.0
+        },
+        "a": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0
+        },
+        "unknown": {
+          "success": 0,
+          "total": 4,
+          "success_rate": 0.0,
+          "avg_latency_ms": 0.4190206527709961
+        },
+        "explore": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 0.5276203155517578
+        }
+      }
+    },
+    {
+      "total_delegations": 448,
+      "success_rate": 0.9910714285714286,
+      "agent_stats": {
+        "hephaestus": {
+          "success": 402,
+          "total": 402,
+          "success_rate": 1.0,
+          "avg_latency_ms": 38.66634349822998
+        },
+        "sisyphus-junior": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0,
+          "avg_latency_ms": 75.0
+        },
+        "prometheus": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 150.0
+        },
+        "metis": {
+          "success": 4,
+          "total": 4,
+          "success_rate": 1.0,
+          "avg_latency_ms": 100.0
+        },
+        "test": {
+          "success": 18,
+          "total": 18,
+          "success_rate": 1.0
+        },
+        "a": {
+          "success": 8,
+          "total": 8,
+          "success_rate": 1.0
+        },
+        "unknown": {
+          "success": 0,
+          "total": 4,
+          "success_rate": 0.0,
+          "avg_latency_ms": 0.4190206527709961
+        },
+        "explore": {
+          "success": 2,
+          "total": 2,
+          "success_rate": 1.0,
+          "avg_latency_ms": 0.5276203155517578
+        }
+      }
+    }
+  ],
+  "summary": {
+    "avg_gate_pass_rate": 1.0,
+    "delegations_this_run": 0,
+    "final_success_rate": 0.9910714285714286,
+    "agent_breakdown": {
+      "hephaestus": {
+        "success": 402,
+        "total": 402,
+        "success_rate": 1.0,
+        "avg_latency_ms": 38.66634349822998
+      },
+      "sisyphus-junior": {
+        "success": 8,
+        "total": 8,
+        "success_rate": 1.0,
+        "avg_latency_ms": 75.0
+      },
+      "prometheus": {
+        "success": 2,
+        "total": 2,
+        "success_rate": 1.0,
+        "avg_latency_ms": 150.0
+      },
+      "metis": {
+        "success": 4,
+        "total": 4,
+        "success_rate": 1.0,
+        "avg_latency_ms": 100.0
+      },
+      "test": {
+        "success": 18,
+        "total": 18,
+        "success_rate": 1.0
+      },
+      "a": {
+        "success": 8,
+        "total": 8,
+        "success_rate": 1.0
+      },
+      "unknown": {
+        "success": 0,
+        "total": 4,
+        "success_rate": 0.0,
+        "avg_latency_ms": 0.4190206527709961
+      },
+      "explore": {
+        "success": 2,
+        "total": 2,
+        "success_rate": 1.0,
+        "avg_latency_ms": 0.5276203155517578
+      }
+    }
+  }
+}

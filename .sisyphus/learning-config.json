@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "rerank_enabled": true,
+  "consolidate_enabled": false,
+  "forget_enabled": false,
+  "tempr_enabled": true,
+  "min_confidence": 0.8,
+  "exploration_rate": 0.2,
+  "consolidation_threshold": 0.95,
+  "learning_cycle_minutes": 120,
+  "feedback_ttl_days": 90,
+  "mandatory_retention_days": 30,
+  "db_path": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/context/memory/file_registry.db",
+  "config_path": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.sisyphus/learning-config.json",
+  "singleton_enabled": true,
+  "health_metrics_enabled": true,
+  "recovery_enabled": true,
+  "thread_safety_enabled": true,
+  "signals_enabled": true,
+  "event_bus_enabled": true,
+  "etgpo_enabled": true,
+  "evoskill_enabled": true
+}

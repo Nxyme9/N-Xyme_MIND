@@ -1,0 +1,59 @@
+{
+  "llama-3.2-3b:coding": {
+    "model_name": "llama-3.2-3b",
+    "task_type": "coding",
+    "total_runs": 2,
+    "successful_runs": 2,
+    "avg_latency_ms": 393.0,
+    "avg_tokens_per_second": 339.25,
+    "avg_cost_usd": 0.0,
+    "best_params": {
+      "temperature": 0.2,
+      "top_p": 0.9,
+      "top_k": 50,
+      "max_tokens": 4096,
+      "repetition_penalty": 1.1,
+      "frequency_penalty": 0.0,
+      "presence_penalty": 0.0
+    },
+    "last_updated": "2026-04-06T04:52:14.713500+00:00"
+  },
+  "llama-3.2-8b:coding": {
+    "model_name": "llama-3.2-8b",
+    "task_type": "coding",
+    "total_runs": 1,
+    "successful_runs": 1,
+    "avg_latency_ms": 450.0,
+    "avg_tokens_per_second": 120.0,
+    "avg_cost_usd": 0.0,
+    "best_params": {
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "top_k": 50,
+      "max_tokens": 4096,
+      "repetition_penalty": 1.1,
+      "frequency_penalty": 0.0,
+      "presence_penalty": 0.0
+    },
+    "last_updated": "2026-04-06T04:52:14.713620+00:00"
+  },
+  "opencode/qwen3.6-plus-free:coding": {
+    "model_name": "opencode/qwen3.6-plus-free",
+    "task_type": "coding",
+    "total_runs": 1,
+    "successful_runs": 1,
+    "avg_latency_ms": 1200.0,
+    "avg_tokens_per_second": 52.5,
+    "avg_cost_usd": 0.0,
+    "best_params": {
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "top_k": 50,
+      "max_tokens": 4096,
+      "repetition_penalty": 1.1,
+      "frequency_penalty": 0.0,
+      "presence_penalty": 0.0
+    },
+    "last_updated": "2026-04-06T04:52:14.713721+00:00"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-04-09T10:34:19.429510",
+  "system_state": {
+    "opencode_version": "1.4.1",
+    "plugin_loaded": true,
+    "agent_count": 18,
+    "agents": [
+      "build",
+      "compaction",
+      "explore",
+      "general",
+      "plan",
+      "summary",
+      "title",
+      "atlas",
+      "catalyst",
+      "hephaestus",
+      "librarian",
+      "metis",
+      "momus",
+      "multimodal-looker",
+      "oracle",
+      "prometheus",
+      "sisyphus",
+      "sisyphus-junior"
+    ],
+    "omo_agents_present": [
+      "sisyphus",
+      "catalyst",
+      "hephaestus",
+      "oracle",
+      "prometheus",
+      "metis",
+      "momus"
+    ],
+    "mcp_servers": {
+      "count": 13,
+      "servers": [
+        "sequential-thinking",
+        "memory",
+        "context7",
+        "filesystem",
+        "fetch",
+        "git",
+        "athena-context",
+        "trigger-guardian",
+        "nx-mind",
+        "athena"
+      ]
+    },
+    "git_changes": 248,
+    "models_available": []
+  },
+  "task_results": [
+    {
+      "task": "What is 1+1?",
+      "success": false,
+      "latency_ms": 20000,
+      "error": "timeout"
+    },
+    {
+      "task": "List 3 files in this directory",
+      "success": false,
+      "latency_ms": 20000,
+      "error": "timeout"
+    }
+  ],
+  "summary": {
+    "success_rate": 0.0,
+    "avg_latency_ms": 20000
+  }
+}

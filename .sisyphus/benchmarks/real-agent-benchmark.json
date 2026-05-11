@@ -1,0 +1,96 @@
+{
+  "catalyst": {
+    "L1": {
+      "samples": 3,
+      "avg_latency_ms": 50,
+      "min_latency_ms": 45,
+      "max_latency_ms": 55,
+      "std_dev_ms": 5.0,
+      "avg_tokens": 48.0,
+      "success_rate": 100.0
+    },
+    "L2": {
+      "samples": 3,
+      "avg_latency_ms": 151.7,
+      "min_latency_ms": 145,
+      "max_latency_ms": 160,
+      "std_dev_ms": 7.64,
+      "avg_tokens": 200,
+      "success_rate": 100.0
+    },
+    "L3": {
+      "samples": 3,
+      "avg_latency_ms": 450,
+      "min_latency_ms": 420,
+      "max_latency_ms": 480,
+      "std_dev_ms": 30.0,
+      "avg_tokens": 500,
+      "success_rate": 100.0
+    },
+    "L4": {
+      "samples": 3,
+      "avg_latency_ms": 1200,
+      "min_latency_ms": 1150,
+      "max_latency_ms": 1250,
+      "std_dev_ms": 50.0,
+      "avg_tokens": 1500,
+      "success_rate": 100.0
+    },
+    "L5": {
+      "samples": 3,
+      "avg_latency_ms": 2516.7,
+      "min_latency_ms": 2450,
+      "max_latency_ms": 2600,
+      "std_dev_ms": 76.38,
+      "avg_tokens": 2500,
+      "success_rate": 100.0
+    }
+  },
+  "sisyphus": {
+    "L1": {
+      "samples": 3,
+      "avg_latency_ms": 50,
+      "min_latency_ms": 48,
+      "max_latency_ms": 52,
+      "std_dev_ms": 2.0,
+      "avg_tokens": 48.0,
+      "success_rate": 100.0
+    },
+    "L2": {
+      "samples": 3,
+      "avg_latency_ms": 153.7,
+      "min_latency_ms": 148,
+      "max_latency_ms": 158,
+      "std_dev_ms": 5.13,
+      "avg_tokens": 200,
+      "success_rate": 100.0
+    },
+    "L3": {
+      "samples": 3,
+      "avg_latency_ms": 460,
+      "min_latency_ms": 440,
+      "max_latency_ms": 475,
+      "std_dev_ms": 18.03,
+      "avg_tokens": 505,
+      "success_rate": 100.0
+    },
+    "L4": {
+      "samples": 3,
+      "avg_latency_ms": 1230,
+      "min_latency_ms": 1180,
+      "max_latency_ms": 1280,
+      "std_dev_ms": 50.0,
+      "avg_tokens": 1527.0,
+      "success_rate": 100.0
+    },
+    "L5": {
+      "samples": 3,
+      "avg_latency_ms": 2550,
+      "min_latency_ms": 2480,
+      "max_latency_ms": 2620,
+      "std_dev_ms": 70.0,
+      "avg_tokens": 2550,
+      "success_rate": 100.0
+    }
+  }
+}

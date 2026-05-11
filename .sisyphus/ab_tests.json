@@ -1,0 +1,58 @@
+{
+  "routing_strategy_test": {
+    "id": "routing_strategy_test",
+    "name": "Routing Strategy Comparison",
+    "description": "Compare trigger-based vs predictive routing",
+    "variants": {
+      "trigger_based": {
+        "traffic_weight": 0.5,
+        "impressions": 49,
+        "successes": 45,
+        "failures": 4,
+        "total_latency_ms": 150.83478466491053
+      },
+      "predictive": {
+        "traffic_weight": 0.5,
+        "impressions": 51,
+        "successes": 36,
+        "failures": 15,
+        "total_latency_ms": 256.23570852939406
+      }
+    },
+    "status": "completed",
+    "created_at": 1775447098.1258068,
+    "completed_at": 1775447098.1293643,
+    "winner": "trigger_based",
+    "confidence": 0.9841300837596707,
+    "min_sample_size": 50,
+    "significance_level": 0.05
+  },
+  "template_test": {
+    "id": "template_test",
+    "name": "Template Comparison",
+    "description": "Compare two prompt templates",
+    "variants": {
+      "template_a": {
+        "traffic_weight": 0.5,
+        "impressions": 0,
+        "successes": 0,
+        "failures": 0,
+        "total_latency_ms": 0.0
+      },
+      "template_b": {
+        "traffic_weight": 0.5,
+        "impressions": 0,
+        "successes": 0,
+        "failures": 0,
+        "total_latency_ms": 0.0
+      }
+    },
+    "status": "running",
+    "created_at": 1775449856.3246684,
+    "completed_at": null,
+    "winner": null,
+    "confidence": 0.0,
+    "min_sample_size": 10,
+    "significance_level": 0.05
+  }
+}

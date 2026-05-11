@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-04-09T07:22:39.951177",
+  "catalyst_results": [
+    {
+      "task": "document this project",
+      "trigger_detected": "bmad-document",
+      "workflow_executed": "bmad-document",
+      "latency_ms": 0.03603800723794848,
+      "agents_spawned": [],
+      "success": true,
+      "state_detected": "adapt",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "create a code review for auth.py",
+      "trigger_detected": "bmad-catalyst-chain",
+      "workflow_executed": "bmad-catalyst-chain",
+      "latency_ms": 0.034415003028698266,
+      "agents_spawned": [],
+      "success": true,
+      "state_detected": "adapt",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "plan a new feature for user authentication",
+      "trigger_detected": "bmad-catalyst-chain",
+      "workflow_executed": "bmad-catalyst-chain",
+      "latency_ms": 0.02709199907258153,
+      "agents_spawned": [],
+      "success": true,
+      "state_detected": "adapt",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "what did we do in the last session?",
+      "trigger_detected": "bmad-memory",
+      "workflow_executed": "bmad-memory",
+      "latency_ms": 0.023023996618576348,
+      "agents_spawned": [],
+      "success": true,
+      "state_detected": "adapt",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "design architecture for a microservice",
+      "trigger_detected": "bmad-catalyst-chain",
+      "workflow_executed": "bmad-catalyst-chain",
+      "latency_ms": 0.01984699338208884,
+      "agents_spawned": [],
+      "success": true,
+      "state_detected": "adapt",
+      "execution_mode": "serial"
+    }
+  ],
+  "standard_results": [
+    {
+      "task": "document this project",
+      "trigger_detected": null,
+      "workflow_executed": null,
+      "latency_ms": 10.056150989839807,
+      "agents_spawned": [
+        "hephaestus"
+      ],
+      "success": true,
+      "state_detected": "unknown",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "create a code review for auth.py",
+      "trigger_detected": null,
+      "workflow_executed": null,
+      "latency_ms": 10.062462999485433,
+      "agents_spawned": [
+        "hephaestus"
+      ],
+      "success": true,
+      "state_detected": "unknown",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "plan a new feature for user authentication",
+      "trigger_detected": null,
+      "workflow_executed": null,
+      "latency_ms": 10.059708001790568,
+      "agents_spawned": [
+        "hephaestus"
+      ],
+      "success": true,
+      "state_detected": "unknown",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "what did we do in the last session?",
+      "trigger_detected": null,
+      "workflow_executed": null,
+      "latency_ms": 10.056451996206306,
+      "agents_spawned": [
+        "hephaestus"
+      ],
+      "success": true,
+      "state_detected": "unknown",
+      "execution_mode": "serial"
+    },
+    {
+      "task": "design architecture for a microservice",
+      "trigger_detected": null,
+      "workflow_executed": null,
+      "latency_ms": 10.054508005850948,
+      "agents_spawned": [
+        "hephaestus"
+      ],
+      "success": true,
+      "state_detected": "unknown",
+      "execution_mode": "serial"
+    }
+  ],
+  "summary": {
+    "total_catalyst_ms": 0.14041599933989346,
+    "total_standard_ms": 50.28928199317306,
+    "workflows_triggered": 5,
+    "fractal_delegations": 0
+  }
+}

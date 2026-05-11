@@ -1,0 +1,14 @@
+{
+  "per_agent_budgets": {
+    "sisyphus": 50000,
+    "oracle": 50000,
+    "prometheus": 50000,
+    "metis": 50000,
+    "momus": 50000,
+    "hephaestus": 80000,
+    "atlas": 80000,
+    "explore": 30000,
+    "librarian": 30000,
+    "sisyphus-junior": 10000
+  }
+}

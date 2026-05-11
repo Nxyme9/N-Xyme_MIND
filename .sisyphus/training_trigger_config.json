@@ -1,0 +1,9 @@
+{
+  "threshold": 50,
+  "last_check": "2026-04-15T03:15:55.008710",
+  "last_trigger": null,
+  "last_run_timestamp": null,
+  "total_runs": 0,
+  "enabled": true,
+  "pending_sequences": 2
+}

@@ -1,0 +1,223 @@
+[
+  {
+    "id": "c3a6c20e",
+    "source_session": "session-001",
+    "content": "Use FastAPI for new API endpoints",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 1.0,
+    "occurrence_count": 3,
+    "created_at": "2026-04-06T04:53:29.176820+00:00",
+    "metadata": {
+      "outcome": "success"
+    }
+  },
+  {
+    "id": "98947c55",
+    "source_session": "session-001",
+    "content": "Avoid mocking database in tests for file:/src/db.py line 42",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 0.7066666666666667,
+    "occurrence_count": 1,
+    "created_at": "2026-04-06T04:53:29.176839+00:00",
+    "metadata": {
+      "outcome": "success"
+    }
+  },
+  {
+    "id": "9710847c",
+    "source_session": "session-001",
+    "content": "Python is better than JavaScript for backend",
+    "knowledge_type": "decision",
+    "confidence": 0.8,
+    "transferability_score": 0.9333333333333333,
+    "occurrence_count": 2,
+    "created_at": "2026-04-06T04:53:29.176847+00:00",
+    "metadata": {
+      "outcome": "positive"
+    }
+  },
+  {
+    "id": "test-123",
+    "source_session": "hivemind-active",
+    "content": "test task: SUCCESS: testing hivemind",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:12:30.606260",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "test-123"
+    }
+  },
+  {
+    "id": "test_001",
+    "source_session": "hivemind-active",
+    "content": "Test task for HIvEMIND: Successfully tested memory integration",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:17:01.874071",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "test_001"
+    }
+  },
+  {
+    "id": "test_002",
+    "source_session": "hivemind-active",
+    "content": "Test NX-HIvEMIND: Outcome test",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:19:14.879345",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "test_002"
+    }
+  },
+  {
+    "id": "test_003",
+    "source_session": "hivemind-active",
+    "content": "Fresh session test: Testing cross-session",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:28:07.637458",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "test_003"
+    }
+  },
+  {
+    "id": "af3399b0",
+    "source_session": "hivemind-active",
+    "content": "test task description: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.386706",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "af3399b0-7f64-4803-9632-f697811c8e31"
+    }
+  },
+  {
+    "id": "af621ae3",
+    "source_session": "hivemind-active",
+    "content": "manual task: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.397407",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "af621ae3-e137-4d48-9828-fda29df69f10"
+    }
+  },
+  {
+    "id": "4769a644",
+    "source_session": "hivemind-active",
+    "content": "failing task: FAILED: Simulated failure",
+    "knowledge_type": "outcome",
+    "confidence": 0.5,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-04-07T01:46:37.429245",
+    "metadata": {
+      "outcome": "failed",
+      "task_id": "4769a644-4664-4cb8-8ff9-7b7e62e34aa8"
+    }
+  },
+  {
+    "id": "c9d54b31",
+    "source_session": "hivemind-active",
+    "content": "test task description: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:11:45.520842",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "c9d54b31-bfca-4141-b020-f28f5c66ef8c"
+    }
+  },
+  {
+    "id": "5c0ef332",
+    "source_session": "hivemind-active",
+    "content": "manual task: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:11:45.534219",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "5c0ef332-bd80-43bf-9886-c2a94cd31903"
+    }
+  },
+  {
+    "id": "b3ce5527",
+    "source_session": "hivemind-active",
+    "content": "failing task: FAILED: Simulated failure",
+    "knowledge_type": "outcome",
+    "confidence": 0.5,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:11:45.571103",
+    "metadata": {
+      "outcome": "failed",
+      "task_id": "b3ce5527-f978-4a8d-9629-1610497717da"
+    }
+  },
+  {
+    "id": "f753c3a4",
+    "source_session": "hivemind-active",
+    "content": "test task description: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:24:06.672305",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "f753c3a4-455e-404b-886b-30462cd3181f"
+    }
+  },
+  {
+    "id": "9152c1e6",
+    "source_session": "hivemind-active",
+    "content": "manual task: SUCCESS",
+    "knowledge_type": "outcome",
+    "confidence": 0.9,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:24:06.688986",
+    "metadata": {
+      "outcome": "success",
+      "task_id": "9152c1e6-8514-46b5-90af-46ea862ac845"
+    }
+  },
+  {
+    "id": "7bd956cf",
+    "source_session": "hivemind-active",
+    "content": "failing task: FAILED: Simulated failure",
+    "knowledge_type": "outcome",
+    "confidence": 0.5,
+    "transferability_score": 0.8,
+    "occurrence_count": 1,
+    "created_at": "2026-05-11T21:24:06.703018",
+    "metadata": {
+      "outcome": "failed",
+      "task_id": "7bd956cf-d90c-4640-8c7f-24328e7bf2ef"
+    }
+  }
+]

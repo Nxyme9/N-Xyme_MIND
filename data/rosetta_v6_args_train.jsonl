@@ -1,0 +1,124 @@
+{"text": "search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Please search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Can you search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "Could you search memory for authentication tokens\n[TOOL_CALL]{tool => \"memory_search\", args => { --query \"authentication tokens\" }}[/TOOL_CALL]"}
+{"text": "write this to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Please write this to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Can you write this to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "Could you write this to memory: user logged in\n[TOOL_CALL]{tool => \"memory_write\", args => { --content \"user logged in\" }}[/TOOL_CALL]"}
+{"text": "route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"the right agent\" }}[/TOOL_CALL]"}
+{"text": "Please route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"the right agent\" }}[/TOOL_CALL]"}
+{"text": "Can you route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"the right agent\" }}[/TOOL_CALL]"}
+{"text": "Could you route this task to the right agent\n[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"the right agent\" }}[/TOOL_CALL]"}
+{"text": "record this outcome\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Please record this outcome\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Can you record this outcome\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "Could you record this outcome\n[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"text": "search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Please search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Can you search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "Could you search code on github for auth middleware\n[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"auth middleware\" }}[/TOOL_CALL]"}
+{"text": "list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Please list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Can you list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "Could you list issues for facebook/react\n[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"facebook\" --repo \"react\" }}[/TOOL_CALL]"}
+{"text": "get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Please get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Can you get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "Could you get file contents from github\n[TOOL_CALL]{tool => \"github_get_file\", args => { --owner \"owner\" --repo \"repo\" --path \"file.py\" }}[/TOOL_CALL]"}
+{"text": "fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Please fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Can you fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "Could you fetch the python.org homepage\n[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"https://example.com\" }}[/TOOL_CALL]"}
+{"text": "query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Please query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Can you query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "Could you query context7 docs for react\n[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/facebook/react\" --query \"hooks\" }}[/TOOL_CALL]"}
+{"text": "think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you think step by step about this problem\n[TOOL_CALL]{tool => \"sequential_thinking\", args => {  }}[/TOOL_CALL]"}
+{"text": "navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Please navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Can you navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Could you navigate to github.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Please click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Can you click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "Could you click the login button\n[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"#login\" }}[/TOOL_CALL]"}
+{"text": "fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"user\" }}[/TOOL_CALL]"}
+{"text": "Please fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"user\" }}[/TOOL_CALL]"}
+{"text": "Can you fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"user\" }}[/TOOL_CALL]"}
+{"text": "Could you fill in the username field\n[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"#username\" --value \"user\" }}[/TOOL_CALL]"}
+{"text": "get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you get the page title\n[TOOL_CALL]{tool => \"browser_get_text\", args => {  }}[/TOOL_CALL]"}
+{"text": "read the README.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Please read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Can you read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "Could you read the readme.md file\n[TOOL_CALL]{tool => \"read_file\", args => { --path \"README.md\" }}[/TOOL_CALL]"}
+{"text": "write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --path \"test.txt\" --content \"hello world\" }}[/TOOL_CALL]"}
+{"text": "Please write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --path \"test.txt\" --content \"hello world\" }}[/TOOL_CALL]"}
+{"text": "Can you write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --path \"test.txt\" --content \"hello world\" }}[/TOOL_CALL]"}
+{"text": "Could you write hello world to test.txt\n[TOOL_CALL]{tool => \"write_file\", args => { --path \"test.txt\" --content \"hello world\" }}[/TOOL_CALL]"}
+{"text": "list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you list files in current directory\n[TOOL_CALL]{tool => \"list_directory\", args => {  }}[/TOOL_CALL]"}
+{"text": "query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"text": "Please query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"text": "Can you query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"text": "Could you query the database\n[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"SELECT * FROM users\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"text": "list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you list all tables\n[TOOL_CALL]{tool => \"sqlite_list_tables\", args => {  }}[/TOOL_CALL]"}
+{"text": "check system health\n[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"text": "Please check system health\n[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"text": "Can you check system health\n[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"text": "Could you check system health\n[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"text": "list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you list all sessions\n[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"text": "get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Please get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Can you get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Could you get info for session 123\n[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Please read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Can you read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "Could you read messages from session 123\n[TOOL_CALL]{tool => \"session_read\", args => { --session_id \"123\" }}[/TOOL_CALL]"}
+{"text": "search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Please search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Can you search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "Could you search sessions for auth\n[TOOL_CALL]{tool => \"session_search\", args => { --query \"auth\" }}[/TOOL_CALL]"}
+{"text": "write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"Important info\" }}[/TOOL_CALL]"}
+{"text": "Please write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"Important info\" }}[/TOOL_CALL]"}
+{"text": "Can you write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"Important info\" }}[/TOOL_CALL]"}
+{"text": "Could you write to knowledge base\n[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"Important info\" }}[/TOOL_CALL]"}
+{"text": "create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you create issue for bug report\n[TOOL_CALL]{tool => \"github_create_issue\", args => {  }}[/TOOL_CALL]"}
+{"text": "create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you create pull request\n[TOOL_CALL]{tool => \"github_create_pr\", args => {  }}[/TOOL_CALL]"}
+{"text": "navigate to url https://example.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Please navigate to url https://example.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Can you navigate to url https://example.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "Could you navigate to url https://example.com\n[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"https://github.com\" }}[/TOOL_CALL]"}
+{"text": "send telegram message hello world\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello!\" }}[/TOOL_CALL]"}
+{"text": "Please send telegram message hello world\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello!\" }}[/TOOL_CALL]"}
+{"text": "Can you send telegram message hello world\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello!\" }}[/TOOL_CALL]"}
+{"text": "Could you send telegram message hello world\n[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"Hello!\" }}[/TOOL_CALL]"}
+{"text": "search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Please search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Can you search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "Could you search web for python\n[TOOL_CALL]{tool => \"websearch\", args => { --query \"python tutorials\" }}[/TOOL_CALL]"}
+{"text": "ask question what is python\n[TOOL_CALL]{tool => \"ask_question\", args => {  }}[/TOOL_CALL]"}
+{"text": "Please ask question what is python\n[TOOL_CALL]{tool => \"ask_question\", args => {  }}[/TOOL_CALL]"}
+{"text": "Can you ask question what is python\n[TOOL_CALL]{tool => \"ask_question\", args => {  }}[/TOOL_CALL]"}
+{"text": "Could you ask question what is python\n[TOOL_CALL]{tool => \"ask_question\", args => {  }}[/TOOL_CALL]"}

@@ -1,0 +1,126 @@
+{
+  "timestamp": "2026-04-06T22:27:38.819141",
+  "python_version": "3.12.13 (main, Mar 24 2026, 22:49:22) [Clang 22.1.1 ]",
+  "benchmarks": [
+    {
+      "benchmark": "retrieval_latency",
+      "target_ms": 100,
+      "num_memories": 100,
+      "metrics": {
+        "mean_ms": 215.53,
+        "median_ms": 212.92,
+        "p95_ms": 237.99,
+        "p99_ms": 237.99,
+        "min_ms": 208.0,
+        "max_ms": 237.99,
+        "num_runs": 15
+      },
+      "passed": false
+    },
+    {
+      "benchmark": "memory_write_latency",
+      "target_ms": 50,
+      "metrics": {
+        "mean_ms": 0.16,
+        "median_ms": 0.16,
+        "p95_ms": 0.18,
+        "p99_ms": 0.18,
+        "min_ms": 0.16,
+        "max_ms": 0.18,
+        "num_runs": 15
+      },
+      "passed": true
+    },
+    {
+      "benchmark": "pipeline_execution",
+      "target_ms": 150,
+      "metrics": {
+        "mean_ms": 13.45,
+        "median_ms": 13.13,
+        "p95_ms": 17.73,
+        "p99_ms": 17.73,
+        "min_ms": 12.63,
+        "max_ms": 17.73,
+        "num_runs": 15
+      },
+      "stages": [
+        "query_analysis",
+        "retrieve",
+        "rrf_fusion",
+        "mmr_rerank",
+        "cross_encoder_rerank",
+        "return"
+      ],
+      "stage_latencies": {
+        "query_analysis": 0.01,
+        "retrieve": 14.11,
+        "rrf_fusion": 0.0,
+        "mmr_rerank": 0.0,
+        "cross_encoder_rerank": 0.1,
+        "return": 0.0
+      },
+      "passed": true
+    },
+    {
+      "benchmark": "memory_usage",
+      "num_memories": 1000,
+      "db_size_before_kb": 44.0,
+      "db_size_after_kb": 608.0,
+      "db_size_growth_kb": 564.0,
+      "process_memory_kb": 0.74,
+      "memory_per_record_b": 577.54
+    },
+    {
+      "benchmark": "concurrent_access",
+      "num_threads": 8,
+      "total_operations": 100,
+      "total_time_ms": 21.07,
+      "throughput_ops_per_sec": 4746.63,
+      "avg_latency_ms": 1.43,
+      "max_latency_ms": 5.71
+    },
+    {
+      "benchmark": "q_learning_update",
+      "target_ms": 20,
+      "metrics": {
+        "mean_ms": 0.09,
+        "median_ms": 0.08,
+        "p95_ms": 0.1,
+        "p99_ms": 0.1,
+        "min_ms": 0.08,
+        "max_ms": 0.1,
+        "num_runs": 15
+      },
+      "passed": true
+    },
+    {
+      "benchmark": "scaling",
+      "scales": [
+        {
+          "num_memories": 100,
+          "avg_latency_ms": 0.14,
+          "p95_latency_ms": 0.15,
+          "db_size_kb": 88.0
+        },
+        {
+          "num_memories": 1000,
+          "avg_latency_ms": 0.14,
+          "p95_latency_ms": 0.17,
+          "db_size_kb": 604.0
+        },
+        {
+          "num_memories": 10000,
+          "avg_latency_ms": 0.16,
+          "p95_latency_ms": 0.18,
+          "db_size_kb": 5664.0
+        }
+      ],
+      "linearity": "check_p95"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "total": 4,
+    "pass_rate": "3/4"
+  }
+}

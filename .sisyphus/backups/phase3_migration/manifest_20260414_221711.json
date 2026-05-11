@@ -1,0 +1,9 @@
+{
+  "timestamp": "20260414_221711",
+  "files": {
+    "routing_db": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.sisyphus/backups/phase3_migration/routing_20260414_221711.db",
+    "outcomes_db": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.sisyphus/backups/phase3_migration/outcomes_20260414_221711.db",
+    "learning_db": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/context/memory/learning.db"
+  },
+  "migration_version": "1.0.0"
+}

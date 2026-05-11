@@ -1,0 +1,81 @@
+{"input": "search memory for query example", "output": "[TOOL_CALL]{tool => \"memory_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "search in memory for query example", "output": "[TOOL_CALL]{tool => \"memory_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "find in memory query example", "output": "[TOOL_CALL]{tool => \"memory_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "look up query example in memory", "output": "[TOOL_CALL]{tool => \"memory_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "query memory for query example", "output": "[TOOL_CALL]{tool => \"memory_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "write this to memory: content example", "output": "[TOOL_CALL]{tool => \"memory_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "save to memory: content example", "output": "[TOOL_CALL]{tool => \"memory_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "remember: content example", "output": "[TOOL_CALL]{tool => \"memory_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "store in memory: content example", "output": "[TOOL_CALL]{tool => \"memory_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "add to memory: content example", "output": "[TOOL_CALL]{tool => \"memory_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "get memory statistics", "output": "[TOOL_CALL]{tool => \"memory_stats\", args => {  }}[/TOOL_CALL]"}
+{"input": "show memory stats", "output": "[TOOL_CALL]{tool => \"memory_stats\", args => {  }}[/TOOL_CALL]"}
+{"input": "what are the memory statistics", "output": "[TOOL_CALL]{tool => \"memory_stats\", args => {  }}[/TOOL_CALL]"}
+{"input": "memory usage info", "output": "[TOOL_CALL]{tool => \"memory_stats\", args => {  }}[/TOOL_CALL]"}
+{"input": "get the active context", "output": "[TOOL_CALL]{tool => \"get_active_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "show active context", "output": "[TOOL_CALL]{tool => \"get_active_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "what is the current context", "output": "[TOOL_CALL]{tool => \"get_active_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "get user preferences", "output": "[TOOL_CALL]{tool => \"get_user_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "show user context", "output": "[TOOL_CALL]{tool => \"get_user_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "get user profile", "output": "[TOOL_CALL]{tool => \"get_user_context\", args => {  }}[/TOOL_CALL]"}
+{"input": "route this task to the right agent", "output": "[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"{}\" }}[/TOOL_CALL]"}
+{"input": "delegate this task: task description example", "output": "[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"task description example\" }}[/TOOL_CALL]"}
+{"input": "which agent should handle task description example", "output": "[TOOL_CALL]{tool => \"route_task\", args => { --task_description \"task description example\" }}[/TOOL_CALL]"}
+{"input": "record this outcome", "output": "[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"input": "log the result: success", "output": "[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"input": "save task outcome", "output": "[TOOL_CALL]{tool => \"record_outcome\", args => { --task \"task\" --success \"True\" }}[/TOOL_CALL]"}
+{"input": "search code on github for q example", "output": "[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"q example\" }}[/TOOL_CALL]"}
+{"input": "search github for q example", "output": "[TOOL_CALL]{tool => \"github_search_code\", args => { --q \"q example\" }}[/TOOL_CALL]"}
+{"input": "list issues for repo example/repo example", "output": "[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"repo example\" --repo \"repo example\" }}[/TOOL_CALL]"}
+{"input": "show issues for repo example repo", "output": "[TOOL_CALL]{tool => \"github_list_issues\", args => { --owner \"repo example\" --repo \"repo example\" }}[/TOOL_CALL]"}
+{"input": "fetch the url example homepage", "output": "[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"url example\" }}[/TOOL_CALL]"}
+{"input": "get content from url example", "output": "[TOOL_CALL]{tool => \"fetch_url\", args => { --url \"url example\" }}[/TOOL_CALL]"}
+{"input": "query context7 docs for query example", "output": "[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/{}\" --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "get documentation for query example", "output": "[TOOL_CALL]{tool => \"context7_query_docs\", args => { --library_id \"/{}\" --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "navigate to url example", "output": "[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"url example\" }}[/TOOL_CALL]"}
+{"input": "go to url example", "output": "[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"url example\" }}[/TOOL_CALL]"}
+{"input": "open url example", "output": "[TOOL_CALL]{tool => \"browser_navigate\", args => { --url \"url example\" }}[/TOOL_CALL]"}
+{"input": "click the selector example button", "output": "[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"selector example\" }}[/TOOL_CALL]"}
+{"input": "click on selector example", "output": "[TOOL_CALL]{tool => \"browser_click\", args => { --selector \"selector example\" }}[/TOOL_CALL]"}
+{"input": "fill in the value example field", "output": "[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"value example\" --value \"value example\" }}[/TOOL_CALL]"}
+{"input": "fill value example with value example", "output": "[TOOL_CALL]{tool => \"browser_fill\", args => { --selector \"value example\" --value \"value example\" }}[/TOOL_CALL]"}
+{"input": "read the path example file", "output": "[TOOL_CALL]{tool => \"read_file\", args => { --path \"path example\" }}[/TOOL_CALL]"}
+{"input": "show contents of path example", "output": "[TOOL_CALL]{tool => \"read_file\", args => { --path \"path example\" }}[/TOOL_CALL]"}
+{"input": "open path example", "output": "[TOOL_CALL]{tool => \"read_file\", args => { --path \"path example\" }}[/TOOL_CALL]"}
+{"input": "write content example to content example", "output": "[TOOL_CALL]{tool => \"write_file\", args => { --path \"content example\" --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "create file content example with content content example", "output": "[TOOL_CALL]{tool => \"write_file\", args => { --path \"content example\" --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "query the database", "output": "[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"{}\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"input": "run sql: sql example", "output": "[TOOL_CALL]{tool => \"sqlite_query\", args => { --sql \"sql example\" --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"input": "list all tables", "output": "[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"input": "show database tables", "output": "[TOOL_CALL]{tool => \"sqlite_list_tables\", args => { --db_path \"app.db\" }}[/TOOL_CALL]"}
+{"input": "run type check", "output": "[TOOL_CALL]{tool => \"run_typecheck\", args => {  }}[/TOOL_CALL]"}
+{"input": "typecheck", "output": "[TOOL_CALL]{tool => \"run_typecheck\", args => {  }}[/TOOL_CALL]"}
+{"input": "run linter", "output": "[TOOL_CALL]{tool => \"run_lint\", args => {  }}[/TOOL_CALL]"}
+{"input": "lint", "output": "[TOOL_CALL]{tool => \"run_lint\", args => {  }}[/TOOL_CALL]"}
+{"input": "run tests", "output": "[TOOL_CALL]{tool => \"run_tests\", args => {  }}[/TOOL_CALL]"}
+{"input": "execute test suite", "output": "[TOOL_CALL]{tool => \"run_tests\", args => {  }}[/TOOL_CALL]"}
+{"input": "check system health", "output": "[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"input": "get health status", "output": "[TOOL_CALL]{tool => \"get_health\", args => { --level \"l0\" }}[/TOOL_CALL]"}
+{"input": "list all sessions", "output": "[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"input": "show sessions", "output": "[TOOL_CALL]{tool => \"session_list\", args => {  }}[/TOOL_CALL]"}
+{"input": "get info for session session id example", "output": "[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"session id example\" }}[/TOOL_CALL]"}
+{"input": "show session session id example details", "output": "[TOOL_CALL]{tool => \"session_info\", args => { --session_id \"session id example\" }}[/TOOL_CALL]"}
+{"input": "search sessions for query example", "output": "[TOOL_CALL]{tool => \"session_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "find session with query example", "output": "[TOOL_CALL]{tool => \"session_search\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "write to knowledge base: content example", "output": "[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "add to knowledge: content example", "output": "[TOOL_CALL]{tool => \"knowledge_write\", args => { --content \"content example\" }}[/TOOL_CALL]"}
+{"input": "create issue for title example", "output": "[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"title example\" }}[/TOOL_CALL]"}
+{"input": "open bug report: title example", "output": "[TOOL_CALL]{tool => \"github_create_issue\", args => { --title \"title example\" }}[/TOOL_CALL]"}
+{"input": "create new page: title example", "output": "[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"title example\" }}[/TOOL_CALL]"}
+{"input": "make notion page: title example", "output": "[TOOL_CALL]{tool => \"notion_create_page\", args => { --title \"title example\" }}[/TOOL_CALL]"}
+{"input": "send telegram message: text example", "output": "[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"text example\" }}[/TOOL_CALL]"}
+{"input": "message on telegram: text example", "output": "[TOOL_CALL]{tool => \"telegram_send_message\", args => { --text \"text example\" }}[/TOOL_CALL]"}
+{"input": "search web for query example", "output": "[TOOL_CALL]{tool => \"websearch\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "google query example", "output": "[TOOL_CALL]{tool => \"websearch\", args => { --query \"query example\" }}[/TOOL_CALL]"}
+{"input": "ask question: question example", "output": "[TOOL_CALL]{tool => \"ask_question\", args => { --question \"question example\" }}[/TOOL_CALL]"}
+{"input": "what is question example", "output": "[TOOL_CALL]{tool => \"ask_question\", args => { --question \"question example\" }}[/TOOL_CALL]"}
+{"input": "think step by step about thought example", "output": "[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"thought example\" }}[/TOOL_CALL]"}
+{"input": "analyze: thought example", "output": "[TOOL_CALL]{tool => \"sequential_thinking\", args => { --thought \"thought example\" }}[/TOOL_CALL]"}
+{"input": "done", "output": "[TOOL_CALL]{tool => \"done\", args => {  }}[/TOOL_CALL]"}
+{"input": "task complete", "output": "[TOOL_CALL]{tool => \"done\", args => {  }}[/TOOL_CALL]"}
+{"input": "finished", "output": "[TOOL_CALL]{tool => \"done\", args => {  }}[/TOOL_CALL]"}

@@ -1,0 +1,43 @@
+{
+  "total_requests": 3,
+  "successful_requests": 2,
+  "failed_requests": 2,
+  "total_rotations": 2,
+  "by_proxy": {
+    "direct-001": {
+      "requests": 3,
+      "errors": 0,
+      "last_used": "2026-04-13T19:51:20.205071"
+    }
+  },
+  "request_history": [
+    {
+      "timestamp": "2026-04-13T19:51:19.132157",
+      "proxy": "direct-001",
+      "status": 200
+    },
+    {
+      "timestamp": "2026-04-13T19:51:19.667643",
+      "proxy": "direct-001",
+      "status": 200
+    },
+    {
+      "timestamp": "2026-04-13T19:51:20.205076",
+      "proxy": "direct-001",
+      "status": 200
+    }
+  ],
+  "error_history": [
+    {
+      "timestamp": "2026-04-13T19:51:19.132310",
+      "proxy": "direct-001",
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    },
+    {
+      "timestamp": "2026-04-13T19:51:19.667798",
+      "proxy": "direct-001",
+      "error": "Expecting value: line 1 column 1 (char 0)"
+    }
+  ],
+  "uptime_start": "2026-04-13T19:51:18.540477"
+}

@@ -1,0 +1,38 @@
+{
+  "performances": {
+    "hephaestus:coding": {
+      "agent_name": "hephaestus",
+      "task_type": "coding",
+      "total_tasks": 6,
+      "successful_tasks": 6,
+      "avg_latency_ms": 186.76349999999996,
+      "avg_quality_score": 0.48655439999999994,
+      "last_used": "2026-04-06T06:50:33.471059+00:00",
+      "streak_success": 6,
+      "streak_failure": 0
+    },
+    "sisyphus-junior:coding": {
+      "agent_name": "sisyphus-junior",
+      "task_type": "coding",
+      "total_tasks": 1,
+      "successful_tasks": 0,
+      "avg_latency_ms": 150.0,
+      "avg_quality_score": 0.09,
+      "last_used": "2026-04-06T04:55:25.293217+00:00",
+      "streak_success": 0,
+      "streak_failure": 1
+    },
+    "oracle:analysis": {
+      "agent_name": "oracle",
+      "task_type": "analysis",
+      "total_tasks": 1,
+      "successful_tasks": 1,
+      "avg_latency_ms": 900.0,
+      "avg_quality_score": 0.285,
+      "last_used": "2026-04-06T04:55:25.293287+00:00",
+      "streak_success": 1,
+      "streak_failure": 0
+    }
+  },
+  "ab_tests": []
+}
