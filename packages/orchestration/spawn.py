@@ -19,6 +19,55 @@ from typing import Optional, Dict, Any
 logger = logging.getLogger("orchestration.spawn")
 
 
+def _handoff_trigger(task: str, agent: str, context: Dict[str, Any]) -> None:
+    """S-305: Check if task requires agent handoff and execute transfer.
+
+    Wires HandoffManager into the spawn pipeline. Scans task keywords
+    and routing confidence to determine if control should transfer.
+    """
+    try:
+        from packages.orchestration.handoff import HandoffManager, HandoffRequest
+
+        should_handoff = False
+        target_agent = None
+
+        handoff_keywords = {
+            "implement": "hephaestus",
+            "create": "hephaestus",
+            "build": "hephaestus",
+            "write code": "hephaestus",
+            "review": "oracle",
+            "architect": "oracle",
+            "debug": "oracle",
+            "search": "explore",
+            "find": "explore",
+            "lookup": "librarian",
+            "research": "librarian",
+            "document": "librarian",
+        }
+
+        task_lower = task.lower()
+        for keyword, target in handoff_keywords.items():
+            if keyword in task_lower and target != agent:
+                should_handoff = True
+                target_agent = target
+                break
+
+        if should_handoff and target_agent:
+            request = HandoffRequest(
+                source_agent=agent,
+                target_agent=target_agent,
+                context=context,
+                reason=f"Keyword match: task requires {target_agent} for '{task[:50]}...'",
+            )
+            manager = HandoffManager()
+            response = manager.execute_handoff(request)
+            if response.success:
+                logger.info(f"Handoff: {agent} -> {target_agent}")
+    except Exception:
+        pass  # Handoff is best-effort, never block spawn pipeline
+
+
 @dataclass
 class SpawnResult:
     """Result from spawn"""
@@ -82,6 +131,10 @@ async def spawn(
                     )
         except Exception as e:
             logger.warning(f"Learning routing failed, using fallback: {e}")
+
+    # S-305: Handoff system wiring — check if agent should transfer
+    # Wire HandoffManager at spawn points for inter-agent transfers
+    _handoff_trigger(task, selected_agent, context or {})
 
     # Fallback if still no agent
     if not selected_agent:
