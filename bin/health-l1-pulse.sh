@@ -14,10 +14,10 @@ curl -sf --max-time 3 http://localhost:11434/api/tags > /dev/null 2>&1 || { echo
 [ -f /usr/bin/mcp-server-filesystem ] || { echo "FAIL: filesystem MCP missing"; ERRORS=$((ERRORS+1)); }
 
 # Python venv works
-"$ROOT/venvs/athena/bin/python" -c "import dotenv" 2>/dev/null || { echo "FAIL: Python venv broken"; ERRORS=$((ERRORS+1)); }
+"$ROOT/.venv/bin/python3" -c "import dotenv" 2>/dev/null || { echo "FAIL: Python venv broken"; ERRORS=$((ERRORS+1)); }
 
 # OpenCode binary exists
-[ -f ~/.opencode/bin/opencode ] || { echo "FAIL: OpenCode binary missing"; ERRORS=$((ERRORS+1)); }
+[ -f /usr/bin/opencode ] || { echo "FAIL: OpenCode binary missing"; ERRORS=$((ERRORS+1)); }
 
 if [ $ERRORS -eq 0 ]; then
     echo "L1: PASS"

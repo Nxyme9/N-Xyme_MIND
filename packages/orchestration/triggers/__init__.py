@@ -1,7 +1,6 @@
-"""Triggers subpackage — Trigger engine and router."""
+"""Triggers subpackage — Trigger engine."""
 
 from .engine import TriggerEngine, Trigger, clean_stale_sessions, clear_db_lock, force_garbage_collection, throttle_ollama
-from .router import TriggerRouter
 
 __all__ = [
     "TriggerEngine",
@@ -10,5 +9,4 @@ __all__ = [
     "clear_db_lock",
     "force_garbage_collection",
     "throttle_ollama",
-    "TriggerRouter",
 ]

