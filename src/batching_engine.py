@@ -74,8 +74,15 @@ class BatchingEngine:
             stderr=subprocess.PIPE,
             text=True,
         )
-        time.sleep(2)
-        self.running = True
+        try:
+            loop = asyncio.get_running_loop()
+            async def _wait_for_server():
+                await asyncio.sleep(2)
+                self.running = True
+            loop.create_task(_wait_for_server())
+        except RuntimeError:
+            time.sleep(2)
+            self.running = True
 
     def stop(self):
         if self.server_process:
