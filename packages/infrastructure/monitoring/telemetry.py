@@ -15,6 +15,13 @@ from collections import defaultdict
 logger = logging.getLogger(__name__)
 
 
+def get_logger(name: Optional[str] = None) -> logging.Logger:
+    """Get a logger instance, optionally named after the caller module."""
+    if name:
+        return logging.getLogger(name)
+    return logging.getLogger(__name__)
+
+
 @dataclass
 class Span:
     """A single trace span."""

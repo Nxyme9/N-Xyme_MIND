@@ -163,8 +163,6 @@ def _register_nxyme_modules():
         # Import module functions (not classes - registry handles lazy loading)
         # Note: These modules must implement NXymeModule interface
         # Skip MemoryCore import - no such class exists in memory_store
-        from packages.learning_engine import health_check as le_health_check
-        # orchestration and intelligence may not exist - skip them too
 
         logger.info("Registered N-Xyme modules with nxyme_core registry")
     except ImportError as e:

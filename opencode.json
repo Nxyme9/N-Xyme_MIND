@@ -235,77 +235,160 @@
   "mcp": {
     "sequential-thinking": {
       "type": "local",
-      "command": ["npx", "-y", "@modelcontextprotocol/server-sequential-thinking"]
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ]
+    },
+    "brain_mcp": {
+      "type": "local",
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.brain_mcp.__main__"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "nx-mind": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "nx_mind_mcp"],
-      "environment": { "PYTHONPATH": "." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "nx_mind_mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "unified-memory": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "packages.memory_core.mcp_server"],
-      "environment": { "PYTHONPATH": ".:src/infrastructure", "ROOT": "." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.memory_core.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": ".:src/infrastructure",
+        "ROOT": "."
+      }
     },
     "learning-engine": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "packages.learning_engine.mcp_server"],
-      "environment": { "PYTHONPATH": "." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.learning_engine.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "intelligence": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "packages.intelligence.mcp_server"],
-      "environment": { "PYTHONPATH": "." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.intelligence.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "session-pool": {
       "type": "local",
-      "command": ["python3", "-m", "mcp_server"],
-      "environment": { "PYTHONPATH": "packages/session-pool-mcp" }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.session_pool_mcp.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "quality-gates": {
       "type": "local",
-      "command": ["./.venv/bin/quality-gates-mcp"],
-      "environment": { "PYTHONPATH": "packages/quality-gates-mcp" }
+      "command": [
+        "./.venv/bin/quality-gates-mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "packages/quality-gates-mcp"
+      }
     },
     "telegram": {
       "type": "local",
-      "command": ["./.venv/bin/telegram-mcp-wrapper"],
+      "command": [
+        "./.venv/bin/telegram-mcp-wrapper"
+      ],
       "environment": {
         "TELEGRAM_BOT_TOKEN": "${TELEGRAM_BOT_TOKEN}"
       }
     },
     "nx-context": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "nx_context_mcp"],
-      "environment": { "PYTHONPATH": "packages/nx-context-mcp:." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.nx_context_mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "trigger-guardian": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "trigger_guardian_mcp"],
-      "environment": { "PYTHONPATH": "packages/trigger-guardian-mcp" }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.trigger_guardian_mcp.trigger_guardian_mcp"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "orchestration": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "packages.orchestration.mcp_server"],
-      "environment": { "PYTHONPATH": "." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.orchestration.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "catalyst": {
       "type": "local",
-      "command": ["./.venv/bin/python", "-m", "catalyst_mcp"],
-      "environment": { "PYTHONPATH": "packages/catalyst-mcp:." }
+      "command": [
+        "./.venv/bin/python",
+        "-m",
+        "packages.catalyst_orchestrator.mcp_server"
+      ],
+      "environment": {
+        "PYTHONPATH": "."
+      }
     },
     "notion": {
       "type": "local",
-      "command": ["npx", "-y", "@notionhq/notion-mcp-server"],
+      "command": [
+        "npx",
+        "-y",
+        "@notionhq/notion-mcp-server"
+      ],
       "environment": {
-        "NOTION_TOKEN": "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"
+        "NOTION_TOKEN": "${NOTION_API_KEY}"
       }
     },
     "obsidian": {
       "type": "local",
-      "command": ["/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv/bin/python", "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/packages/obsidian_mcp_fixed.py"],
+      "command": [
+        "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/.venv/bin/python",
+        "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/packages/obsidian_mcp_fixed.py"
+      ],
       "environment": {
-        "OBSIDIAN_API_KEY": "a28142a995356e59b1b6d98687111414f6e4e95dbc5aa6d784b8749796b5c867",
+        "OBSIDIAN_API_KEY": "${OBSIDIAN_API_KEY}",
         "OBSIDIAN_HOST": "127.0.0.1",
         "OBSIDIAN_PORT": "27123",
         "OBSIDIAN_PROTOCOL": "http"
@@ -313,7 +396,11 @@
     },
     "github": {
       "type": "local",
-      "command": ["npx", "-y", "@beautyfree/modelcontextprotocol-server-github"],
+      "command": [
+        "npx",
+        "-y",
+        "@beautyfree/modelcontextprotocol-server-github"
+      ],
       "environment": {}
     }
   },
@@ -353,19 +440,31 @@
         },
         "meta-llama/llama-4-maverick-17b-128e-instruct": {
           "name": "Llama 4 Maverick 17B",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "meta-llama/llama-4-scout-17b-16e-instruct": {
           "name": "Llama 4 Scout 17B",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "qwen/qwen3-32b": {
           "name": "Qwen 3 32B",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "qwen/qwen3-coder-32b": {
           "name": "Qwen 3 Coder 32B",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         }
       }
     },
@@ -376,19 +475,31 @@
       "models": {
         "grok-3-beta": {
           "name": "Grok 3 Beta",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "grok-3-mini-beta": {
           "name": "Grok 3 Mini Beta",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "grok-3-fast-beta": {
           "name": "Grok 3 Fast Beta",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "grok-3-mini-fast-beta": {
           "name": "Grok 3 Mini Fast Beta",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         }
       }
     },
@@ -399,11 +510,17 @@
       "models": {
         "deepseek-r1": {
           "name": "DeepSeek R1",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         },
         "deepseek-r1-distill-llama-70b": {
           "name": "DeepSeek R1 Distill Llama 70B",
-          "limit": { "context": 131072, "output": 8192 }
+          "limit": {
+            "context": 131072,
+            "output": 8192
+          }
         }
       }
     },
@@ -445,19 +562,31 @@
       "models": {
         "qwen2.5-coder-7b-q4_k_m": {
           "name": "Qwen 2.5 Coder 7B (GGUF - GPU 6 layers)",
-          "limit": { "context": 2048, "output": 2048 }
+          "limit": {
+            "context": 2048,
+            "output": 2048
+          }
         },
         "qwen2.5-0.5b-instruct-q4_k_m": {
           "name": "Qwen 2.5 0.5B (GGUF - fast)",
-          "limit": { "context": 2048, "output": 512 }
+          "limit": {
+            "context": 2048,
+            "output": 512
+          }
         },
         "nomic-embed-text-v1.5-Q4_K_M": {
           "name": "Nomic Embed Text (GGUF - embedding)",
-          "limit": { "context": 512, "output": 0 }
+          "limit": {
+            "context": 512,
+            "output": 0
+          }
         },
         "rosetta-lora": {
           "name": "Rosetta LoRA (GGUF - tool translation)",
-          "limit": { "context": 2048, "output": 256 }
+          "limit": {
+            "context": 2048,
+            "output": 256
+          }
         }
       }
     },
