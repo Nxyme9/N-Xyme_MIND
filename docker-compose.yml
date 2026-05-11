@@ -1,0 +1,221 @@
+# =============================================================================
+# N-Xyme MIND — Docker Compose
+# =============================================================================
+# Services: GGUF llama-server, SOCKS5 proxies, MCP servers
+#
+# Usage:
+#   docker compose up -d          # Start all services
+#   docker compose up -d llama    # Start only llama-server
+#   docker compose up -d socks5   # Start only SOCKS5 proxies
+#   docker compose down           # Stop all services
+#   docker compose logs -f        # Follow logs
+# =============================================================================
+
+services:
+  # ---------------------------------------------------------------------------
+  # GGUF Llama Server — Local LLM Inference Engine
+  # ---------------------------------------------------------------------------
+  llama-server:
+    image: ghcr.io/ggerganov/llama.cpp:server
+    container_name: nx-llama-server
+    profiles:
+      - llama
+    ports:
+      - "8080:8080"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8080
+    volumes:
+      # Model files — mount your GGUF models directory
+      - ./models:/models:ro
+    command: >
+      --model /models/default.gguf
+      --host 0.0.0.0
+      --port 8080
+      --n-gpu-layers 99
+      --ctx-size 4096
+      --parallel 16
+      --flash-attn
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # SOCKS5 Proxy Pool — VPN Rotation for Rate Limit Bypass
+  # ---------------------------------------------------------------------------
+  socks5-proxy:
+    image: serjs/go-socks5-proxy
+    container_name: nx-socks5-proxy
+    profiles:
+      - socks5
+    ports:
+      - "1080:1080"
+    environment:
+      - PROXY_USER=${SOCKS_USER:-}
+      - PROXY_PASSWORD=${SOCKS_PASSWORD:-}
+    # Uncomment to chain through VPN proxy:
+    # network_mode: "service:wireguard"
+    restart: unless-stopped
+
+  socks5-proxy-2:
+    image: serjs/go-socks5-proxy
+    container_name: nx-socks5-proxy-2
+    profiles:
+      - socks5
+    ports:
+      - "1081:1080"
+    environment:
+      - PROXY_USER=${SOCKS_USER:-}
+      - PROXY_PASSWORD=${SOCKS_PASSWORD:-}
+    restart: unless-stopped
+
+  socks5-proxy-3:
+    image: serjs/go-socks5-proxy
+    container_name: nx-socks5-proxy-3
+    profiles:
+      - socks5
+    ports:
+      - "1082:1080"
+    environment:
+      - PROXY_USER=${SOCKS_USER:-}
+      - PROXY_PASSWORD=${SOCKS_PASSWORD:-}
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # MCP Servers — N-Xyme Brain MCP, Memory, Orchestration
+  # ---------------------------------------------------------------------------
+  brain-mcp:
+    image: python:3.12-slim
+    container_name: nx-brain-mcp
+    profiles:
+      - mcp
+    ports:
+      - "8090:8090"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ~/.cache/n-xyme-mind:/root/.cache/n-xyme-mind
+    environment:
+      - PYTHONPATH=/app
+      - SOURCE_DIR=/app
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - NOTION_API_KEY=${NOTION_API_KEY:-}
+      - OBSIDIAN_API_KEY=${OBSIDIAN_API_KEY:-}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+    command: >
+      python -m packages.brain_mcp
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8090/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  memory-store:
+    image: python:3.12-slim
+    container_name: nx-memory-store
+    profiles:
+      - mcp
+    ports:
+      - "8091:8091"
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ./memory.db:/data/memory.db
+    environment:
+      - PYTHONPATH=/app
+    command: >
+      python -m packages.memory_store.mcp_server
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sqlite3; conn=sqlite3.connect('/data/memory.db'); conn.close()"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Model Router Proxy — API Key Auth + Multi-Provider Routing
+  # ---------------------------------------------------------------------------
+  model-router:
+    image: python:3.12-slim
+    container_name: nx-model-router
+    profiles:
+      - router
+    ports:
+      - "8092:8092"
+    depends_on:
+      - llama-server
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - LOCAL_ROUTING_ENABLED=${LOCAL_ROUTING_ENABLED:-true}
+      - LOCAL_QUALITY_THRESHOLD=${LOCAL_QUALITY_THRESHOLD:-0.7}
+      - LOCAL_TIMEOUT_SECONDS=${LOCAL_TIMEOUT_SECONDS:-30}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - CEREBRAS_API_KEY=${CEREBRAS_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - MODEL_ROUTER_API_KEY=${MODEL_ROUTER_API_KEY:-}
+    command: >
+      python -m packages.infrastructure.proxy.__main__
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8092/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Telegram Bot — NxCatalyst Integration
+  # ---------------------------------------------------------------------------
+  telegram-bot:
+    image: python:3.12-slim
+    container_name: nx-telegram-bot
+    profiles:
+      - bot
+    ports:
+      - "8093:8093"
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONPATH=/app
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - SOURCE_DIR=/app
+    command: >
+      python telegram-bot.py
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8093/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+# ---------------------------------------------------------------------------
+# Networks
+# ---------------------------------------------------------------------------
+networks:
+  default:
+    name: nx-network
+    driver: bridge
+
+# ---------------------------------------------------------------------------
+# Volumes (persistent data)
+# ---------------------------------------------------------------------------
+volumes:
+  memory-db:
+    driver: local
