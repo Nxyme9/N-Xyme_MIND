@@ -15,7 +15,7 @@ Usage:
 """
 
 import re
-from collections import Counter, defaultdict
+from collections import defaultdict
 from datetime import datetime
 from difflib import SequenceMatcher
 from pathlib import Path

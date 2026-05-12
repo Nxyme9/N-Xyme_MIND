@@ -1,8 +1,6 @@
 from typing import Any
-import os
 
-from athena.memory.vectors import get_embedding, get_client
-
+from athena.memory.vectors import get_client, get_embedding
 
 # Supported embedding dimensions per model (multi-model support)
 EXPECTED_DIMS = {
@@ -52,9 +50,9 @@ class HealthCheck:
         try:
             chroma_path = "./athena/.agent/chroma_db"
             import os
-            provider = (os.environ.get("EMBEDDING_PROVIDER", "").lower() or 
+            provider = (os.environ.get("EMBEDDING_PROVIDER", "").lower() or
                        ("ollama" if os.path.exists(chroma_path) else ""))
-            
+
             if provider == "ollama" or os.path.exists(chroma_path):
                 # Use local ChromaDB instead of Supabase when using Ollama embeddings
                 chroma_path = "./athena/.agent/chroma_db"

@@ -11,12 +11,12 @@ Architecture:
 Uses the existing athena.db SQLite database. Zero external dependencies.
 """
 
+import logging
 import sqlite3
 import time
 import uuid
-import logging
 from pathlib import Path
-from typing import List, Optional, Dict, Any
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -32,10 +32,10 @@ DB_PATH = PROJECT_ROOT / ".agent" / "inputs" / "athena.db"
 
 
 class SessionRegister(BaseModel):
-    session_id: Optional[str] = None  # Auto-generated if not provided
+    session_id: str | None = None  # Auto-generated if not provided
     role: str  # e.g., "master", "A", "B", "C", "D"
-    goal: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    goal: str | None = None
+    metadata: dict[str, Any] | None = None
 
 
 class SessionMessage(BaseModel):
@@ -101,7 +101,7 @@ class SessionsRPC:
         finally:
             conn.close()
 
-    def register_session(self, reg: SessionRegister) -> Dict[str, Any]:
+    def register_session(self, reg: SessionRegister) -> dict[str, Any]:
         """Register a new swarm session. Returns the session record."""
         session_id = reg.session_id or f"swarm-{reg.role}-{uuid.uuid4().hex[:8]}"
         now = time.time()
@@ -126,7 +126,7 @@ class SessionsRPC:
         finally:
             conn.close()
 
-    def send_message(self, msg: SessionMessage) -> Dict[str, Any]:
+    def send_message(self, msg: SessionMessage) -> dict[str, Any]:
         """Send a message from one session to another."""
         now = time.time()
         conn = self._get_conn()
@@ -154,7 +154,7 @@ class SessionsRPC:
 
     def get_history(
         self, session_id: str, limit: int = 50, unread_only: bool = False
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Get message history for a session (messages sent TO this session)."""
         conn = self._get_conn()
         try:
@@ -185,7 +185,7 @@ class SessionsRPC:
         finally:
             conn.close()
 
-    def list_sessions(self, status: Optional[str] = None) -> List[Dict[str, Any]]:
+    def list_sessions(self, status: str | None = None) -> list[dict[str, Any]]:
         """List all swarm sessions, optionally filtered by status."""
         conn = self._get_conn()
         try:
@@ -214,7 +214,7 @@ class SessionsRPC:
         finally:
             conn.close()
 
-    def update_status(self, update: SessionStatus) -> Dict[str, Any]:
+    def update_status(self, update: SessionStatus) -> dict[str, Any]:
         """Update a session's status (active, completed, error)."""
         now = time.time()
         conn = self._get_conn()

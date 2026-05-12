@@ -15,7 +15,7 @@ from typing import Any, Callable, Optional, TypeVar
 
 from ..outcome_logger import DelegationOutcome, OutcomeLogger
 from ..rl.q_learning import ActionType, QLearningEngine, QState
-from ...memory_core.router import MemoryRouter, SearchResults, UnifiedMemoryQuery
+from packages.memory_core.router import MemoryRouter, SearchResults, UnifiedMemoryQuery
 
 logger = logging.getLogger(__name__)
 

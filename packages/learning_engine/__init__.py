@@ -13,71 +13,90 @@ from __future__ import annotations
 __interface_version__ = "1.0.0"
 
 # =============================================================================
-# Core Imports - rl module
+# LAZY IMPORTS — Prevent eager cascade that crashes MCP startup
+# FAISS/numpy imported inside rl/__init__.py at module level caused
+# brain_mcp/__init__.py → _register_nxyme_modules() → learning_engine/__init__
+# → rl/__init__.py → q_learning.py (faiss import) → cascade failure.
+# Solution: TYPE_CHECKING + __getattr__ pattern. Imports defer until first access.
 # =============================================================================
+from typing import TYPE_CHECKING
 
-from .rl import (
-    QLearningEngine,
-    MultiArmedBandit,
-    PolicyManager,
-    CompositeReward,
-)
+if TYPE_CHECKING:
+    from .rl import (
+        QLearningEngine,
+        MultiArmedBandit,
+        PolicyManager,
+        CompositeReward,
+    )
+    from .meta import (
+        MetaLearningEngine,
+        EWCEngine,
+        ActiveLearningEngine,
+    )
+    from .routing import (
+        RoutingWeightOptimizer,
+        RoutingRecommendation,
+        AgentWeights,
+        ABTestingFramework,
+        ABTest,
+        TestStatus,
+        TestVariant,
+        CounterfactualEngine,
+        CounterfactualResult,
+    )
+    from .delegation import (
+        DelegationLearner,
+        LearningReport,
+        PatternInsight,
+    )
+    from .session_hooks import SessionLifecycleHook
+    from .routing.outcome_hook import TaskOutcomeHook, TaskContext, TaskState
 
-# =============================================================================
-# Core Imports - meta module
-# =============================================================================
+# Lazy module __getattr__ — resolve only when accessed
+_LAZY_MAPPINGS = {
+    "QLearningEngine": ".rl.q_learning",
+    "MultiArmedBandit": ".rl.bandit",
+    "PolicyManager": ".rl.policy",
+    "CompositeReward": ".rl.reward",
+    "MetaLearningEngine": ".meta.meta_learning",
+    "EWCEngine": ".meta.ewc",
+    "ActiveLearningEngine": ".meta.active_learning",
+    "RoutingWeightOptimizer": ".routing.optimizer",
+    "RoutingRecommendation": ".routing.optimizer",
+    "AgentWeights": ".routing.optimizer",
+    "get_routing_optimizer": ".routing.optimizer",
+    "ABTestingFramework": ".routing.ab_testing",
+    "ABTest": ".routing.ab_testing",
+    "TestStatus": ".routing.ab_testing",
+    "TestVariant": ".routing.ab_testing",
+    "get_ab_testing": ".routing.ab_testing",
+    "CounterfactualEngine": ".routing.counterfactual",
+    "CounterfactualResult": ".routing.counterfactual",
+    "DelegationLearner": ".delegation.learner",
+    "LearningReport": ".delegation.learner",
+    "PatternInsight": ".delegation.learner",
+    "SessionLifecycleHook": ".session_hooks",
+    "TaskOutcomeHook": ".routing.outcome_hook",
+    "TaskContext": ".routing.outcome_hook",
+    "TaskState": ".routing.outcome_hook",
+    "get_hook": ".routing.outcome_hook",
+    "learn_from_delegations": ".delegation.learner",
+    "get_routing_recommendations": ".delegation.learner",
+    "generate_learning_report": ".delegation.learner",
+}
 
-from .meta import (
-    MetaLearningEngine,
-    EWCEngine,
-    ActiveLearningEngine,
-)
 
-# =============================================================================
-# Core Imports - routing module
-# =============================================================================
+def __getattr__(name: str):
+    if name in _LAZY_MAPPINGS:
+        import importlib
+        mod_path = _LAZY_MAPPINGS[name]
+        module = importlib.import_module(mod_path, package=__package__)
+        return getattr(module, name)
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-from .routing import (
-    RoutingWeightOptimizer,
-    RoutingRecommendation,
-    AgentWeights,
-    get_routing_optimizer,
-    ABTestingFramework,
-    ABTest,
-    TestStatus,
-    TestVariant,
-    get_ab_testing,
-    CounterfactualEngine,
-    CounterfactualResult,
-)
 
-# =============================================================================
-# Core Imports - delegation module
-# =============================================================================
-
-from .delegation import (
-    DelegationLearner,
-    LearningReport,
-    PatternInsight,
-    learn_from_delegations,
-    get_routing_recommendations,
-    generate_learning_report,
-)
-
-# =============================================================================
-# Cross-session and outcome hooks
-# =============================================================================
-
-from .session_hooks import (
-    SessionLifecycleHook,
-)
-
-from .routing.outcome_hook import (
-    TaskOutcomeHook,
-    TaskContext,
-    TaskState,
-    get_hook,
-)
+def __dir__():
+    return list(__all__) + list(_LAZY_MAPPINGS.keys())
 
 # =============================================================================
 # Module-level singletons (lazy initialization, thread-safe)
@@ -109,6 +128,7 @@ def record_outcome(
         success: Whether the task succeeded
         latency_ms: Execution latency in milliseconds
     """
+    from .routing.optimizer import get_routing_optimizer
     global _routing_optimizer
     if _routing_optimizer is None:
         with _lock:
@@ -127,6 +147,7 @@ def route_task(task_description: str, level: int) -> RoutingRecommendation:
     Returns:
         RoutingRecommendation with optimal agent and confidence
     """
+    from .routing.optimizer import get_routing_optimizer
     global _routing_optimizer
     if _routing_optimizer is None:
         with _lock:
@@ -141,25 +162,25 @@ def status() -> dict:
     Returns:
         Dict with routing weights, A/B tests, and learning stats
     """
+    from .routing.optimizer import get_routing_optimizer
+    from .delegation.learner import DelegationLearner
     global _routing_optimizer, _ab_testing, _learner
     
     result = {"version": __interface_version__}
     
-    # Routing weights
     if _routing_optimizer is None:
         with _lock:
             if _routing_optimizer is None:
                 _routing_optimizer = get_routing_optimizer()
     result["routing_weights"] = _routing_optimizer.get_routing_weights()
     
-    # A/B tests
     if _ab_testing is None:
         with _lock:
             if _ab_testing is None:
+                from .routing.ab_testing import get_ab_testing
                 _ab_testing = get_ab_testing()
     result["ab_tests"] = _ab_testing.get_all_tests()
     
-    # Delegation learning stats
     if _learner is None:
         with _lock:
             if _learner is None:

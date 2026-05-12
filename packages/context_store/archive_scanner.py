@@ -127,10 +127,17 @@ class ArchiveScanner:
 
         # Scan from session-log.jsonl
         session_log = self.sisyphus_dir / "session-log.jsonl"
+        max_lines = 10000
+        line_count = 0
+        file_size_mb = 0
         if session_log.exists():
+            file_size_mb = session_log.stat().st_size / (1024 * 1024)
             try:
                 with open(session_log, "r", encoding="utf-8") as f:
                     for line in f:
+                        if line_count >= max_lines:
+                            logger.warning(f"JSONL scan bounded at {max_lines} lines")
+                            break
                         if line.strip():
                             entry = json.loads(line)
                             session = SessionSummary(
@@ -149,6 +156,7 @@ class ArchiveScanner:
                                 continue
 
                             sessions.append(session)
+                        line_count += 1
             except Exception as e:
                 logger.error(f"Failed to read session-log.jsonl: {e}")
 
@@ -230,12 +238,16 @@ class ArchiveScanner:
 
         matches: List[Dict[str, Any]] = []
 
-        # Search in session-log.jsonl
+        max_lines = 10000
+        line_count = 0
+        # Search in session-log.jsonl with bounded scan
         session_log = self.sisyphus_dir / "session-log.jsonl"
         if session_log.exists():
             try:
                 with open(session_log, "r", encoding="utf-8") as f:
                     for line in f:
+                        if line_count >= max_lines:
+                            break
                         if line.strip():
                             entry = json.loads(line)
                             description = entry.get("description", "").lower()
@@ -262,6 +274,7 @@ class ArchiveScanner:
                                         "match_type": "description",
                                     }
                                 )
+                        line_count += 1
             except Exception as e:
                 logger.error(f"Failed to search session-log.jsonl: {e}")
 

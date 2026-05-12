@@ -5,8 +5,9 @@ athena.tools.latency
 Network health monitoring and latency indicators.
 """
 import time
+
 import requests
-import sys
+
 
 def check_gemini_latency() -> float:
     """
@@ -24,7 +25,7 @@ def check_gemini_latency() -> float:
 
 def main():
     latency = check_gemini_latency()
-    
+
     if latency < 0:
         status = "🔴 OFFLINE"
         color = "\033[91m"
@@ -32,15 +33,15 @@ def main():
         status = "🟢 ULTRA-FAST"
         color = "\033[92m"
     elif latency < 0.8:
-        status = "🟢 FAST" 
+        status = "🟢 FAST"
         color = "\033[92m"
     elif latency < 2.0:
         status = "🟡 SLOW"
         color = "\033[93m"
     else:
-        status = "🔴 LAG" 
+        status = "🔴 LAG"
         color = "\033[91m"
-        
+
     reset = "\033[0m"
     print(f"Network Latency: {color}{status} ({latency*1000:.0f}ms){reset}")
 

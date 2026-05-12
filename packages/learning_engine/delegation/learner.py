@@ -81,7 +81,7 @@ class DelegationLearner:
         if db is not None:
             self._db = db
         elif HAS_STATE_DB:
-            db_path = (root_dir or Path(__file__).parent.parent.parent) / ".sisyphus" / "state.db"
+            db_path = None
             self._db = StateDB(db_path)
         else:
             self._db = None
@@ -100,7 +100,7 @@ class DelegationLearner:
             return {"error": "no delegations found", "delegations": []}
 
         total = len(delegations)
-        success_count = sum(1 for d in delegations if d.status == "success")
+        success_count = sum(1 for d in delegations if d.success)
         failure_count = total - success_count
         success_rate = (success_count / total * 100) if total > 0 else 0
 
@@ -108,7 +108,7 @@ class DelegationLearner:
         level_stats: dict[str, dict[str, int]] = defaultdict(lambda: {"success": 0, "failure": 0, "total": 0})
 
         for d in delegations:
-            is_success = d.status == "success"
+            is_success = d.success
             agent_stats[d.agent]["total"] += 1
             agent_stats[d.agent]["success" if is_success else "failure"] += 1
             level_stats[d.level]["total"] += 1
@@ -291,18 +291,9 @@ class DelegationLearner:
 
         with self._lock:
             try:
-                perf_data = self._db.get_all_agent_performance()
-                agent_data = perf_data.get(actual_agent, {})
-                task_type_data = agent_data.get(task_id, {"success": 0, "failure": 0})
-
-                if success:
-                    task_type_data["success"] = task_type_data.get("success", 0) + 1
-                else:
-                    task_type_data["failure"] = task_type_data.get("failure", 0) + 1
-                    task_type_data["last_failure_reason"] = f"expected={expected_agent}, actual={actual_agent}"
-
-                # Note: Using relative import for models would cause circular import
-                # The original imports from src.state.models - keeping the pattern
+                # Write feedback to outcomes.db
+                failure_reason = f"expected={expected_agent}, actual={actual_agent}" if not success else ""
+                self._db.update_feedback(task_id, actual_agent, success, failure_reason)
                 logger.debug(f"Recorded feedback for {task_id}: {actual_agent} = {success}")
             except Exception as e:
                 logger.error(f"Failed to record feedback: {e}")

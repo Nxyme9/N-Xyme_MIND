@@ -3,11 +3,11 @@
 Auto Case Study Generator
 Feed a session log → get a structured case study.
 """
-import os
-import sys
 import argparse
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -50,7 +50,7 @@ Be concise. Focus on the transferable insight, not the specific details."""
 def generate_case_study(session_content: str) -> tuple[str, str]:
     """Generate case study from session log. Returns (title, content)."""
     client = get_client()
-    
+
     prompt = f"""{SYSTEM_PROMPT}
 
 === SESSION LOG ===
@@ -58,9 +58,9 @@ def generate_case_study(session_content: str) -> tuple[str, str]:
 === END SESSION LOG ===
 
 Generate a case study based on this session:"""
-    
+
     response = client.generate(prompt)
-    
+
     # Extract title from first line
     lines = response.strip().split('\n')
     title = "Untitled"
@@ -68,7 +68,7 @@ Generate a case study based on this session:"""
         if line.startswith("# Case Study:"):
             title = line.replace("# Case Study:", "").strip()
             break
-    
+
     return title, response
 
 def main():
@@ -99,10 +99,10 @@ def main():
 
     print(f"📄 Reading: {session_file}")
     content = session_file.read_text(encoding="utf-8")
-    
+
     print("🤖 Generating case study...")
     title, case_study = generate_case_study(content)
-    
+
     if args.dry_run:
         print("\n" + case_study)
         return

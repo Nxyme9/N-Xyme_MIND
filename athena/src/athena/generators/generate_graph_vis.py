@@ -8,10 +8,9 @@ a standalone HTML file with an interactive Vis.js network graph.
 Usage: python3 generate_graph_vis.py
 """
 
+import json
 import os
 import re
-import json
-import sys
 from collections import defaultdict
 from urllib.parse import unquote
 
@@ -55,7 +54,7 @@ def get_all_md_files():
         for root, dirs, files in os.walk(root_dir):
             # Exclude directories
             dirs[:] = [d for d in dirs if d not in EXCLUDED_DIRS]
-            
+
             for file in files:
                 if file.endswith(".md"):
                     md_files.append(os.path.join(root, file))
@@ -73,11 +72,11 @@ def extract_links(file_path):
     """Extract all markdown links from a file."""
     link_pattern = re.compile(r'\[.*?\]\((?!http|mailto)(.*?)\)')
     links = []
-    
+
     try:
-        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+        with open(file_path, encoding="utf-8", errors="ignore") as f:
             content = f.read()
-        
+
         matches = link_pattern.findall(content)
         for link in matches:
             normalized = normalize_path(link)
@@ -91,7 +90,7 @@ def extract_links(file_path):
                     links.append(os.path.join(PROJECT_ROOT, normalized))
     except Exception:
         pass # Ignore read errors
-    
+
     return links
 
 def determine_group(path):
@@ -107,10 +106,10 @@ def determine_group(path):
 
 def generate_html(nodes, edges):
     """Generate the HTML content."""
-    
+
     nodes_json = json.dumps(nodes)
     edges_json = json.dumps(edges)
-    
+
     html_template = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -196,22 +195,22 @@ def generate_html(nodes, edges):
 def main():
     print("🔍 Scanning workspace for knowledge nodes...")
     files = get_all_md_files()
-    
+
     nodes = []
     edges = []
-    
+
     # Path to ID mapping
     path_to_id = {}
-    
+
     # Pass 1: Create Nodes
     for i, file_path in enumerate(files):
         abs_path = os.path.abspath(file_path)
         path_to_id[abs_path] = i
-        
+
         filename = os.path.basename(file_path)
         group = determine_group(file_path)
-        
-        # Calculate approximate weight (size) based on inbound links later, 
+
+        # Calculate approximate weight (size) based on inbound links later,
         # for now initialized defaults
         nodes.append({
             "id": i,
@@ -220,18 +219,18 @@ def main():
             "color": COLOR_MAP.get(group, "#a8a8b3"),
             "value": 1 # Base size
         })
-        
+
     print(f"✅ Found {len(nodes)} nodes.")
-    
+
     # Pass 2: Create Edges
     print("🔗 Linking concepts...")
     edge_count = 0
     inbound_counts = defaultdict(int)
-    
+
     for file_path in files:
         source_id = path_to_id.get(os.path.abspath(file_path))
         if source_id is None: continue
-        
+
         links = extract_links(file_path)
         for link in links:
             target_id = path_to_id.get(link)
@@ -242,29 +241,29 @@ def main():
                 })
                 inbound_counts[target_id] += 1
                 edge_count += 1
-                
+
     # Update node sizes based on centrality (inbound links)
     for node in nodes:
         node_id = node["id"]
         count = inbound_counts[node_id]
         # Size formula: base + (links * multiplier)
         node["value"] = 5 + (count * 2)
-        
+
         # High value nodes get special treatment if not already colored special
         if count > 10 and node["color"] == "#a8a8b3":
              node["color"] = "#ffffff" # Highlight hubs
-             
+
     print(f"✅ Created {edge_count} connections.")
-    
+
     # Generate HTML
     html_content = generate_html(nodes, edges)
-    
+
     # Ensure dir exists
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
-    
+
     with open(OUTPUT_FILE, "w") as f:
         f.write(html_content)
-        
+
     print(f"🚀 Visualization saved to: {OUTPUT_FILE}")
 
 if __name__ == "__main__":

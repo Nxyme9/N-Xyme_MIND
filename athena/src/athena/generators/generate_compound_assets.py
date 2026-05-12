@@ -5,12 +5,13 @@ Uses Gemini 3 Flash Preview to generate durable value assets.
 Budget: 19 API calls total.
 """
 
-import os
 import json
-from pathlib import Path
+import os
 from datetime import datetime
-from dotenv import load_dotenv
+from pathlib import Path
+
 import google.generativeai as genai
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -228,8 +229,8 @@ Workflow:
 if __name__ == "__main__":
     print("=" * 60)
     print("⚡ COMPOUND ASSET GENERATOR")
-    print(f"   Model: gemini-3-flash-preview")
-    print(f"   Budget: 19 API calls")
+    print("   Model: gemini-3-flash-preview")
+    print("   Budget: 19 API calls")
     print(f"   Time: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("=" * 60)
 

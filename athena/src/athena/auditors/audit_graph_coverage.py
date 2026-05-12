@@ -1,6 +1,6 @@
+import json
 import os
 import re
-import json
 
 # Configuration
 CASE_STUDIES_DIR = ".context/memories/case_studies"
@@ -21,14 +21,14 @@ KEYWORDS = {
 }
 
 def scan_file(filepath):
-    with open(filepath, 'r') as f:
+    with open(filepath) as f:
         content = f.read()
-    
+
     # Check for links
     protocol_links = re.findall(r'\[Protocol \d+.*?\]', content)
     case_links = re.findall(r'\[.*?Case.*?\]', content)
     has_related_section = "Related Protocols" in content or "Cross-References" in content
-    
+
     # Check for missing keywords
     missing_links = []
     for keyword, expected_link in KEYWORDS.items():
@@ -57,16 +57,16 @@ def audit_directory(directory):
 def main():
     print("Starting Audit...")
     case_results = audit_directory(CASE_STUDIES_DIR)
-    
+
     # Filter for actionable items
     actionable = [r for r in case_results if not r['has_related_section'] or r['missing_links']]
-    
+
     report = {
         "total_files": len(case_results),
         "files_needing_action": len(actionable),
         "details": actionable
     }
-    
+
     print(json.dumps(report, indent=2))
 
 if __name__ == "__main__":

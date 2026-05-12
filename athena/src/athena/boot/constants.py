@@ -25,4 +25,3 @@ BOOT_TIMEOUT_SECONDS = 90
 EXPECTED_CORE_HASH = "8f2e6f9e248951a84aa48e24e9bfd8239f76c6c8bffd44ee7c9cd854861a8820caed733aafa3b333e8851f372c854d4a"
 
 # Colors (centralized)
-from athena.core.colors import GREEN, CYAN, YELLOW, RED, BOLD, DIM, RESET

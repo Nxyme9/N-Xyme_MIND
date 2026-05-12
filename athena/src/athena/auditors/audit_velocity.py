@@ -11,7 +11,6 @@ Usage:
     python3 audit_velocity.py
 """
 
-import sys
 import json
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -32,12 +31,12 @@ def calculate_slope(days=7):
     """Calculate average daily score velocity."""
     if not OUTCOME_DB.exists():
         return 0.0
-        
+
     cutoff = datetime.now() - timedelta(days=days)
     total_score = 0.0
-    
+
     try:
-        with open(OUTCOME_DB, "r") as f:
+        with open(OUTCOME_DB) as f:
             for line in f:
                 try:
                     entry = json.loads(line)
@@ -48,7 +47,7 @@ def calculate_slope(days=7):
                     continue
     except Exception:
         return 0.0
-        
+
     # Slope = Daily Average Score
     # e.g., if you shipped 2 big things (10pts) in 7 days = 1.4 slope
     slope = total_score / days
@@ -56,10 +55,10 @@ def calculate_slope(days=7):
 
 def main():
     slope = calculate_slope(7)
-    
-    print(f"📊 Velocity Audit: 7-Day Outcome Slope")
+
+    print("📊 Velocity Audit: 7-Day Outcome Slope")
     print(f"   Outcome Slope: {slope} points/day")
-    
+
     if slope == 0.0:
         print("\n⚠️  WARNING: FLATLINE DETECTED (Slope 0.0)")
         print("   No shipping events in 7 days.")

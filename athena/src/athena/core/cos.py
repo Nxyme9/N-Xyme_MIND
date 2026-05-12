@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Dict, Optional
+
 
 class Seat(Enum):
     STRATEGIST = "The Strategist"
@@ -47,13 +47,13 @@ class COSEngine:
     Manages identity-driven reasoning and perspective-taking.
     """
     def __init__(self):
-        self.active_seats: List[Seat] = list(Seat)
-        self.active_roles: Dict[SpecializedRole, Seat] = ROLE_TO_SEAT_MAP
+        self.active_seats: list[Seat] = list(Seat)
+        self.active_roles: dict[SpecializedRole, Seat] = ROLE_TO_SEAT_MAP
 
     def get_seat_for_role(self, role: SpecializedRole) -> Seat:
         return self.active_roles.get(role)
 
-    def get_roles_for_seat(self, seat: Seat) -> List[SpecializedRole]:
+    def get_roles_for_seat(self, seat: Seat) -> list[SpecializedRole]:
         return [role for role, assigned_seat in self.active_roles.items() if assigned_seat == seat]
 
     def format_perspective_prompt(self, seat_or_role) -> str:
@@ -61,7 +61,7 @@ class COSEngine:
         name = seat_or_role.value
         return f"Speaking as **{name}**, "
 
-    def get_committee_for_complexity(self, complexity: int) -> List[Seat]:
+    def get_committee_for_complexity(self, complexity: int) -> list[Seat]:
         """
         Returns a subset of seats based on task complexity (1-100).
         Per Protocol 166 (Deep Think Proxy).

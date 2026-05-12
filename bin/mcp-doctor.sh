@@ -72,6 +72,10 @@ fi
 # ── 2. Athena MCP ──
 header "athena"
 ATHENA_VENV="$ROOT/venvs/athena"
+ATHENA_VENV_ALT="$ROOT/athena/.venv"
+if [ ! -f "$ATHENA_VENV/bin/python" ] && [ -f "$ATHENA_VENV_ALT/bin/python" ]; then
+    ATHENA_VENV="$ATHENA_VENV_ALT"
+fi
 if [ ! -f "$ATHENA_VENV/bin/python" ]; then
     fail "athena venv missing at $ATHENA_VENV"
     warn "Cannot diagnose athena without venv"

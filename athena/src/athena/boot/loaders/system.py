@@ -1,5 +1,6 @@
-import subprocess
 import os
+import subprocess
+
 from athena.boot.constants import GREEN, RESET
 
 
@@ -7,7 +8,7 @@ class SystemLoader:
     @staticmethod
     def verify_environment():
         """Titanium Airlock: Verifies dependencies and env vars."""
-        from athena.boot.constants import PROJECT_ROOT, RED, YELLOW, BOLD, RESET, DIM
+        from athena.boot.constants import BOLD, DIM, PROJECT_ROOT, RED, RESET, YELLOW
 
         ensure_env = (
             PROJECT_ROOT / "Athena-Public" / "examples" / "scripts" / "ensure_env.sh"
@@ -35,7 +36,7 @@ class SystemLoader:
     @staticmethod
     def enforce_daemon():
         """Ensures the Athena Daemon (athenad) is active."""
-        from athena.boot.constants import PROJECT_ROOT, GREEN, BOLD, RESET
+        from athena.boot.constants import GREEN, PROJECT_ROOT, RESET
 
         daemon_script = PROJECT_ROOT / "src" / "athena" / "core" / "athenad.py"
 
@@ -59,7 +60,7 @@ class SystemLoader:
     @staticmethod
     def sync_ui():
         """Launch UI components and sync hardware state."""
-        print(f"🔄 Syncing UI Components...")
+        print("🔄 Syncing UI Components...")
 
         # Antigravity Launch with GPU flags
         cmd = [

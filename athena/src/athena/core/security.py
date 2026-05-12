@@ -4,9 +4,9 @@ athena.core.security — Security patches and hardening.
 """
 
 import logging
+
 import diskcache
 import dspy
-from athena.core.config import PROJECT_ROOT
 
 logger = logging.getLogger(__name__)
 

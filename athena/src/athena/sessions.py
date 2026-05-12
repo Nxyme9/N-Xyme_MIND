@@ -6,14 +6,14 @@ Unified session lifecycle and checkpointing logic.
 """
 
 import re
-from pathlib import Path
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from pathlib import Path
+from typing import Any
 
-from athena.core.config import get_current_session_log, CONTEXT_DIR, SESSIONS_DIR
+from athena.core.config import CONTEXT_DIR, SESSIONS_DIR, get_current_session_log
 
 
-def parse_yaml_frontmatter(content: str) -> tuple[Dict[str, Any], int]:
+def parse_yaml_frontmatter(content: str) -> tuple[dict[str, Any], int]:
     """Extract YAML frontmatter from session log. Returns (metadata, body_start_index)."""
     import yaml
 
@@ -40,7 +40,7 @@ def parse_yaml_frontmatter(content: str) -> tuple[Dict[str, Any], int]:
         return metadata, body_start
 
 
-def recall_last_session() -> Optional[Path]:
+def recall_last_session() -> Path | None:
     """
     Find and return the most recent session log file.
     """
@@ -265,7 +265,7 @@ def extract_lambda_stats(content: str) -> dict:
     }
 
 
-def extract_learnings(content: str) -> tuple[List[str], List[str], List[str]]:
+def extract_learnings(content: str) -> tuple[list[str], list[str], list[str]]:
     """Extract [S], [U], [X] learnings from the session log."""
     system_learnings = []
     user_learnings = []
@@ -295,7 +295,7 @@ def extract_learnings(content: str) -> tuple[List[str], List[str], List[str]]:
 
 
 def append_checkpoint(
-    summary: str, bullets: Optional[List[str]] = None, log_path: Optional[Path] = None
+    summary: str, bullets: list[str] | None = None, log_path: Path | None = None
 ):
     """
     Append a checkpoint block to the session log.
@@ -320,7 +320,7 @@ def append_checkpoint(
     return log_path
 
 
-def log_to_decision_ledger(summary: str, rationale: Optional[str] = None):
+def log_to_decision_ledger(summary: str, rationale: str | None = None):
     """
     Log high-stakes decisions to DECISION_LOG.md.
     """
@@ -338,8 +338,8 @@ def log_to_decision_ledger(summary: str, rationale: Optional[str] = None):
 
 def update_session_metadata(
     new_tokens: int = 0,
-    thread_id: Optional[str] = None,
-    log_path: Optional[Path] = None,
+    thread_id: str | None = None,
+    log_path: Path | None = None,
 ):
     """
     Update YAML frontmatter in session log.

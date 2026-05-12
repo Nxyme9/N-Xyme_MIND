@@ -1,13 +1,20 @@
-import os
-import sys
 import json
+import os
 import signal
+import sys
 from datetime import datetime
+
 from athena.boot.constants import (
-    PROJECT_ROOT, SAFE_BOOT_SCRIPT, BOOT_TIMEOUT_SECONDS,
-    RED, YELLOW, BOLD, DIM, RESET
+    BOLD,
+    BOOT_TIMEOUT_SECONDS,
+    DIM,
+    PROJECT_ROOT,
+    RED,
+    RESET,
+    SAFE_BOOT_SCRIPT,
+    YELLOW,
 )
-from athena.boot.loaders.ui import UILoader
+
 
 class StateLoader:
     @staticmethod
@@ -16,7 +23,7 @@ class StateLoader:
         print(f"\n{RED}{'=' * 60}{RESET}")
         print(f"{RED}{BOLD}⚠️  BOOT TIMEOUT - {BOOT_TIMEOUT_SECONDS}s EXCEEDED{RESET}")
         print(f"{RED}{'=' * 60}{RESET}")
-        
+
         # Dump crash report
         try:
             crash_file = PROJECT_ROOT / ".athena" / "crash_reports" / f"boot_timeout_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
@@ -33,12 +40,12 @@ class StateLoader:
             print(f"{YELLOW}Failed to dump forensics: {e}{RESET}")
 
         print(f"\n{YELLOW}Triggering safe mode fallback...{RESET}")
-        
+
         if SAFE_BOOT_SCRIPT.exists():
             print(f"{DIM}Run: ./safe_boot.sh{RESET}")
         else:
             print(f"{DIM}Manual recovery: Load Core_Identity.md directly{RESET}")
-        
+
         sys.exit(1)
 
     @staticmethod
@@ -47,7 +54,7 @@ class StateLoader:
         crash_dir = PROJECT_ROOT / ".athena" / "crash_reports"
         if not crash_dir.exists():
             return
-        
+
         crash_files = sorted(crash_dir.glob("*.json"), reverse=True)
         if crash_files:
             latest = crash_files[0]
@@ -71,7 +78,7 @@ class StateLoader:
         canary_file = PROJECT_ROOT / "DEAD_MAN_SWITCH.md"
         if not canary_file.exists():
             return
-        
+
         try:
             import re
             content = canary_file.read_text()
@@ -80,13 +87,13 @@ class StateLoader:
                 audit_date_str = match.group(1)
                 audit_date = datetime.strptime(audit_date_str, "%Y-%m-%d")
                 today = datetime.now()
-                
+
                 if today > audit_date:
                     days_overdue = (today - audit_date).days
                     print(f"\n{RED}{'=' * 60}{RESET}")
                     print(f"{RED}🚨 DEAD MAN SWITCH: AUDIT OVERDUE BY {days_overdue} DAYS{RESET}")
                     print(f"{RED}{'=' * 60}{RESET}")
-                    
+
                     overdue_flag = PROJECT_ROOT / ".athena" / "overdue_audit.flag"
                     overdue_flag.parent.mkdir(parents=True, exist_ok=True)
                     overdue_flag.write_text(f"overdue_since={audit_date_str}\ndays_overdue={days_overdue}\n")

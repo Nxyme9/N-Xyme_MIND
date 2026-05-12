@@ -16,14 +16,10 @@ Usage:
 """
 
 import json
-import os
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 from athena.core.config import get_project_root
-
 
 # --- CONFIGURATION ---
 
@@ -43,7 +39,7 @@ def log_skill_invocation(
     skill_name: str,
     session_id: str = "",
     trigger: str = "manual",
-    metadata: Optional[dict] = None,
+    metadata: dict | None = None,
 ) -> dict:
     """
     Append a skill invocation record to the JSONL log.
@@ -102,7 +98,7 @@ def log_skill_change(
     return record
 
 
-def _read_log(days: Optional[int] = None) -> list[dict]:
+def _read_log(days: int | None = None) -> list[dict]:
     """
     Read the JSONL log and return records, optionally filtered by recency.
 
@@ -118,7 +114,7 @@ def _read_log(days: Optional[int] = None) -> list[dict]:
         cutoff = (datetime.now() - timedelta(days=days)).isoformat()
 
     records = []
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if not line:
@@ -202,7 +198,7 @@ def get_skill_stats(days: int = 30) -> dict:
 
 
 def get_dead_skills(
-    known_skills: Optional[list[str]] = None, days: int = 90
+    known_skills: list[str] | None = None, days: int = 90
 ) -> list[str]:
     """
     Return skills from the known_skills list that have never been invoked.

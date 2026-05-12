@@ -6,9 +6,8 @@ Automatically regenerates the .context/KNOWLEDGE_GRAPH.md file.
 Reflects the actual workspace structure in a Mermaid diagram.
 """
 
-from pathlib import Path
-import os
 import sys
+from pathlib import Path
 
 # SDK Imports
 SDK_PATH = Path(__file__).resolve().parent.parent.parent

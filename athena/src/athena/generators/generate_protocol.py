@@ -3,9 +3,10 @@
 Protocol Generator
 Describe a rough idea → get a full workflow.md with phases and turbo annotations.
 """
-import sys
 import argparse
+import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -21,7 +22,7 @@ def get_existing_protocol_ids() -> set:
     ids = set()
     if not PROTOCOLS_DIR.exists():
         return ids
-    
+
     for subdir in PROTOCOLS_DIR.iterdir():
         if subdir.is_dir():
             for f in subdir.glob("*.md"):
@@ -31,7 +32,7 @@ def get_existing_protocol_ids() -> set:
                     id_part = name.split("-")[0]
                     if id_part.isdigit():
                         ids.add(int(id_part))
-    
+
     # Also check root protocols
     for f in PROTOCOLS_DIR.glob("*.md"):
         name = f.stem
@@ -39,13 +40,13 @@ def get_existing_protocol_ids() -> set:
             id_part = name.split("-")[0]
             if id_part.isdigit():
                 ids.add(int(id_part))
-    
+
     return ids
 
 def check_for_collisions():
     """Check for duplicate protocol IDs across directories."""
     id_locations = {}
-    
+
     for subdir in PROTOCOLS_DIR.iterdir():
         if subdir.is_dir():
             for f in subdir.glob("*.md"):
@@ -57,7 +58,7 @@ def check_for_collisions():
                         if pid not in id_locations:
                             id_locations[pid] = []
                         id_locations[pid].append(str(f.relative_to(PROTOCOLS_DIR)))
-    
+
     collisions = {k: v for k, v in id_locations.items() if len(v) > 1}
     return collisions
 
@@ -118,9 +119,9 @@ Rules:
 def generate_protocol(description: str, name: str = None) -> str:
     """Generate a protocol from description."""
     client = get_client()
-    
+
     name_hint = f"Workflow name should be: {name}" if name else "Suggest an appropriate workflow name."
-    
+
     prompt = f"""{SYSTEM_PROMPT}
 
 USER REQUEST:
@@ -129,9 +130,9 @@ USER REQUEST:
 {name_hint}
 
 Generate the complete workflow file:"""
-    
+
     response = client.generate(prompt)
-    
+
     # Clean up if wrapped in code blocks
     if response.startswith("```markdown"):
         response = response[11:]
@@ -139,7 +140,7 @@ Generate the complete workflow file:"""
         response = response[3:]
     if response.endswith("```"):
         response = response[:-3]
-    
+
     return response.strip()
 
 def main():
@@ -163,7 +164,7 @@ def main():
 
     print("🤖 Generating protocol...")
     protocol = generate_protocol(description, name)
-    
+
     if args.output:
         output_path = Path(args.output)
     elif name:
@@ -171,7 +172,7 @@ def main():
     else:
         # Extract name from generated content
         output_path = None
-    
+
     if output_path:
         output_path.write_text(protocol, encoding="utf-8")
         print(f"✅ Saved to {output_path}")

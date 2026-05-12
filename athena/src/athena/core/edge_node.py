@@ -14,10 +14,9 @@ Designed to be triggered by iOS Shortcuts, curl, or any webhook source.
 
 import base64
 import json
-import time
 import logging
-from pathlib import Path
-from typing import Optional, Dict, Any
+import time
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -35,7 +34,7 @@ INGEST_DIR = PROJECT_ROOT / ".context" / "ingest"
 class IngestPayload(BaseModel):
     type: str  # camera, location, voice, text
     data: str  # base64 for binary, raw string for text/location
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
 
 class IngestResponse(BaseModel):
@@ -105,7 +104,7 @@ def process_ingest(payload: IngestPayload) -> IngestResponse:
     elif payload.type == "text":
         filename = f"{prefix}-capture-{source}.md"
         filepath = INGEST_DIR / filename
-        content = f"# Quick Capture\n\n"
+        content = "# Quick Capture\n\n"
         content += f"> Ingested: {time.strftime('%Y-%m-%d %H:%M:%S')}\n"
         content += f"> Source: {source}\n\n"
         content += payload.data

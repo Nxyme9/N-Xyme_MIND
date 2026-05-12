@@ -21,7 +21,7 @@ import re
 import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 from athena.core.models import SearchResult
 from athena.memory.vectors import get_embedding
@@ -165,7 +165,7 @@ VALIDATION_THRESHOLD = 0.25  # Cosine similarity floor for result validation
 # ── Decomposition Engine ─────────────────────────────────────────────────────
 
 
-def decompose_query(query: str) -> List[str]:
+def decompose_query(query: str) -> list[str]:
     """
     Decompose a complex query into 2-4 sub-queries using rule-based NLP.
 
@@ -229,7 +229,7 @@ def decompose_query(query: str) -> List[str]:
 # ── Cosine Similarity ────────────────────────────────────────────────────────
 
 
-def cosine_similarity(vec_a: List[float], vec_b: List[float]) -> float:
+def cosine_similarity(vec_a: list[float], vec_b: list[float]) -> float:
     """Compute cosine similarity between two vectors."""
     dot = sum(a * b for a, b in zip(vec_a, vec_b))
     norm_a = sum(a * a for a in vec_a) ** 0.5
@@ -242,19 +242,19 @@ def cosine_similarity(vec_a: List[float], vec_b: List[float]) -> float:
 # ── Retriever (Parallel Search) ──────────────────────────────────────────────
 
 
-def _run_subquery_search(subquery: str, limit: int = 10) -> Tuple[str, List[Dict]]:
+def _run_subquery_search(subquery: str, limit: int = 10) -> tuple[str, list[dict]]:
     """Run a single search sub-query and return JSON results."""
     # Import here to avoid circular imports at module level
+    from athena.memory.vectors import get_embedding as _get_embedding
     from athena.tools.search import (
         collect_canonical,
+        collect_filenames,
+        collect_graphrag,
+        collect_sqlite,
         collect_tags,
         collect_vectors,
-        collect_graphrag,
-        collect_filenames,
-        collect_sqlite,
         weighted_rrf,
     )
-    from athena.memory.vectors import get_embedding as _get_embedding
 
     try:
         query_embedding = _get_embedding(subquery)
@@ -302,10 +302,10 @@ def _run_subquery_search(subquery: str, limit: int = 10) -> Tuple[str, List[Dict
 
 
 def validate_results(
-    results: List[SearchResult],
-    query_embedding: List[float],
+    results: list[SearchResult],
+    query_embedding: list[float],
     threshold: float = VALIDATION_THRESHOLD,
-) -> List[SearchResult]:
+) -> list[SearchResult]:
     """
     Validate results against the original query using cosine similarity.
     Filters out results below the threshold.
@@ -335,7 +335,7 @@ def agentic_search(
     limit: int = 10,
     validate: bool = True,
     debug: bool = False,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Agentic RAG v2 — Full pipeline.
 
@@ -358,8 +358,8 @@ def agentic_search(
             print(f"   {i}. '{sq}'", file=sys.stderr)
 
     # Phase 2: Parallel Retrieval
-    all_results: Dict[str, SearchResult] = {}  # Dedup by doc ID
-    provenance: Dict[str, List[str]] = defaultdict(list)  # doc_id -> [sub_queries that found it]
+    all_results: dict[str, SearchResult] = {}  # Dedup by doc ID
+    provenance: dict[str, list[str]] = defaultdict(list)  # doc_id -> [sub_queries that found it]
 
     # Run sub-queries in parallel
     with ThreadPoolExecutor(max_workers=min(len(sub_queries), 4)) as executor:

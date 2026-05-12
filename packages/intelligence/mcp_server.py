@@ -71,8 +71,8 @@ def score_complexity(task_description: str) -> Dict[str, Any]:
         return {
             "status": "success",
             "level": result.level,
-            "tokens": result.tokens,
-            "factors": result.factors
+            "confidence": result.confidence,
+            "reason": result.reason
         }
     except Exception as e:
         return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}

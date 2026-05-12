@@ -1,17 +1,17 @@
-import sys
 import subprocess
+import sys
 from datetime import datetime
-from pathlib import Path
+
 from athena.boot.constants import (
-    PROJECT_ROOT,
-    LOGS_DIR,
-    SUPABASE_SEARCH_SCRIPT,
-    GREEN,
-    YELLOW,
-    RED,
     BOLD,
     DIM,
+    GREEN,
+    LOGS_DIR,
+    PROJECT_ROOT,
+    RED,
     RESET,
+    SUPABASE_SEARCH_SCRIPT,
+    YELLOW,
 )
 
 

@@ -8,31 +8,30 @@ Replaces the monolithic .agent/scripts/boot.py
 
 import sys
 from datetime import datetime
+
 from athena.boot.constants import (
-    PROJECT_ROOT,
-    RED,
-    GREEN,
-    YELLOW,
-    CYAN,
     BOLD,
     DIM,
+    GREEN,
+    PROJECT_ROOT,
+    RED,
     RESET,
 )
 
 
 def main():
     # Lazy Imports for Speed
-    from athena.boot.loaders.ui import UILoader
-    from athena.boot.loaders.state import StateLoader
     from athena.boot.loaders.identity import IdentityLoader
     from athena.boot.loaders.memory import MemoryLoader
-    from athena.boot.loaders.system import SystemLoader
     from athena.boot.loaders.prefetch import PrefetchLoader
+    from athena.boot.loaders.state import StateLoader
+    from athena.boot.loaders.system import SystemLoader
     from athena.boot.loaders.token_budget import (
-        measure_boot_files,
-        display_gauge,
         auto_compact_if_needed,
+        display_gauge,
+        measure_boot_files,
     )
+    from athena.boot.loaders.ui import UILoader
 
     # Phase 0: Check for --verify flag
     if len(sys.argv) > 1 and sys.argv[1] == "--verify":
@@ -56,7 +55,7 @@ def main():
         from athena.core.security import patch_dspy_cache_security
 
         patch_dspy_cache_security()
-        print(f"   🛡️  Security: DiskCache mitigation active.")
+        print("   🛡️  Security: DiskCache mitigation active.")
     except ImportError:
         pass
     except Exception as e:
@@ -96,11 +95,12 @@ def main():
 
     # Phase 4: Parallel Background Work (ALL non-gating work moved here)
     from concurrent.futures import ThreadPoolExecutor
-    from athena.core.health import HealthCheck
+
     from athena.boot.loaders.context_summaries import (
-        generate_summaries,
         display_summary_status,
+        generate_summaries,
     )
+    from athena.core.health import HealthCheck
 
     def run_health_check_wrapper():
         try:

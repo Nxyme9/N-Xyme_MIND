@@ -11,8 +11,8 @@ then generates a consolidated TAG_INDEX.md in .context/.
 
 import os
 import re
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent.parent.parent
 CONTEXT_DIR = ROOT_DIR / ".context"
@@ -38,7 +38,7 @@ def extract_tags_from_file(filepath: Path) -> list[str]:
     """Extract tags from YAML frontmatter AND inline #tags at end of file."""
     tags = []
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             content = f.read()
 
         # Method 1: Match YAML frontmatter tags

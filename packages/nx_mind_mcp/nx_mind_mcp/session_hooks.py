@@ -23,6 +23,11 @@ CACHE_TTL_SECONDS = 300  # 5 minutes
 SESSION_STATE_PATH = Path(".sisyphus/session-state.json")
 ACTIVE_CONTEXT_PATH = Path(".context/activeContext.md")
 
+# Token budget for context injection (prevents bloat on fresh sessions)
+# Total budget: 1000 tokens max for SessionInjector (prioritize critical state)
+MAX_CONTEXT_TOKENS = 1000
+CHARS_PER_TOKEN = 4.0
+
 # Optional imports - graceful fallback if unavailable
 _MEMORY_CORE_AVAILABLE = False
 _LEARNING_ENGINE_AVAILABLE = False
@@ -147,7 +152,19 @@ class SessionInjector:
         try:
             if ACTIVE_CONTEXT_PATH.exists():
                 with open(ACTIVE_CONTEXT_PATH, "r", encoding="utf-8") as f:
-                    return f.read()
+                    content = f.read()
+                    max_chars = int(MAX_CONTEXT_TOKENS * CHARS_PER_TOKEN)
+                    if len(content) > max_chars:
+                        lines = content.split("\n")
+                        accumulated = 0
+                        truncated = []
+                        for line in lines:
+                            accumulated += len(line) + 1
+                            if accumulated > max_chars:
+                                break
+                            truncated.append(line)
+                        return "\n".join(truncated) + f"\n... [truncated {len(lines) - len(truncated)} lines]"
+                    return content
         except Exception as e:
             logger.warning(f"Failed to read active context: {e}")
         return None

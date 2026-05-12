@@ -34,7 +34,7 @@ def get_last_action():
     try:
         if not FLIGHT_RECORDER.exists():
             return "None"
-        with open(FLIGHT_RECORDER, "r") as f:
+        with open(FLIGHT_RECORDER) as f:
             lines = f.readlines()
             if not lines:
                 return "None"
@@ -51,7 +51,7 @@ def main():
     print(f"Daemon Status    : {get_daemon_status()}")
     print(f"Total Sessions   : {get_session_count()}")
     print(f"Last Action      : {get_last_action()}")
-    print(f"Memory Integrity : SEALED")
+    print("Memory Integrity : SEALED")
     print("=" * 40 + "\n")
 
 

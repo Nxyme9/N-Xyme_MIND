@@ -1,22 +1,22 @@
-import time
 import sys
+import time
 from datetime import datetime
+
 from rich.console import Console
 from rich.layout import Layout
-from rich.panel import Panel
 from rich.live import Live
 from rich.markdown import Markdown
+from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
-from rich import box
 
 # Import Client
 try:
     from athena_client import AthenaClient
 except ImportError:
     # Fallback for direct execution
-    import sys
     import os
+    import sys
 
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from athena_client import AthenaClient

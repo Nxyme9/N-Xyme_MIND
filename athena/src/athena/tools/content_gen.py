@@ -6,12 +6,10 @@ Automated Marketing Asset Generator based on SEO Strategy.
 Implements Outcome Positioning (CS-240) and Visceral Copywriting (Protocol 272).
 """
 
-import os
-import sys
 import argparse
 import re
+import sys
 from pathlib import Path
-from typing import Dict, List
 
 # Fix sys.path for SDK access
 SDK_PATH = Path(__file__).resolve().parent.parent.parent
@@ -37,11 +35,11 @@ Generate 3 variations of marketing copy:
 Constraint: Follow Protocol 272 (Visceral triggers) and CS-240 (Outcome framing).
 """
 
-def get_keywords() -> List[str]:
+def get_keywords() -> list[str]:
     """Parse keywords from SEO_STRATEGY_MASTER.md."""
     if not SEO_MASTER.exists():
         return []
-    
+
     content = SEO_MASTER.read_text(encoding="utf-8")
     # Matches bullet points like "- `Keyword`"
     keywords = re.findall(r'- `([^`]+)`', content)
@@ -54,19 +52,19 @@ def generate_assets(keyword: str):
     In this SDK shim, we provide a placeholder integration point.
     """
     print(f"🛠️  Generating assets for: {keyword}")
-    
+
     # Placeholder for actual LLM call (e.g. via athena.core.models)
     # Since this is a local tool, we output the prompt for the user to use in the AI chat
     # or implement a simple mock.
-    
+
     output_file = OUTPUT_DIR / f"{keyword.replace(' ', '_').lower()}.md"
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    
+
     # We output the specific prompt to the user as the 'generated' asset for now,
     # effectively becoming a 'Prompt Scaffolder' for marketing efforts.
-    
+
     final_prompt = PROMPT_TEMPLATE.replace("{keyword}", keyword)
-    
+
     output_file.write_text(final_prompt, encoding="utf-8")
     print(f"  ✅ Prompt Scaffolded: {output_file.relative_to(PROJECT_ROOT)}")
 

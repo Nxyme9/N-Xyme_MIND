@@ -15,9 +15,8 @@ Living Docs (The Metabolic Layer):
 - Operating_Principles.md (New Rules)
 """
 
-import os
-import re
 import glob
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -155,10 +154,10 @@ def get_latest_session_log():
     today = datetime.now().strftime("%Y-%m-%d")
     pattern = str(SESSION_LOGS_DIR / f"{today}-session-*.md")
     files = sorted(glob.glob(pattern), reverse=True)
-    
+
     if files:
         return Path(files[0])
-    
+
     # Fallback: any session log from today
     all_files = sorted(glob.glob(str(SESSION_LOGS_DIR / "*.md")), reverse=True)
     return Path(all_files[0]) if all_files else None
@@ -167,17 +166,17 @@ def get_latest_session_log():
 def extract_signals(session_content: str) -> dict:
     """Scan session content for signals requiring Living Doc updates."""
     signals = {doc: [] for doc in LIVING_DOCS}
-    
+
     for doc, patterns in SIGNAL_PATTERNS.items():
         for pattern in patterns:
             matches = re.findall(pattern, session_content, re.IGNORECASE)
             if matches:
                 unique_matches = list(set(m.lower() if isinstance(m, str) else m[0].lower() for m in matches))
                 signals[doc].extend(unique_matches[:5])
-    
+
     for doc in signals:
         signals[doc] = list(set(signals[doc]))
-    
+
     return signals
 
 
@@ -188,20 +187,20 @@ def detect_personality_drift(session_content: str) -> dict:
         "MBTI_functions": {},
         "recommendations": []
     }
-    
+
     # Check Big Five markers
     for trait, directions in BIG_FIVE_MARKERS.items():
         increase_count = 0
         decrease_count = 0
-        
+
         for pattern in directions.get("increase", []):
             matches = re.findall(pattern, session_content, re.IGNORECASE)
             increase_count += len(matches)
-        
+
         for pattern in directions.get("decrease", []):
             matches = re.findall(pattern, session_content, re.IGNORECASE)
             decrease_count += len(matches)
-        
+
         if increase_count > 3 or decrease_count > 3:
             current = CURRENT_PROFILE["Big_Five"][trait]
             if increase_count > decrease_count:
@@ -216,7 +215,7 @@ def detect_personality_drift(session_content: str) -> dict:
                     drift["recommendations"].append(f"✅ {trait} signals DOWN ({decrease_count}x) — currently {current}. Consider -3-5 points?")
                 else:
                     drift["recommendations"].append(f"📊 {trait} signals DOWN ({decrease_count}x) — currently {current}. Consider -3-5 points?")
-    
+
     # Check MBTI function usage
     function_counts = {}
     for func, patterns in MBTI_MARKERS.items():
@@ -226,21 +225,21 @@ def detect_personality_drift(session_content: str) -> dict:
             count += len(matches)
         if count > 2:
             function_counts[func] = count
-    
+
     if function_counts:
         drift["MBTI_functions"] = function_counts
         # Check for unusual function activation (not Ni-Te for INTJ)
         unusual = [f for f in function_counts if f not in ["Ni", "Te", "Fi", "Se"]]
         if unusual:
             drift["recommendations"].append(f"🔄 Unusual MBTI functions active: {', '.join(unusual)}. Type shift?")
-    
+
     return drift
 
 
 def check_living_doc_freshness():
     """Check when each Living Doc was last updated."""
     freshness = {}
-    
+
     for doc in LIVING_DOCS:
         doc_path = PROFILE_DIR / doc
         if doc_path.exists():
@@ -252,7 +251,7 @@ def check_living_doc_freshness():
                 freshness[doc] = "Unknown"
         else:
             freshness[doc] = "FILE MISSING"
-    
+
     return freshness
 
 
@@ -261,28 +260,28 @@ def main():
     print("🫀 METABOLIC SCAN — Living Docs Update Check")
     print("=" * 60)
     print()
-    
+
     # Get latest session
     session_file = get_latest_session_log()
     if not session_file:
         print("❌ No session log found for today.")
         return
-    
+
     print(f"📄 Session: {session_file.name}")
     print()
-    
+
     # Read session content
     session_content = session_file.read_text()
-    
+
     # Extract signals
     signals = extract_signals(session_content)
-    
+
     # Detect personality drift
     drift = detect_personality_drift(session_content)
-    
+
     # Check freshness
     freshness = check_living_doc_freshness()
-    
+
     # ============================================================
     # PERSONALITY DRIFT REPORT
     # ============================================================
@@ -297,39 +296,39 @@ def main():
         print()
         print("   ➡️  ACTION: Update User_Profile_Core.md if sustained pattern")
         print()
-    
+
     # ============================================================
     # LIVING DOCS CHECKLIST
     # ============================================================
     print("📋 LIVING DOCS UPDATE CHECKLIST")
     print("-" * 60)
-    
+
     updates_needed = False
-    
+
     for doc, description in LIVING_DOCS.items():
         doc_signals = signals.get(doc, [])
         last_updated = freshness.get(doc, "Unknown")
-        
+
         # Force flag User_Profile_Core.md if personality drift detected
         if doc == "User_Profile_Core.md" and drift["recommendations"]:
             updates_needed = True
             print(f"\n⚠️  {doc} — PERSONALITY DRIFT FLAGGED")
             print(f"   Purpose: {description}")
             print(f"   Last Updated: {last_updated}")
-            print(f"   ➡️  ACTION: Review Big Five / MBTI scores")
+            print("   ➡️  ACTION: Review Big Five / MBTI scores")
         elif doc_signals:
             updates_needed = True
             print(f"\n⚠️  {doc}")
             print(f"   Purpose: {description}")
             print(f"   Last Updated: {last_updated}")
             print(f"   Detected Signals: {', '.join(doc_signals[:8])}")
-            print(f"   ➡️  ACTION: Review and update if new insights found")
+            print("   ➡️  ACTION: Review and update if new insights found")
         else:
             print(f"\n✅ {doc} — No signals detected")
-    
+
     print()
     print("-" * 60)
-    
+
     if updates_needed or drift["recommendations"]:
         print("⚠️  UPDATES MAY BE NEEDED. AI must review session for:")
         print("   • Personality score changes → User_Profile_Core.md")
@@ -338,7 +337,7 @@ def main():
         print("   • New decision rules → Operating_Principles.md")
     else:
         print("✅ No obvious updates detected. Verify manually.")
-    
+
     print()
     print("=" * 60)
 

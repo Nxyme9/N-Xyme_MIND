@@ -31,7 +31,6 @@ Usage:
 
 from dataclasses import dataclass
 
-
 # --- THRESHOLDS ---
 
 TOKEN_BUDGET_CEILING = 20_000  # Athena boot budget

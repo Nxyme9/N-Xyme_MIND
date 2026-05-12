@@ -11,19 +11,20 @@ import contextlib
 import json
 import subprocess
 import sys
-from pathlib import Path
 from collections import defaultdict
-from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
+from concurrent.futures import ALL_COMPLETED, ThreadPoolExecutor, wait
+from pathlib import Path
 
+from athena.core.cache import get_search_cache
 from athena.core.config import (
+    CANONICAL_PATH,
     PROJECT_ROOT,
-    TAG_INDEX_PATH,
     TAG_INDEX_AM_PATH,
     TAG_INDEX_NZ_PATH,
-    CANONICAL_PATH,
+    TAG_INDEX_PATH,
 )
 from athena.core.models import SearchResult
-from athena.core.cache import get_search_cache
+
 # Lazy imports to speed up CLI startup
 # from athena.memory.vectors import ... (Moved inside functions)
 # from athena.tools.reranker import ... (Moved inside functions)
@@ -201,19 +202,19 @@ def collect_vectors(
     results = []
     try:
         from athena.memory.vectors import (
-            get_embedding,
             get_client,
-            search_sessions,
-            search_case_studies,
-            search_protocols,
+            get_embedding,
             search_capabilities,
-            search_playbooks,
-            search_references,
-            search_frameworks,
-            search_workflows,
+            search_case_studies,
             search_entities,
-            search_user_profile,
+            search_frameworks,
+            search_playbooks,
+            search_protocols,
+            search_references,
+            search_sessions,
             search_system_docs,
+            search_user_profile,
+            search_workflows,
         )
 
         query_embedding = embedding if embedding else get_embedding(query)
@@ -558,6 +559,7 @@ def collect_framework_docs(query: str) -> list[SearchResult]:
 def collect_sqlite(query: str, limit: int = 10) -> list[SearchResult]:
     """Sovereign Fallback: Search the local SQLite index (athena.db)."""
     import sqlite3
+
     from athena.core.config import INPUTS_DIR
 
     db_path = INPUTS_DIR / "athena.db"
@@ -640,7 +642,8 @@ def collect_exocortex(query: str, limit: int = 5) -> list[SearchResult]:
         # Sanitize term for FTS5
         # Tokenize and wrap in quotes to prevent column syntax interpretation (e.g. 1:1)
         # "trend" "continuation" "1:1"
-        tokens = [f'"{token.replace('"', '""')}"' for token in query.split()]
+        double_quote = '"'
+        tokens = [f"{double_quote}{token.replace(double_quote, double_quote + double_quote)}{double_quote}" for token in query.split()]
         clean_query = " ".join(tokens)
 
         # FTS query syntax
@@ -730,8 +733,9 @@ def run_search(
         try:
             # We need the embedding for semantic check
             # This corresponds to "Step 2: Fetch embedding" in the plan
-            from athena.memory.vectors import get_embedding
             import signal
+
+            from athena.memory.vectors import get_embedding
 
             # Timeout wrapper for get_embedding (Supabase cold start issues)
             def handler(signum, frame):
@@ -837,7 +841,7 @@ def run_search(
                 if is_low_entropy and not include_personal and not skills_only:
                     if not json_output:
                         print(
-                            f"   ⚡ Low Entropy Query: Skipping deep retrieval (Vectors bypassed)"
+                            "   ⚡ Low Entropy Query: Skipping deep retrieval (Vectors bypassed)"
                         )
                 else:
                     # Launch vector search

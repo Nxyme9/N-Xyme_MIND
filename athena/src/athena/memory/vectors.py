@@ -6,14 +6,12 @@ Optimizations:
     - Atomic Cache: PersistentEmbeddingCache now uses Locks and Atomic Writes.
 """
 
-import os
-import sys
 import hashlib
 import json
-import threading
+import os
 import tempfile
-from pathlib import Path
-from typing import List, Dict, Any, Optional
+import threading
+from typing import Any
 
 # Global cache instance
 _embedding_cache = None
@@ -41,8 +39,9 @@ def get_client() -> Any:
 
     if not hasattr(_thread_local, "client"):
         try:
-            from supabase import create_client
             from dotenv import load_dotenv
+
+            from supabase import create_client
 
             load_dotenv()
 
@@ -66,7 +65,7 @@ class PersistentEmbeddingCache:
 
         self.cache_file = AGENT_DIR / "state" / filename
         self.lock = threading.Lock()
-        self._cache: Dict[str, List[float]] = {}
+        self._cache: dict[str, list[float]] = {}
         self._dirty = False
         self._load()
 
@@ -110,11 +109,11 @@ class PersistentEmbeddingCache:
         except Exception:
             pass
 
-    def get(self, text_hash: str) -> Optional[List[float]]:
+    def get(self, text_hash: str) -> list[float] | None:
         with self.lock:
             return self._cache.get(text_hash)
 
-    def set(self, text_hash: str, embedding: List[float]):
+    def set(self, text_hash: str, embedding: list[float]):
         with self.lock:
             self._cache[text_hash] = embedding
             self._dirty = True
@@ -125,7 +124,7 @@ def _hash_text(text: str) -> str:
     return hashlib.md5(text.encode()).hexdigest()
 
 
-def _get_embedding_gemini(text: str) -> List[float]:
+def _get_embedding_gemini(text: str) -> list[float]:
     """Fetch embedding from Google Gemini API (gemini-embedding-001, 3072 dims)."""
     import requests
     from dotenv import load_dotenv
@@ -147,7 +146,7 @@ def _get_embedding_gemini(text: str) -> List[float]:
     return response.json()["embedding"]["values"]
 
 
-def _get_embedding_ollama(text: str) -> List[float]:
+def _get_embedding_ollama(text: str) -> list[float]:
     """Fetch embedding from local Ollama instance.
 
     Requires Ollama running locally (default: http://localhost:11434).
@@ -181,7 +180,7 @@ _EMBEDDING_PROVIDERS = {
 }
 
 
-def get_embedding(text: str) -> List[float]:
+def get_embedding(text: str) -> list[float]:
     """Generate embedding with persistent disk caching.
 
     Provider is selected via EMBEDDING_PROVIDER env var:
@@ -210,8 +209,8 @@ def get_embedding(text: str) -> List[float]:
 
 
 def search_rpc(
-    rpc_name: str, query_embedding: List[float], limit: int = 5, threshold: float = 0.3
-) -> List[Dict]:
+    rpc_name: str, query_embedding: list[float], limit: int = 5, threshold: float = 0.3
+) -> list[dict]:
     client = get_client()
     result = client.rpc(
         rpc_name,
@@ -225,11 +224,12 @@ def search_rpc(
 
 
 def _search_chroma(
-    collection_name: str, query_embedding: List[float], limit: int = 5, threshold: float = 0.3
-) -> List[Dict]:
+    collection_name: str, query_embedding: list[float], limit: int = 5, threshold: float = 0.3
+) -> list[dict]:
     """Search ChromaDB collection as fallback when Supabase unavailable."""
     try:
         import chromadb
+
         from athena.core.config import PROJECT_ROOT
 
         chroma_path = str(PROJECT_ROOT / ".agent" / "chroma_db")

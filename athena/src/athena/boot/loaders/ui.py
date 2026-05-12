@@ -1,5 +1,6 @@
 from athena.boot.constants import BOLD, CYAN, RESET
 
+
 class UILoader:
     @staticmethod
     def divider(title: str):

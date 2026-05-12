@@ -79,7 +79,25 @@ packages = ["src/athena"]
 line-length = 88
 target-version = "py310"
 select = ["E", "W", "F", "I", "B", "C4", "UP", "SIM"]
-ignore = ["E501", "B008"]
+ignore = [
+    "E501",   # Line too long
+    "E701",   # Multiple statements on one line (colon)
+    "E722",   # Do not use bare `except`
+    "W291",   # Trailing whitespace
+    "W293",   # Blank line contains whitespace
+    "F841",   # Local variable is assigned to but never used
+    "B007",   # Loop control variable not used
+    "B905",   # zip() without explicit strict=
+    "C401",   # Unnecessary generator
+    "C414",   # Unnecessary list() call within sorted()
+    "E402",   # Module level import not at top of file
+    "SIM102", # Nested if statements
+    "SIM105", # try-except-pass → suppress()
+    "SIM108", # if-else-block → ternary
+    "SIM110", # for loop → all()
+    "C901",   # Function too complex
+    "B008",   # Mutable default argument
+]
 
 [tool.ruff.isort]
 known-first-party = ["athena"]

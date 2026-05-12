@@ -7,13 +7,13 @@ Responsibilities:
   2.  Health Monitor -> Self-healing
 """
 
-import os
-import time
-import sqlite3
-import re
-import sys
 import logging
 import logging.handlers
+import os
+import re
+import sqlite3
+import sys
+import time
 from pathlib import Path
 
 # --- CONFIGURATION ---
@@ -74,7 +74,7 @@ def extract_tags(filepath):
     """Extract tags from Markdown."""
     tags = []
     try:
-        with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
+        with open(filepath, encoding="utf-8", errors="ignore") as f:
             content = f.read()
             tags = re.findall(r"#([\w-]+)", content)
     except Exception as e:
@@ -110,7 +110,7 @@ class AthenaDaemon:
     def init_db(self):
         if not DB_PATH.exists() and SCHEMA_PATH.exists():
             conn = self.get_db_connection()
-            with open(SCHEMA_PATH, "r") as f:
+            with open(SCHEMA_PATH) as f:
                 conn.executescript(f.read())
             conn.commit()
             conn.close()

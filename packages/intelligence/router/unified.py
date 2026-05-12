@@ -70,6 +70,9 @@ class UnifiedDelegationRouter:
         self._advanced_learning = None
         self._ActionType = None
 
+        # NEW: Multi-Reward Router (Thompson Sampling + composite rewards)
+        self._multi_reward_router = None
+
         # NEW: Semantic Task Classifier (Strategy 2.5)
         self._semantic_classifier = None
 
@@ -223,6 +226,14 @@ class UnifiedDelegationRouter:
                 logger.info("SemanticTaskClassifier connected to UnifiedRouter")
             except Exception as e:
                 logger.warning(f"Semantic Task Classifier unavailable: {e}")
+
+        if self._multi_reward_router is None:
+            try:
+                from packages.learning_engine.routing.multi_reward_router import MultiRewardRouter
+                self._multi_reward_router = MultiRewardRouter(strategy="thompson")
+                logger.info("MultiRewardRouter connected to UnifiedRouter")
+            except Exception as e:
+                logger.warning(f"MultiRewardRouter unavailable: {e}")
 
     async def route_task(self, task_description: str) -> RoutingDecision:
         """Route a task using all available strategies with fallback chain."""
@@ -475,6 +486,42 @@ class UnifiedDelegationRouter:
             except Exception as e:
                 logger.warning(f"Learning routing failed: {e}")
 
+        # Strategy 5c: Multi-Reward Router (Thompson Sampling + composite rewards)
+        if self._multi_reward_router:
+            try:
+                keyword_level = 2
+                if self._complexity_scorer:
+                    keyword_level = self._complexity_scorer.score(task_description).level
+
+                mr_decision = self._multi_reward_router.route(
+                    task_description=task_description,
+                    level=keyword_level,
+                    context={"strategy": "multi_reward"},
+                )
+
+                alternatives.append({
+                    "strategy": "multi_reward",
+                    "agent": mr_decision.selected_agent,
+                    "confidence": mr_decision.confidence,
+                    "all_scores": mr_decision.all_scores,
+                })
+
+                if mr_decision.confidence > 0.5:
+                    decision = RoutingDecision(
+                        task_description=task_description,
+                        level=keyword_level,
+                        agent=mr_decision.selected_agent,
+                        confidence=mr_decision.confidence,
+                        strategy_used="multi_reward",
+                        reason=f"Thompson Sampling: {mr_decision.strategy}, best={mr_decision.selected_agent}",
+                        alternatives=alternatives,
+                        latency_ms=(time.time() - start_time) * 1000,
+                    )
+                    logger.info(f"MultiReward routing: {decision.agent}")
+                    return self._enhance_decision(decision, task_description)
+            except Exception as e:
+                logger.warning(f"MultiReward routing failed: {e}")
+
         # Strategy 6: Keyword-based fallback (always available)
         if self._complexity_scorer:
             try:
@@ -673,6 +720,23 @@ class UnifiedDelegationRouter:
                 )
             except Exception as e:
                 logger.warning(f"Weight update failed: {e}")
+
+        if self._multi_reward_router:
+            try:
+                import uuid
+                self._multi_reward_router._outcome_logger.log_outcome(
+                    task_id=str(uuid.uuid4())[:8],
+                    task_description=task_description,
+                    level=level,
+                    agent=agent,
+                    success=success,
+                    latency_ms=latency_ms,
+                    tokens_used=tokens_used,
+                    strategy="multi_reward",
+                    confidence=0.7,
+                )
+            except Exception as e:
+                logger.warning(f"MultiReward update failed: {e}")
 
         # Update Advanced Learning Engine (Q-Learning + Bandits)
         if self._advanced_learning and self._ActionType:

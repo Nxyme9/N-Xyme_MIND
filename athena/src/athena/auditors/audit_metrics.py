@@ -1,5 +1,5 @@
-import os
 import glob
+import os
 
 
 def count_files(base_path, pattern, ignore_dirs=None):

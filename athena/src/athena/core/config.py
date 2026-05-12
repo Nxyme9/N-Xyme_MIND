@@ -5,13 +5,11 @@ athena.core.config
 Centralized configuration and path discovery.
 """
 
-from pathlib import Path
-from typing import Optional
 import os
-
+from pathlib import Path
 
 # Global Cache for PROJECT_ROOT
-_PROJECT_ROOT_CACHE: Optional[Path] = None
+_PROJECT_ROOT_CACHE: Path | None = None
 
 
 def get_project_root() -> Path:
@@ -105,7 +103,7 @@ TAG_INDEX_NZ_PATH = CONTEXT_DIR / "TAG_INDEX_N-Z.md"
 CANONICAL_PATH = CONTEXT_DIR / "CANONICAL.md"
 
 
-def get_current_session_log() -> Optional[Path]:
+def get_current_session_log() -> Path | None:
     """
     Find the most recent session log file (pattern: YYYY-MM-DD-session-XX.md).
     """

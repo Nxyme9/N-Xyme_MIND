@@ -5,8 +5,8 @@ athena.core.models
 Shared data structures and Pydantic models.
 """
 
-from typing import Dict, Any, Optional, List
 from dataclasses import dataclass, field
+from typing import Any
 
 
 @dataclass
@@ -19,12 +19,12 @@ class SearchResult:
     id: str
     content: str
     source: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     score: float = 0.0  # Raw score from source (cos-sim or keyword match)
     rrf_score: float = 0.0  # Fused Reciprocal Rank score
-    signals: Dict[str, Any] = field(default_factory=dict)  # Debug info
+    signals: dict[str, Any] = field(default_factory=dict)  # Debug info
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         d = {
             "id": self.id,
             "content": self.content[:100] + "...",

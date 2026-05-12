@@ -22,6 +22,9 @@ import sys
 # Logger must be defined early for module imports
 logger = logging.getLogger("context-store")
 
+MAX_TOKENS_BUDGET = 1500
+CHARS_PER_TOKEN = 4.0
+
 
 def _setup_memory_path():
     """Add src to path for memory router."""
@@ -673,7 +676,20 @@ def inject_context(context_type: str = "active", output_path: str = None) -> dic
                 context_block.append("")
                 available_contexts.append("archive")
         except Exception:
-            pass  # Archive scanner not available
+            pass
+
+    # Budget enforcement: truncate to MAX_TOKENS_BUDGET
+    total_chars = sum(len(p) for p in context_block)
+    max_chars = int(MAX_TOKENS_BUDGET * CHARS_PER_TOKEN)
+    if total_chars > max_chars:
+        accumulated = 0
+        truncated = []
+        for part in context_block:
+            if accumulated + len(part) > max_chars:
+                break
+            accumulated += len(part)
+            truncated.append(part)
+        context_block = truncated
 
     result = {
         "tool": "inject_context",

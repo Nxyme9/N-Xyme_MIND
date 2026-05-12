@@ -13,15 +13,16 @@ Operating Band:
 
 import sys
 from pathlib import Path
+
 from athena.boot.constants import (
-    BOOT_FILES,
-    GREEN,
-    YELLOW,
-    RED,
-    CYAN,
     BOLD,
+    BOOT_FILES,
+    CYAN,
     DIM,
+    GREEN,
+    RED,
     RESET,
+    YELLOW,
 )
 
 # === Budget Constants ===

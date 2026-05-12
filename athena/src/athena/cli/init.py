@@ -16,7 +16,6 @@ Usage:
 from datetime import datetime
 from pathlib import Path
 
-
 # --- Templates ---
 
 CORE_IDENTITY_TEMPLATE = """# Core Identity

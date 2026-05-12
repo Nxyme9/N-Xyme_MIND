@@ -25,13 +25,13 @@ def main():
 
     now = datetime.now()
     cutoff = now - timedelta(days=7)
-    
+
     events = []
     total_score = 0
     ship_count = 0
     meta_count = 0
-    
-    with open(OUTCOME_DB, "r") as f:
+
+    with open(OUTCOME_DB) as f:
         for line in f:
             try:
                 entry = json.loads(line)
@@ -39,7 +39,7 @@ def main():
                 if ts >= cutoff:
                     events.append(entry)
                     total_score += entry["score"]
-                    
+
                     if entry["type"] == "SHIP":
                         ship_count += 1
                     elif entry["type"] == "META":
@@ -54,19 +54,19 @@ def main():
 
     # Sort high impact first
     events.sort(key=lambda x: x["score"], reverse=True)
-    
+
     print(f"📊 WEEKLY OUTCOME REVIEW ({cutoff.strftime('%Y-%m-%d')} - {now.strftime('%Y-%m-%d')})")
-    print(f"============================================================")
+    print("============================================================")
     print(f"🔥 Velocity Score: {round(total_score, 1)} points")
     print(f"📈 Daily Slope:    {round(total_score/7, 2)}")
     print(f"🚢 Total Ships:    {ship_count}")
     print(f"🔧 Meta Ratio:     {round(meta_count / len(events), 2) if events else 0}")
-    print(f"============================================================")
+    print("============================================================")
     print("\n🏆 HIGHLIGHT REEL (Top Impacts):")
-    
+
     for e in events[:5]: # Top 5
         print(f"   • [{e['type']}] (+{e['score']}) {e['description']}")
-        
+
     print("\n📉 The Grind (Recent):")
     for e in events[-3:]: # Last 3 checks
         print(f"   • {e['timestamp'][:16]} [{e['type']}] {e['description']}")

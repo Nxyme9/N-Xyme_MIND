@@ -16,12 +16,11 @@ Runs untrusted/experimental Python scripts in an isolated Docker container with:
   - Writable /tmp only via tmpfs
 """
 
-import subprocess
 import logging
-import time
+import subprocess
 import tempfile
+import time
 from pathlib import Path
-from typing import Optional, Dict, Any
 
 from pydantic import BaseModel
 

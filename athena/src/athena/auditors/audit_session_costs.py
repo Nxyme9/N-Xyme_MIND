@@ -6,9 +6,8 @@ Assumption: All previous sessions used the "Monolith" architecture (~30k boot) u
 However, for fair comparison to the NEW architecture, we will display what they WOULD have cost vs what they DID cost.
 """
 
-import os
 import glob
-import re
+import os
 
 # Configuration
 PROJECT_ROOT = os.path.dirname(
@@ -68,7 +67,7 @@ def analyze_sessions():
         filename = os.path.basename(log_path)
 
         # Read content
-        with open(log_path, "r", encoding="utf-8") as f:
+        with open(log_path, encoding="utf-8") as f:
             content = f.read()
 
         # Estimate session tokens
