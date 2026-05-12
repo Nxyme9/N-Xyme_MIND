@@ -1,0 +1,44 @@
+{
+  "cold_start": {
+    "load_time_seconds": 0.7541050910949707,
+    "process_ram_mb": 611.5234375
+  },
+  "latency": {
+    "min_ms": 27.562618255615234,
+    "max_ms": 113.63744735717773,
+    "mean_ms": 44.66668128967285,
+    "p50_ms": 44.013023376464844,
+    "p95_ms": 48.162221908569336,
+    "p99_ms": 113.63744735717773,
+    "num_runs": 100
+  },
+  "throughput": {
+    "duration_seconds": 10.005948543548584,
+    "total_requests": 231,
+    "total_tokens": 46200,
+    "throughput_tokens_per_sec": 4617.253406703538,
+    "requests_per_sec": 23.08626703351769
+  },
+  "tool_calling": {
+    "correct": 8,
+    "total": 8,
+    "accuracy_percent": 100.0,
+    "avg_latency_ms": 45.299232006073,
+    "test_cases": [
+      "search memory for authentication tokens",
+      "check git status",
+      "get the active context",
+      "run type check",
+      "list all sessions",
+      "navigate to github.com",
+      "fetch python.org",
+      "send telegram message hello"
+    ]
+  },
+  "memory": {
+    "initial_ram_mb": 1134.73046875,
+    "final_ram_mb": 1134.75,
+    "ram_increase_mb": 0.01953125,
+    "gpu_vram_mb": 0
+  }
+}

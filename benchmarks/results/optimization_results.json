@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-04-09 14:31:30",
+  "baseline": {
+    "single": {
+      "scenario": "single",
+      "latency_ms": 378.2484531402588,
+      "tokens_per_second": 95.17553793313411,
+      "gpu_utilization_percent": 45.36363636363637,
+      "gpu_memory_mb": 3164.0,
+      "power_watts": 31.684545454545454,
+      "success_count": 1,
+      "total_count": 1
+    },
+    "parallel_8": {
+      "scenario": "parallel_8",
+      "latency_ms": 501.01757049560547,
+      "tokens_per_second": 716.5417365400539,
+      "gpu_utilization_percent": 34.69230769230769,
+      "gpu_memory_mb": 3164.0,
+      "power_watts": 83.53538461538461,
+      "success_count": 8,
+      "total_count": 8
+    },
+    "burst_25": {
+      "scenario": "burst_25",
+      "latency_ms": 1048.2218265533447,
+      "tokens_per_second": 1115.2219600728843,
+      "gpu_utilization_percent": 42.55555555555556,
+      "gpu_memory_mb": 3161.0,
+      "power_watts": 174.52277777777778,
+      "success_count": 25,
+      "total_count": 25
+    }
+  },
+  "optimized": {
+    "single": {
+      "scenario": "single",
+      "latency_ms": 94.53034400939941,
+      "tokens_per_second": 539.5093029062597,
+      "gpu_utilization_percent": 1.6,
+      "gpu_memory_mb": 3160.0,
+      "power_watts": 166.895,
+      "success_count": 1,
+      "total_count": 1
+    },
+    "parallel_8": {
+      "scenario": "parallel_8",
+      "latency_ms": 593.2538509368896,
+      "tokens_per_second": 758.5285780940865,
+      "gpu_utilization_percent": 44.57142857142857,
+      "gpu_memory_mb": 3160.0,
+      "power_watts": 122.03285714285714,
+      "success_count": 8,
+      "total_count": 8
+    },
+    "burst_25": {
+      "scenario": "burst_25",
+      "latency_ms": 1025.8095264434814,
+      "tokens_per_second": 1191.2542908786565,
+      "gpu_utilization_percent": 36.888888888888886,
+      "gpu_memory_mb": 3160.0,
+      "power_watts": 177.00611111111112,
+      "success_count": 25,
+      "total_count": 25
+    }
+  },
+  "gpu_info": {
+    "gpu": "GPU 0: NVIDIA GeForce RTX 3080 Ti (UUID: GPU-dc6cb784-1ca7-119b-5817-42a47de2ef3e)",
+    "vram": "12288"
+  }
+}

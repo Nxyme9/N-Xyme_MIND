@@ -1,0 +1,203 @@
+{
+  "timestamp": "2026-04-04T16:47:23.961136",
+  "iterations": 200,
+  "results": [
+    {
+      "name": "model_config_loading",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.0016,
+        "std_ms": 0.0005,
+        "p50_ms": 0.0015,
+        "p95_ms": 0.0019,
+        "p99_ms": 0.0053
+      },
+      "throughput": {
+        "ops_per_sec": 640442.62
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure time to load ModelConfig and get model",
+        "module": "model_config.py"
+      }
+    },
+    {
+      "name": "model_selection",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.0023,
+        "std_ms": 0.0006,
+        "p50_ms": 0.0021,
+        "p95_ms": 0.0034,
+        "p99_ms": 0.0055
+      },
+      "throughput": {
+        "ops_per_sec": 432282.82
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure time for model-selector.py to route tasks",
+        "module": "model-selector.py",
+        "num_tasks": 100
+      }
+    },
+    {
+      "name": "model_routing",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.6945,
+        "std_ms": 0.1162,
+        "p50_ms": 0.6626,
+        "p95_ms": 0.86,
+        "p99_ms": 0.9647
+      },
+      "throughput": {
+        "ops_per_sec": 1439.98
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure time for model-router.py to route tasks",
+        "module": "model-router.py",
+        "num_tasks": 100
+      }
+    },
+    {
+      "name": "prompt_cache",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.0661,
+        "std_ms": 0.1145,
+        "p50_ms": 0.054,
+        "p95_ms": 0.0863,
+        "p99_ms": 0.1161
+      },
+      "throughput": {
+        "ops_per_sec": 15120.56
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure hit/miss latency for cache operations",
+        "module": "prompt-cache.py",
+        "cache_size": 5,
+        "hit_rate": 100.0
+      }
+    },
+    {
+      "name": "fallback_chain",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 4.0483,
+        "std_ms": 1.1904,
+        "p50_ms": 4.013,
+        "p95_ms": 5.9767,
+        "p99_ms": 6.0509
+      },
+      "throughput": {
+        "ops_per_sec": 247.02
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure time for each tier in fallback chain",
+        "module": "model-fallback.py",
+        "num_tiers": 6,
+        "models": [
+          "openrouter/deepseek/deepseek-r1",
+          "openrouter/qwen/qwen3-coder",
+          "google/gemini-2.5-pro"
+        ]
+      }
+    },
+    {
+      "name": "local_router_classification",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.003,
+        "std_ms": 0.001,
+        "p50_ms": 0.0027,
+        "p95_ms": 0.0043,
+        "p99_ms": 0.0093
+      },
+      "throughput": {
+        "ops_per_sec": 335652.69
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure classification latency for local-router.py",
+        "module": "local-router.py",
+        "num_tasks": 100
+      }
+    },
+    {
+      "name": "local_pipeline_single_step",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 3.1818,
+        "std_ms": 1.1454,
+        "p50_ms": 3.1854,
+        "p95_ms": 4.903,
+        "p99_ms": 5.018
+      },
+      "throughput": {
+        "ops_per_sec": 314.29
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure single-step execution latency for local-pipeline.py (mocked)",
+        "module": "local-pipeline.py",
+        "num_steps": 3
+      }
+    },
+    {
+      "name": "local_chain_escalation",
+      "iterations": 200,
+      "latency": {
+        "mean_ms": 0.0019,
+        "std_ms": 0.0009,
+        "p50_ms": 0.0017,
+        "p95_ms": 0.0021,
+        "p99_ms": 0.0101
+      },
+      "throughput": {
+        "ops_per_sec": 520508.11
+      },
+      "memory": {
+        "before_bytes": 0,
+        "after_bytes": 0,
+        "delta_bytes": 0
+      },
+      "metadata": {
+        "description": "Measure escalation latency for local-chain.py (mocked)",
+        "module": "local-chain.py",
+        "num_prompts": 3
+      }
+    }
+  ]
+}

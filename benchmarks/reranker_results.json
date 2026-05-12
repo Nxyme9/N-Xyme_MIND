@@ -1,0 +1,52 @@
+{
+  "active_reranker": "HuggingFaceReranker",
+  "rerank_time": {
+    "n_candidates": 100,
+    "runs": 5,
+    "mean_time_ms": 113.47586020128801,
+    "median_time_ms": 100.6753000037861,
+    "min_time_ms": 75.50647199968807,
+    "max_time_ms": 189.29119400127092,
+    "stdev_ms": 43.79510985034578
+  },
+  "fallback_chain": {
+    "cohere_available": false,
+    "cohere_time_ms": null,
+    "hf_available": true,
+    "hf_time_ms": 24.700467998627573,
+    "passthrough_time_ms": 0.030196999432519078
+  },
+  "precision": {
+    "query": "authentication",
+    "n_candidates": 10,
+    "raw_top3": [
+      "Python list comprehension tutorial",
+      "JWT token authentication",
+      "JavaScript arrays guide"
+    ],
+    "reranked_top3": [
+      "LDAP authentication",
+      "SAML authentication",
+      "JWT token authentication"
+    ],
+    "raw_relevant_count": 1,
+    "reranked_relevant_count": 3,
+    "raw_precision@3": 0.3333333333333333,
+    "reranked_precision@3": 1.0,
+    "precision_improvement": 0.6666666666666667
+  },
+  "throughput": {
+    "n_candidates": 100,
+    "iterations": 10,
+    "duration_sec": 1.019733304005058,
+    "throughput_candidates_per_sec": 980.6485637690223
+  },
+  "ordering_changes": {
+    "n_candidates": 50,
+    "query": "Python authentication",
+    "moved_up": 27,
+    "moved_down": 23,
+    "unchanged": 0,
+    "pct_changed": 100.0
+  }
+}

@@ -1,0 +1,14 @@
+#!/bin/bash
+# N-Xyme MIND - Terminal Launcher
+# Usage: nx-mind "task description" [--options]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Check for virtual environment
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
+
+# Run with Python
+exec python3 nx_mind.py "$@"

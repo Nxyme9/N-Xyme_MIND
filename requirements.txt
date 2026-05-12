@@ -1,0 +1,16 @@
+# N-Xyme_MIND Core Dependencies
+# Portable requirements for local GGUF inference
+
+# Core ML
+llama-cpp-python>=0.3.20
+
+# Optional: For GPU-accelerated training
+# torch>=2.0.0
+# transformers>=4.30.0
+# peft>=0.4.0
+
+# Optional: For embedding models
+# sentence-transformers>=2.2.0
+
+# Optional: For memory/vector store
+# lancedb>=0.4.0

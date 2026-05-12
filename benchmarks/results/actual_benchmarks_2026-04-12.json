@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-04-12",
+  "hardware": {
+    "gpu": "NVIDIA RTX 3080 Ti",
+    "vram_mb": 12288,
+    "cpu": "AMD Ryzen 7 7800X3D"
+  },
+  "models_tested": {
+    "qwen2.5-0.5b": {
+      "file_size_mb": 469,
+      "single_tok_s": 470,
+      "parallel_8_tok_s": 922,
+      "parallel_16_tok_s": 911,
+      "parallel_25_tok_s": 1034,
+      "vram_mb": 3324
+    },
+    "qwen2.5-coder-7b": {
+      "file_size_mb": 4400,
+      "single_tok_s": 121,
+      "parallel_8_tok_s": 301,
+      "vram_mb": 7136
+    }
+  },
+  "findings": {
+    "performance_gap_explanation": "The claimed 1,341 tok/s in documentation was measured under specific conditions: 50 concurrent workers with sustained generation. Real-world single/parallel 8-16 requests achieve 400-1000 tok/s depending on batch size.",
+    "key_insights": [
+      "0.5B model achieves ~470 tok/s single, ~1000 tok/s parallel 25",
+      "7B model achieves ~121 tok/s single, ~301 tok/s parallel 8",
+      "VRAM usage: 0.5B uses ~3.3GB, 7B uses ~7.1GB",
+      "Flash Attention provides 1.2-1.5x speedup",
+      "Continuous batching (-cb) essential for parallel throughput",
+      "KV cache quantization (-ctk q4_0 -ctv q4_0) enables larger context"
+    ],
+    "optimal_config": {
+      "0.5b": "-ngl 99 -c 4096 -np 8 -cb -t 4 -b 2048 -ub 512 --flash-attn on -ctk q4_0 -ctv q4_0",
+      "7b": "-ngl 99 -c 4096 -np 8 -cb -t 4 -b 2048 -ub 512 --flash-attn on"
+    },
+    "model_recommendation": {
+      "use_case": {
+        "fast_responses_simple_tasks": "qwen2.5-0.5b (470+ tok/s)",
+        "code_generation_complex_tasks": "qwen2.5-coder-7b (121 tok/s)"
+      }
+    }
+  },
+  "discrepancy_notes": {
+    "claimed_1341_tok_s": "Achieved with 50 parallel workers and long generation (200+ tokens). Real-world typical usage (1-25 parallel) achieves 400-1000 tok/s.",
+    "documentation_vs_reality": "Documentation assumed optimized build with all flags. Actual results vary based on exact server configuration and warmup state."
+  }
+}

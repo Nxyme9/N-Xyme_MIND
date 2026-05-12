@@ -1,0 +1,146 @@
+{
+  "tasks": [],
+  "agentsConfig": [
+    {
+      "id": "hephaestus",
+      "name": "Hephaestus",
+      "role": "Implementation",
+      "enabled": true,
+      "color": "#22c55e",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/openai/gpt-4o"
+    },
+    {
+      "id": "oracle",
+      "name": "Oracle",
+      "role": "Architecture Review",
+      "enabled": true,
+      "color": "#3b82f6",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/anthropic/claude-3.5-sonnet"
+    },
+    {
+      "id": "explore",
+      "name": "Explore",
+      "role": "Codebase Search",
+      "enabled": true,
+      "color": "#06b6d4",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/openai/gpt-4o"
+    },
+    {
+      "id": "librarian",
+      "name": "Librarian",
+      "role": "External Research",
+      "enabled": true,
+      "color": "#84cc16",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/anthropic/claude-3.5-sonnet"
+    },
+    {
+      "id": "prometheus",
+      "name": "Prometheus",
+      "role": "Plan Builder",
+      "enabled": true,
+      "color": "#8b5cf6",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/openai/gpt-4o"
+    },
+    {
+      "id": "momus",
+      "name": "Momus",
+      "role": "Adversarial Review",
+      "enabled": true,
+      "color": "#ef4444",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/google/gemini-1.5-pro"
+    },
+    {
+      "id": "atlas",
+      "name": "Atlas",
+      "role": "Plan Executor",
+      "enabled": true,
+      "color": "#f97316",
+      "icon": {
+        "type": {},
+        "key": null,
+        "props": {
+          "className": "w-4 h-4"
+        },
+        "_owner": null,
+        "_store": {}
+      },
+      "timeout": 300,
+      "maxRetries": 3,
+      "capacity": 10,
+      "model": "openrouter/openai/gpt-4o"
+    }
+  ],
+  "exportedAt": "2026-04-20T18:19:09.340Z"
+}

@@ -1,0 +1,6 @@
+TASK COMPLETE
+
+- Synthesis document: docs/leaked-source-synthesis.md
+- MD5: fcbab1491300b9aeed72a7d671ae1727
+- Lines: 953
+- Status: DONE

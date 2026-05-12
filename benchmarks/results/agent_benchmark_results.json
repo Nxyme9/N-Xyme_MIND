@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-04-09T08:43:31.519783",
+  "config": "full_system",
+  "rounds": 1,
+  "results": [
+    {
+      "agent": "explore",
+      "skills": [],
+      "total_runs": 5,
+      "success_count": 0,
+      "success_rate": 0.0,
+      "avg_latency_ms": 796.5222835540771,
+      "min_latency_ms": 776.1118412017822,
+      "max_latency_ms": 835.3934288024902,
+      "avg_tokens": 0,
+      "avg_quality": 0.0
+    },
+    {
+      "agent": "librarian",
+      "skills": [],
+      "total_runs": 5,
+      "success_count": 0,
+      "success_rate": 0.0,
+      "avg_latency_ms": 790.0206565856934,
+      "min_latency_ms": 775.2478122711182,
+      "max_latency_ms": 816.3373470306396,
+      "avg_tokens": 0,
+      "avg_quality": 0.0
+    },
+    {
+      "agent": "hephaestus",
+      "skills": [],
+      "total_runs": 5,
+      "success_count": 0,
+      "success_rate": 0.0,
+      "avg_latency_ms": 793.8994407653809,
+      "min_latency_ms": 786.1614227294922,
+      "max_latency_ms": 814.5546913146973,
+      "avg_tokens": 0,
+      "avg_quality": 0.0
+    },
+    {
+      "agent": "oracle",
+      "skills": [],
+      "total_runs": 5,
+      "success_count": 0,
+      "success_rate": 0.0,
+      "avg_latency_ms": 798.1040000915527,
+      "min_latency_ms": 786.3473892211914,
+      "max_latency_ms": 809.7162246704102,
+      "avg_tokens": 0,
+      "avg_quality": 0.0
+    }
+  ]
+}

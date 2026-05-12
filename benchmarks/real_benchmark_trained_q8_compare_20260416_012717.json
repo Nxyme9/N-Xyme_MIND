@@ -1,0 +1,19 @@
+{
+  "compare": {
+    "trained_q8": {
+      "avg_latency_ms": 46.56694412231445,
+      "min_latency_ms": 27.995586395263672,
+      "max_latency_ms": 108.93487930297852
+    },
+    "trained_f16": {
+      "avg_latency_ms": 59.13212299346924,
+      "min_latency_ms": 53.604841232299805,
+      "max_latency_ms": 67.23642349243164
+    },
+    "untrained_q4": {
+      "avg_latency_ms": 85.4982042312622,
+      "min_latency_ms": 26.28183364868164,
+      "max_latency_ms": 107.47098922729492
+    }
+  }
+}

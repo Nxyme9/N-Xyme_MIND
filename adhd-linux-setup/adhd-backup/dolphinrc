@@ -1,0 +1,13 @@
+[General]
+Version=202
+LockPanels=true
+[KFileDialog Settings]
+Breadcrumb Navigation=true
+Show hidden files=false
+Sort by=Name
+View Style=DetailView
+DetailViewIconSize=24
+[MainWindow]
+MenuBar=Disabled
+[PreviewSettings]
+Plugins=none

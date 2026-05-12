@@ -1,0 +1,33 @@
+audio:
+  bit_depth: 24
+  default_key: C major
+  default_tempo: 120
+  sample_rate: 44100
+bitwig_osc:
+  bridge_url: http://localhost:8000
+  enabled: true
+  timeout_ms: 5000
+memory:
+  enabled: true
+  recall_context: true
+  store_patterns: true
+plugins:
+  default_chain:
+  - EQ+
+  - Compressor+
+  - Reverb+
+  vocal_chain:
+  - Compressor+
+  - EQ+
+  - Reverb+
+  - Delay+
+routes:
+  buses:
+  - Drums
+  - Vocals
+  - Instruments
+  - Master
+  style: bus-based
+templates:
+  auto_load: true
+  custom_path: null

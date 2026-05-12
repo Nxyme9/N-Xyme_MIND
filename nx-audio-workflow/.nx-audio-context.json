@@ -1,0 +1,125 @@
+{
+  "project": {
+    "name": "My First Track",
+    "tempo": 128,
+    "key": "G major",
+    "time_signature": "4/4",
+    "tracks": [
+      {
+        "name": "Drum Machine",
+        "type": "Instrument",
+        "created": "2026-05-04T20:33:21.895914",
+        "armed": false,
+        "muted": false,
+        "volume": 0.0,
+        "pan": 0.0
+      },
+      {
+        "name": "Vocals",
+        "type": "Audio",
+        "created": "2026-05-04T20:33:21.896013",
+        "armed": false,
+        "muted": false,
+        "volume": 0.0,
+        "pan": 0.0
+      },
+      {
+        "name": "Drum Machine",
+        "type": "Instrument",
+        "created": "2026-05-04T20:43:44.237083",
+        "armed": false,
+        "muted": false,
+        "volume": 0.0,
+        "pan": 0.0
+      },
+      {
+        "name": "Vocals",
+        "type": "Audio",
+        "created": "2026-05-04T20:43:44.237194",
+        "armed": false,
+        "muted": false,
+        "volume": 0.0,
+        "pan": 0.0
+      }
+    ],
+    "created": "2026-05-04T20:33:21.895829",
+    "last_modified": "2026-05-04T20:43:44.237199"
+  },
+  "preferences": {
+    "default_plugins": [
+      "EQ+",
+      "Compressor+",
+      "Reverb+"
+    ],
+    "routing_style": "bus-based",
+    "favorite_buses": [
+      "Drums",
+      "Vocals",
+      "Instruments"
+    ],
+    "default_bpm": 120,
+    "default_key": "C major"
+  },
+  "history": [
+    {
+      "timestamp": "2026-05-04T20:33:21.895916",
+      "action": "add_track",
+      "details": {
+        "track": {
+          "name": "Drum Machine",
+          "type": "Instrument",
+          "created": "2026-05-04T20:33:21.895914",
+          "armed": false,
+          "muted": false,
+          "volume": 0.0,
+          "pan": 0.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-04T20:33:21.896019",
+      "action": "add_track",
+      "details": {
+        "track": {
+          "name": "Vocals",
+          "type": "Audio",
+          "created": "2026-05-04T20:33:21.896013",
+          "armed": false,
+          "muted": false,
+          "volume": 0.0,
+          "pan": 0.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-04T20:43:44.237086",
+      "action": "add_track",
+      "details": {
+        "track": {
+          "name": "Drum Machine",
+          "type": "Instrument",
+          "created": "2026-05-04T20:43:44.237083",
+          "armed": false,
+          "muted": false,
+          "volume": 0.0,
+          "pan": 0.0
+        }
+      }
+    },
+    {
+      "timestamp": "2026-05-04T20:43:44.237197",
+      "action": "add_track",
+      "details": {
+        "track": {
+          "name": "Vocals",
+          "type": "Audio",
+          "created": "2026-05-04T20:43:44.237194",
+          "armed": false,
+          "muted": false,
+          "volume": 0.0,
+          "pan": 0.0
+        }
+      }
+    }
+  ]
+}

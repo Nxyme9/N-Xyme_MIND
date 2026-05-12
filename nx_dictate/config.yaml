@@ -1,0 +1,30 @@
+# N-Xyme Dictate Configuration Template
+# Copy to config.yaml and customize
+
+api:
+  host: "127.0.0.1"
+  port: 8765
+
+whisper:
+  model: "large-v3-turbo"
+  device: "auto"
+  language: "auto"
+
+audio:
+  device: "auto"
+  sample_rate: 16000
+
+hotkey:
+  key: "f6"
+
+injection:
+  enabled: true
+  backend: "auto"
+
+features:
+  noise_suppression: true
+  realtime: false
+  history: true
+
+logging:
+  level: "INFO"

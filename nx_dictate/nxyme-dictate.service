@@ -1,0 +1,21 @@
+[Unit]
+Description=N-Xyme Dictate - GPU-accelerated voice dictation
+After=network.target graphical.target
+StartLimitIntervalSec=300
+
+[Service]
+Type=simple
+WorkingDirectory=%h/N-Xyme_CODE/N-Xyme_MIND/nx_dictate
+ExecStart=/usr/bin/python3 -m nx_dictate --headless
+Restart=on-failure
+RestartSec=5
+Environment=DISPLAY=:0
+Environment=WAYLAND_DISPLAY=wayland-0
+Environment=PYTHONPATH=%h/N-Xyme_CODE/N-Xyme_MIND
+SupplementaryGroups=audio
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=nxyme-dictate
+
+[Install]
+WantedBy=default.target

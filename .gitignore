@@ -29,6 +29,13 @@ build/
 node_modules/
 .cache/
 
+# Next.js build artifacts
+.next/
+out/
+*.tsbuildinfo
+*.tsbuildinfo.*
+.turbo/
+
 # OpenCode runtime
 .opencode/data/
 .opencode/cache/
@@ -56,11 +63,73 @@ context/opencode/*.db
 context/opencode/
 context/
 
+# Runtime state files (auto-generated)
+y
+telegram-bot-state.json
+telegram-queue.json
+nxyme-queue-*.json
+
 # Runtime (auto-generated)
 .opencode/opencode.json
 
-# Evidence (QA artifacts)
+# Sisyphus runtime state (auto-generated)
 .sisyphus/evidence/
+.sisyphus/ml_model.json
+.sisyphus/outcomes.db
+.sisyphus/ralph-loop.local.md
+.sisyphus/embedding_cache/
+.sisyphus/mcp_pids/
+
+# Package-level sisyphus runtime state
+packages/.sisyphus/routing-weights.json
+packages/.sisyphus/state.db*
+
+# Agent/local runtime state
+.agent/
+.context/
+.local/
+.depricated/
+.trash/
+
+# ML/Training artifacts (large, experimental)
+pretrained_models/
+models/
+outputs/
+
+# nx_trainer experiment artifacts
+nx_trainer/output/
+nx_trainer/data/
+nx_trainer/unsloth_compiled_cache/
+
+# Generated datasets (can be regenerated)
+datasets/
+scripts/datasets/
+
+# nx_trainer experiment scripts (one-off training runs - NOT library code)
+nx_trainer/train_*.py
+nx_trainer/test_*.py
+nx_trainer/generate_*.py
+nx_trainer/merge_*.py
+nx_trainer/quick_*.py
+nx_trainer/continue_*.py
+nx_trainer/benchmark.py
+nx_trainer/cloud_trainer.py
+nx_trainer/simple_test.py
+nx_trainer/tool_normalizer.py
+nx_trainer/train_args.py
+nx_trainer/trainer_production.py
+nx_trainer/run_train.sh
+nx_trainer/verify_model.sh
+
+# Leaked/analysis documents (not project source)
+LEAKED_*
+synthesis-*
+
+# Package-level runtime state
+packages/**/.sisyphus/
+packages/**/node_modules/
+packages/**/dist/
+packages/**/package-lock.json
 
 # Pre-commit config
 .pre-commit-config.yaml

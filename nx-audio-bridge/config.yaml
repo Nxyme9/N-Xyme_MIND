@@ -1,0 +1,20 @@
+# nx-audio-bridge configuration
+# Edit these values to match your hardware setup.
+
+bitwig:
+  host: "127.0.0.1"
+  send_port: 8000        # Port Bitwig OSC extension listens on
+  receive_port: 9000     # Local port for receiving responses
+  timeout: 2.0           # Seconds before OSC command times out
+
+scarlett_2i2:
+  input_gain_db: 0.0     # Default gain in dB (range: -60 to +12)
+  monitor_direct: 0.5    # Direct input mix (0.0 = off, 1.0 = full)
+  monitor_playback: 0.5  # DAW playback mix (0.0 = off, 1.0 = full)
+  sample_rate: 48000     # Sample rate in Hz (44100, 48000, 96000)
+  buffer_size: 256       # Buffer size in samples (64, 128, 256, 512, 1024)
+
+audio_device:
+  input_channels: 2      # Scarlett 2i2 has 2 combo inputs
+  output_channels: 4     # 2 main + 2 headphone outputs
+  phantom_power: false   # +48V phantom power for condenser mics

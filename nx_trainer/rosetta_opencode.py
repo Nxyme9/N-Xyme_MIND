@@ -5,8 +5,8 @@ OpenCode Rosetta Integration
 Usage in OpenCode:
     Use the 'rosetta' agent type which routes through Rosetta for tool calling
     
-Or as a tool:
-    task(subagent_type="rosetta", prompt="search memory for security")
+Or as a tool (from OpenCode):
+    # Example: use 'rosetta' agent type which routes through Rosetta
 
 This script provides:
 1. Shell wrapper for CLI usage
