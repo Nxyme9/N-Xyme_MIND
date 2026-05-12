@@ -26,10 +26,9 @@ try:
 except ImportError:
     pass
 
-_learner = None
+_get_learner_func = None
 try:
-    from packages.intelligence.realtime_learner import get_learner as _get_learner
-    _learner = _get_learner()
+    from packages.intelligence.realtime_learner import get_learner as _get_learner_func
 except Exception:
     pass
 
@@ -130,8 +129,12 @@ def get_memory_stats() -> dict:
             conn.close()
     except Exception as e:
         stats["learning_events_error"] = str(e)
-    if _learner:
-        stats["learner"] = {"status": "active"}
+    if _get_learner_func:
+        try:
+            learner = _get_learner_func()
+            stats["learner"] = {"status": "active"}
+        except Exception:
+            pass
     return stats
 
 
