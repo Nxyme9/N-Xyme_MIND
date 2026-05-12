@@ -36,7 +36,7 @@ async def route(task_description: str) -> Dict[str, Any]:
             "level": result.level,
             "agent": result.agent,
             "confidence": result.confidence,
-            "strategy": result.strategy
+            "strategy": result.strategy_used
         })
         # Keep only last 100 entries
         if len(_routing_history) > 100:
@@ -47,7 +47,7 @@ async def route(task_description: str) -> Dict[str, Any]:
             "level": result.level,
             "agent": result.agent,
             "confidence": result.confidence,
-            "strategy": result.strategy
+            "strategy": result.strategy_used
         }
     except Exception as e:
         return {"status": "error", "error": str(e), "traceback": traceback.format_exc()}

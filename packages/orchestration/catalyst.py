@@ -23,7 +23,14 @@ from packages.orchestration.agent_coordinator import AgentCoordinator
 from packages.orchestration.athena_bridge import AthenaBridge
 from packages.orchestration.session_memory import SessionMemory, create_session_memory
 from packages.memory_core.knowledge_graph import KnowledgeGraph
-from packages.infrastructure.multimodal_handler import ClipboardHandler, ClipboardContent, ContentType
+try:
+    from packages.infrastructure.multimodal_handler import ClipboardHandler, ClipboardContent, ContentType
+    _clipboard_available = True
+except ImportError:
+    ClipboardHandler = None
+    ClipboardContent = None
+    ContentType = None
+    _clipboard_available = False
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +69,14 @@ class Catalyst:
         self.session_memory.set_knowledge_graph(self.knowledge_graph)
 
         # Clipboard handler (detect images, route to vision agent)
-        self.clipboard = ClipboardHandler(
-            ollama_url="http://localhost:11434",
-            vision_model="llava:7b",
-        )
+        if _clipboard_available and ClipboardHandler:
+            self.clipboard = ClipboardHandler(
+                ollama_url="http://localhost:11434",
+                vision_model="llava:7b",
+            )
+        else:
+            self.clipboard = None
+            logger.warning("ClipboardHandler not available - image detection disabled")
 
         logger.info("Catalyst: All modules wired and ready")
 
