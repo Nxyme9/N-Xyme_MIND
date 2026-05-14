@@ -58,8 +58,8 @@ jobs:
         run: |
           git config user.name "Model Heartbeat Bot"
           git config user.email "heartbeat@n-xyme.github.io"
-          git add model-heartbeat/data/snapshot_latest.json
-          git add model-heartbeat/data/snapshot_prev.json
+          git add data/snapshot_latest.json
+          git add data/snapshot_prev.json
           if git diff --cached --quiet; then
             echo "No changes to snapshot — skipping commit."
           else
