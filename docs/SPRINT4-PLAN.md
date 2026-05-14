@@ -1,112 +1,84 @@
-# Sprint 4 — Integration Plan
+# Sprint 4 — Integration Hardening & Test Coverage
 
-> **Generated**: 2026-04-03 | **Status**: Ready to Execute
-
----
-
-## Task 1: CATALYST Integration
-
-### Current State
-- BMAD workflows exist in `_bmad/catalyst/workflows/`
-- 3 workflows: `bmad-catalyst-chain`, `bmad-memory`, `bmad-resilience`
-- Each has SKILL.md defining how to use
-
-### What's Missing
-- No bridge from OpenCode to BMAD workflows
-- Workflows not registered as skills
-- No integration documentation
-
-### Deliverables
-1. `docs/CATALYST-INTEGRATION.md` - How to use CATALYST from N-Xyme_MIND
-2. Update `skills/` configuration to include BMAD workflows
-3. Create `bin/catalyst-run` wrapper script
+> **Generated**: 2026-05-12 | **Status**: Ready to Execute
+> **Context**: Post-Sprint 3 integration (commit `89ba984`)
 
 ---
 
-## Task 2: VPN Rotator Automation
+## Sprint 4 Overview
 
-### Current State
-- `vpn/rotator.py` works as SOCKS5 proxy
-- `--list` shows available configs (none downloaded yet)
-- No auto-rotation on rate limits
-
-### What's Missing
-- Auto-rotate on 429 detection
-- Health check integration
-- systemd timer for periodic checks
-
-### Deliverables
-1. Update `vpn/rotator.py` with auto-rotate logic
-2. Add health check triggers for VPN rotation
-3. Create `bin/vpn-rotate` command
+Sprint 3 shipped ~15 new modules (nx_trainer, nx_dictate, nx-audio, nx-mind-desktop, nxyme_core, nx_sms, etc.). Sprint 4 focuses on **hardening**: covering these new modules with tests, fixing bugs discovered during real use, and closing integration gaps the old plan didn't address.
 
 ---
 
-## Task 3: Trigger Engine Automation
+## Old Sprint 4 Plan — Audit
 
-### Current State
-- `src/trigger_engine.py` has base class
-- `triggers.json` has action registry
-- Added handlers: clean_stale_sessions, clear_db_lock, force_gc, throttle_ollama
-
-### What's Missing
-- Triggers not wired to scripts
-- No systemd timer integration
-- No health check triggers
-
-### Deliverables
-1. Wire triggers.json to bin/health-*.sh scripts
-2. Add trigger timer (30min heartbeat)
-3. Create `bin/trigger-status` command
+| Task | Status | Action |
+|------|--------|--------|
+| CATALYST Integration | ✅ Done (docs + workflows + MCP tools) | Close |
+| VPN Rotator Automation | ✅ Done (bin/vpn-rotate + rotator.py) | Close |
+| Trigger Engine Automation | ❌ Not done (src/trigger_engine.py missing) | Re-prioritize to Low |
+| BMAD Workflow Integration | ✅ Mostly done (workflows exist, orchestration active) | Close |
+| Integration Tests | ⚠️ Partially done (5 old test files, pre-Sprint-3) | Fold into new plan |
 
 ---
 
-## Task 4: BMAD Workflow Integration
+## Refreshed Sprint 4 Priorities
 
-### Current State
-- BMAD workflows exist in `_bmad/`
-- Not integrated into main system
-- No documentation on how to use
+### HIGH PRIORITY — Test Coverage
 
-### What's Missing
-- BMAD workflow documentation
-- Usage examples
-- Integration with main system
+Rationale: 40+ packages, only 2 have test directories. New Sprint-3 modules have zero tests.
 
-### Deliverables
-1. Update `docs/BMAD-WORKFLOWS.md` with usage guide
-2. Create example workflow runs
+| # | Task | Effort | Details |
+|---|------|--------|---------|
+| 4.1 | **nx_trainer tests** | 4h | Test training pipeline, data loading, model orchestration |
+| 4.2 | **nx_dictate tests** | 3h | Test transcription, audio capture, text processing |
+| 4.3 | **nx-audio-* tests** | 3h | Bridge, workflow, plugin integration tests |
+| 4.4 | **nxyme_core tests** | 2h | Core framework unit tests |
+| 4.5 | **nx-mind-desktop tests** | 3h | Desktop UI logic tests |
+| 4.6 | **nx_sms / nx_rotator tests** | 2h | SMS gateway + rotation service tests |
+| 4.7 | **Refresh integration test suite** | 3h | Update tests/integration/ to cover new module wiring |
 
----
+**Total: ~20h**
 
-## Task 5: Integration Tests
+### MEDIUM PRIORITY — Bug Bash & Hardening
 
-### Current State
-- Quality gates exist in `bin/quality-gates/`
-- No integration test suite
+| # | Task | Effort | Details |
+|---|------|--------|---------|
+| 4.8 | **Bug bash on Sprint 3 modules** | 4h | Run each new module, log and fix issues |
+| 4.9 | **MCP tool surfaces audit** | 3h | Verify all new modules expose correct MCP tools |
+| 4.10 | **Session persistence check** | 2h | Verify session state survives across restarts for new modules |
+| 4.11 | **Documentation for new modules** | 4h | README per module, update docs/ index |
+| 4.12 | **update activeContext.md** | 0.5h | Refresh stale context file with current module inventory |
 
-### What's Missing
-- Test suite for MCP connections
-- Test suite for agent chains
-- Test suite for VPN/rotation
+**Total: ~13.5h**
 
-### Deliverables
-1. Create `tests/integration/` directory
-2. Add MCP connection tests
-3. Add agent chain tests
+### LOW PRIORITY — CI & Benchmarks
+
+| # | Task | Effort | Details |
+|---|------|--------|---------|
+| 4.13 | **CI pipeline for test execution** | 3h | GitHub Actions or local CI for test runners |
+| 4.14 | **Benchmark suite expansion** | 2h | Add benchmarks for new module performance |
+| 4.15 | **Trigger engine revival** | 2h | Wire triggers.json to health scripts if still needed |
+
+**Total: ~7h**
 
 ---
 
 ## Execution Order
 
-| Order | Task | Est. Time |
-|-------|------|-----------|
-| 1 | CATALYST Integration | 2h |
-| 2 | VPN Rotator Automation | 2h |
-| 3 | Trigger Engine Automation | 2h |
-| 4 | BMAD Workflow Integration | 1h |
-| 5 | Integration Tests | 3h |
+| Order | Task | Hours | Dependency |
+|-------|------|-------|------------|
+| 1 | 4.12 Update activeContext.md | 0.5 | None |
+| 2 | 4.1–4.7 Test coverage (parallel per module) | 20 | None |
+| 3 | 4.8 Bug bash | 4 | 4.1–4.7 (fix bugs found during testing) |
+| 4 | 4.9 MCP surface audit | 3 | 4.8 |
+| 5 | 4.10 Session persistence | 2 | 4.8 |
+| 6 | 4.11 Docs | 4 | 4.8 (docs reflect fixed state) |
+| 7 | 4.13–4.15 CI/Benchmarks/Trigger | 7 | Everything above |
+
+**Estimated Total**: ~40.5h (relaxed pace, ~2 weeks)
 
 ---
 
-*Sprint 4 Plan v1.0 | N-Xyme_MIND*
+*Sprint 4 Plan v2.0 | N-Xyme_MIND | 2026-05-12*

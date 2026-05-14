@@ -21,6 +21,35 @@ def _get_connection(db_path: Optional[str] = None) -> sqlite3.Connection:
     return sqlite3.connect(db)
 
 
+def _validate_table_name(table: str, conn: sqlite3.Connection) -> str:
+    """Validate that a table name exists in the database.
+
+    This prevents SQL injection via f-string interpolation of table names.
+    SQLite does not allow parameterised table names, so we validate against
+    the actual schema from sqlite_master.
+
+    Args:
+        table: Table name to validate
+        conn: Active database connection
+
+    Returns:
+        Validated table name
+
+    Raises:
+        ValueError: If table name is invalid or doesn't exist
+    """
+    if not table or not table.isidentifier():
+        raise ValueError(f"Invalid table name: {table!r}")
+    cursor = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+        (table,),
+    )
+    result = cursor.fetchone()
+    if result is None:
+        raise ValueError(f"Table not found: {table!r}")
+    return table
+
+
 @mcp.tool()
 def query(sql: str, db_path: Optional[str] = None) -> dict:
     """Execute a SELECT query and return results. READ-ONLY — only SELECT allowed."""
@@ -59,6 +88,7 @@ def describe_table(table: str, db_path: Optional[str] = None) -> dict:
     """Show schema/columns for a table."""
     try:
         conn = _get_connection(db_path)
+        _validate_table_name(table, conn)
         cursor = conn.cursor()
         cursor.execute(f"PRAGMA table_info({table})")
         columns = [
@@ -83,6 +113,7 @@ def sample_table(table: str, limit: int = 10, db_path: Optional[str] = None) -> 
     """Get sample rows from a table."""
     try:
         conn = _get_connection(db_path)
+        _validate_table_name(table, conn)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM {table} LIMIT ?", (limit,))

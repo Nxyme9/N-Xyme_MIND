@@ -10,24 +10,21 @@ Transport: stdio (default), SSE (optional via --sse flag).
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import sqlite3
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING
 
 from fastmcp import FastMCP
 
 # Learning module imports
-try:
-    from packages.learning_engine import record_outcome, status as learning_status
-except ImportError:
-    pass
-try:
-    from packages.learning_engine.event_bus import LearningEventBus, LearningEvent
-except ImportError:
-    pass
+with contextlib.suppress(ImportError):
+    from packages.learning_engine import record_outcome, status as learning_status  # noqa: F401
+with contextlib.suppress(ImportError):
+    from packages.learning_engine.event_bus import LearningEventBus, LearningEvent  # noqa: F401
 
 # Try to get learner from various sources
 _learner = None
@@ -76,8 +73,11 @@ logger = logging.getLogger("unified-memory-mcp")
 # Learning Module Singletons (lazy initialization)
 # ---------------------------------------------------------------------------
 
-_pe: Optional["PriorityEngine"] = None
-_event_bus: Optional[LearningEventBus] = None
+if TYPE_CHECKING:
+    from .cognitive.priority import PriorityEngine
+
+_pe: PriorityEngine | None = None
+_event_bus: LearningEventBus | None = None
 
 
 def _get_event_bus() -> LearningEventBus:
@@ -88,7 +88,7 @@ def _get_event_bus() -> LearningEventBus:
     return _event_bus
 
 
-def _get_pe() -> "PriorityEngine":
+def _get_pe() -> PriorityEngine:
     """Get or create PriorityEngine singleton."""
     global _pe
     if _pe is None:
@@ -196,6 +196,8 @@ def get_memory_stats() -> dict:
             cur.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = {}
             for (table,) in cur.fetchall():
+                if not table or not isinstance(table, str) or not table.isidentifier():
+                    continue
                 try:
                     cur.execute(f"SELECT COUNT(*) FROM {table}")
                     tables[table] = cur.fetchone()[0]
@@ -266,7 +268,7 @@ def recall_session(session_id: str = None, limit: int = 50) -> dict:
         cursor = conn.cursor()
 
         if session_id:
-            # Query messages for specific session (using session_id as part of message id prefix or from_agent)
+            # Query messages for specific session (session_id prefix or from_agent)
             cursor.execute(
                 """
                 SELECT id, from_agent, to_agent, type, subject, content, created_at
@@ -409,13 +411,14 @@ def memory_write(
     content: str,
     kind: str = "episodic",
     scope: str = "global",
-    tags: Optional[list[str]] = None,
+    tags: list[str] | None = None,
 ) -> dict:
     """Write memory using MemoryManager.
 
     Args:
         content: The memory content to store.
-        kind: Type of memory (episodic, semantic, procedural, declarative). Default: episodic.
+        kind: Type of memory (episodic, semantic, procedural, declarative).
+            Default: episodic.
         scope: Scope of memory (global, session, project). Default: global.
         tags: Optional list of tags for the memory.
 
@@ -508,7 +511,10 @@ def get_capabilities() -> dict:
             {"name": "search_memories", "desc": "Search across all memory sources"},
             {"name": "get_memory_stats", "desc": "Get statistics about memory sources"},
             {"name": "recall_session", "desc": "Recall session context from memory"},
-            {"name": "find_context", "desc": "Find relevant context for a specific task"},
+            {
+                "name": "find_context",
+                "desc": "Find relevant context for a specific task",
+            },
             {"name": "memory_search", "desc": "Search via MemoryRouter (alias)"},
             {"name": "memory_write", "desc": "Write to memory store"},
             {"name": "memory_stats", "desc": "Stats via MemoryManager (alias)"},
