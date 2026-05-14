@@ -1,0 +1,69 @@
+name: Model Heartbeat
+
+on:
+  schedule:
+    # Daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger for testing
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: model-heartbeat
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies (none required)
+        run: |
+          python --version
+          echo "All dependencies are stdlib — no pip install needed."
+
+      - name: Save previous snapshot as baseline (before fetch)
+        id: save_prev
+        run: |
+          if [ -f data/snapshot_latest.json ]; then
+            cp data/snapshot_latest.json data/snapshot_prev.json
+            echo "snapshot_saved=true" >> $GITHUB_OUTPUT
+            echo "Preserved existing snapshot as previous baseline."
+          else
+            echo "snapshot_saved=false" >> $GITHUB_OUTPUT
+            echo "No existing snapshot — this is the first run."
+          fi
+
+      - name: Fetch model lists from all providers
+        id: fetch
+        run: |
+          python fetch_models.py --output-dir data
+        continue-on-error: false
+
+      - name: Run heartbeat orchestrator (skip-fetch, use saved snapshot)
+        id: heartbeat
+        run: |
+          python run_heartbeat.py --skip-fetch
+        continue-on-error: false
+
+      - name: Commit and push updated snapshot
+        if: always()
+        run: |
+          git config user.name "Model Heartbeat Bot"
+          git config user.email "heartbeat@n-xyme.github.io"
+          git add model-heartbeat/data/snapshot_latest.json
+          git add model-heartbeat/data/snapshot_prev.json
+          if git diff --cached --quiet; then
+            echo "No changes to snapshot — skipping commit."
+          else
+            git commit -m "chore(heartbeat): update model snapshot [skip ci]"
+            git push
+            echo "Snapshot committed and pushed."
+          fi
