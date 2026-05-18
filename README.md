@@ -3,7 +3,7 @@
 [![GitHub Stars](https://img.shields.io/github/stars/nxyme/N-Xyme_MIND?style=for-the-badge&logo=github&label=stars&color=ff4c1f)](https://github.com/nxyme/N-Xyme_MIND)
 [![GitHub Forks](https://img.shields.io/github/forks/nxyme/N-Xyme_MIND?style=for-the-badge&logo=github&label=forks&color=8B5CF6)](https://github.com/nxyme/N-Xyme_MIND)
 [![Built with Mojo](https://img.shields.io/badge/Built%20with-Mojo%20%E2%80%93-ff4c1f?style=for-the-badge&logoColor=white)](https://mojolang.org)
-[![Mojo Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fnxyme%2FN-Xyme_MIND%2Fmain%2Fpixi.toml&query=%24.dependencies.mojo&style=for-the-badge&logoColor=white&label=Mojo&color=ff4c1f)](https://mojolang.org/releases/)
+[![Mojo Version](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2FNxyme9%2FN-Xyme_MIND%2Fmain%2Fpixi.toml&query=%24.dependencies.mojo&type=json&style=for-the-badge&logoColor=white&label=Mojo&color=ff4c1f)](https://mojolang.org/releases/)
 [![License](https://img.shields.io/badge/License-MIT-ff4c1f?style=for-the-badge)](LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/nxyme/N-Xyme_MIND?style=for-the-badge&logo=git&logoColor=white&label=updated&color=3b82f6)](https://github.com/nxyme/N-Xyme_MIND/commits/main)
 
@@ -11,7 +11,7 @@
 
 # N-Xyme MIND 🔥
 
-**The first Mojo 1.0.0b1 multi-agent operating system — compiled GPU kernels, Tensor Core-accelerated consciousness engine, custom-trained GGUF tool router, and 6,181 lines of Mojo. Built in 6 months with zero coding background.**
+**The first Mojo 1.0.0b1 multi-agent operating system — compiled GPU kernels, Tensor Core-accelerated identity engine, custom-trained GGUF tool router, and 6,730 lines of Mojo. Built in 6 months with zero coding background.**
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
@@ -22,7 +22,7 @@
 │  ⚡  GPU Tensor Core       │  661 lines · RTX 3080 Ti MMA    │
 │  📦  Native Embed Engine   │  935 lines · SIMD cache top-k   │
 │  🔗  llama.cpp FFI         │  717 lines · C++ + Mojo bridge  │
-│  🧩  4 Core Agents         │  OMO orchestration · MCP proto  │
+│  🧩  7 OMO Agents          │  Compiled · MCP · quality gates │
 │  🗃️  156K Memory Vectors   │  Auto-ingesting · 384-dim       │
 │  🎤  GPU Voice Pipeline    │  Whisper · VAD · FIFO → TTS     │
 │  🪟  TUI Dashboard         │  Rich · systemd · GPU monitor   │
@@ -70,39 +70,58 @@ May 18  — Full system running: voice → GPU → consciousness → TTS
 └────────────────────┴─────────────────────┴───────────────────┘
 ```
 
-### 4 Core Agents
+### 7 OMO Agents
 
-| Agent | Role | What it does |
-|-------|------|-------------|
-| **Catalyst** | Orchestrator | Classifies requests, plans, delegates (NEVER writes code) |
-| **Hephaestus** | Builder | Hotloads, builds, runs quality gates, reviews |
-| **Atlas** | Executor | Sprint plans, tracks execution, reports progress |
-| **Hermes** | Memory & Personal | Recalls context, searches memory, consolidates, therapy |
+| Agent | Archetype | Role |
+|-------|-----------|------|
+| **Catalyst** | Orchestrator | Entry point — classifies, routes to 6 specialists, verifies |
+| **Hephaestus** | Builder | Complex code, refactoring, quality gates |
+| **Sisyphus Jr** | Quick Writer | Simple edits, config changes, docs, fixes |
+| **Librarian** | Researcher | Web fetching, docs, OSS code, best practices |
+| **Explorer** | Searcher | Codebase search, patterns, file discovery |
+| **Momus** | Critic | 5-lens adversarial review |
+| **Metis** | Consultant | Pre-planning, assumptions, risks |
 
-### Moji 1.0.0b1 Engine (`services/mojo/src/`)
+### Mojo 1.0.0b1 Engine (`services/mojo/src/`)
 
 ```
 services/mojo/src/
-├── engine.mojo          # Unified InferenceEngine — 3 backends
-├── gpu_kernels.mojo     # SIMD-accelerated tensor operations
-├── gpu_memory.mojo      # Direct VRAM access (via MAX SDK)
-├── native_embed.mojo    # Pure Mojo 896-dim embedding engine
-├── consciousness_engine.mojo  # Agent identity tracking
-├── llama_ffi.mojo       # llama.cpp FFI, hand-aligned C structs
-├── daemon.mojo          # TF-IDF tool router
-├── pipeline.mojo        # Audio streaming pipeline
-├── whisper.mojo         # Whisper GPU integration
-├── vad.mojo             # Voice activity detection
-├── audio.mojo           # Audio processing
-├── codex.mojo           # Code analysis
-├── phone_bridge.mojo    # Telegram bridge
-└── backends/
-    ├── llama_backend.mojo  # llama.cpp GGUF backend
-    ├── native_backend.mojo # Pure Mojo SIMD backend
-    └── hf_backend.mojo     # HuggingFace backend (stub)
+├── agent/
+│   ├── identity.mojo     # Agent identity tracking (896-dim)
+│   └── state.mojo        # GPU state monitoring
+├── inference/
+│   ├── engine.mojo       # Unified InferenceEngine — 3 backends
+│   ├── core.mojo         # Pure Mojo Tensor Core inference
+│   ├── bridge.mojo       # llama.cpp C++ FFI
+│   └── backends/
+│       ├── llama.mojo    # llama.cpp GGUF backend
+│       ├── native.mojo   # Pure Mojo SIMD backend
+│       └── hf.mojo       # HuggingFace backend
+├── voice/
+│   ├── pipeline.mojo     # Audio streaming pipeline
+│   ├── whisper.mojo      # Whisper GPU integration
+│   ├── vad.mojo          # Voice activity detection
+│   └── audio.mojo        # Audio processing
+├── gpu/
+│   ├── kernels.mojo      # SIMD-accelerated tensor operations
+│   └── memory.mojo       # Direct VRAM access
+├── communication/
+│   ├── telegram.mojo     # Telegram bridge
+│   └── phone_bridge.mojo # Phone control
+├── tools/
+│   ├── code_search.mojo  # Code analysis
+│   └── codex.mojo        # Code intelligence
+├── lib/
+│   ├── utils.mojo        # Utilities
+│   └── format.mojo       # Formatting
+├── compat.mojo           # Compile-time version bridge
+├── daemon.mojo           # Service daemon
+├── agent_profile.mojo    # Per-agent profiles
+├── native_embed.mojo     # Pure Mojo 896-dim embedding engine
+└── main.mojo             # Entry point
 ```
 
-**Total: 6,730 lines of Mojo across 31 files** — the largest Mojo 1.0.0b1 codebase on the planet.
+**Total: 6,730 lines of Mojo across 25 files** — the largest Mojo 1.0.0b1 codebase on the planet.
 
 ### Custom Training Pipeline (`services/rosenna_trainer/`)
 

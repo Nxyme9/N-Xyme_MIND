@@ -1,0 +1,69 @@
+# Agent Router — Model selection by task category
+# Default: local Mojo inference engine
+# Fallback: OpenCode API (if engine unavailable)
+
+engine:
+  default: local
+  local:
+    binary: bins/mojo-engine
+    type: subprocess
+    timeout_ms: 30000
+  api:
+    provider: opencode
+    fallback: true
+
+categories:
+  ultrabrain:
+    model: deepseek-v4-flash-free
+    context: 262144
+    temperature: 0.2
+    reasoning: deep
+    agents: [Momus, Metis]
+    fallback: null
+    description: "Deep analysis, adversarial review, planning"
+
+  deep:
+    model: deepseek-v4-flash-free
+    context: 1048576
+    temperature: 0.3
+    reasoning: balanced
+    agents: [Hephaestus, Catalyst]
+    fallback: null
+    description: "Complex code, orchestration, refactoring"
+
+  quick:
+    model: minimax-m2.5-free
+    context: 204800
+    temperature: 0.5
+    reasoning: fast
+    agents: [Sisyphus Jr, Explorer]
+    fallback: null
+    description: "Simple edits, config changes, search"
+
+  research:
+    model: qwen3.6-plus-free
+    context: 1048576
+    temperature: 0.1
+    reasoning: broad
+    agents: [Librarian]
+    fallback: null
+    description: "Long documents, web research, deep context"
+
+routing:
+  strategy: category_first
+  rules:
+    - match: { type: code, complexity: complex }
+      category: deep
+    - match: { type: code, complexity: simple }
+      category: quick
+    - match: { type: research }
+      category: research
+    - match: { type: review }
+      category: ultrabrain
+    - match: { type: plan }
+      category: ultrabrain
+    - match: { type: search }
+      category: quick
+    - match: { type: unknown }
+      category: ultrabrain
+      confidence_threshold: 0.7
