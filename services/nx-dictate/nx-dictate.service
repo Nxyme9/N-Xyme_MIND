@@ -1,0 +1,18 @@
+[Unit]
+Description=N-Xyme Dictate — voice dictation with CUDA Whisper
+After=graphical-session.target pipewire.service
+Wants=pipewire.service
+
+[Service]
+Type=simple
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_CURRENT_DESKTOP=KDE
+Environment=PATH=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin:/usr/bin:/bin
+Environment=CUDA_VISIBLE_DEVICES=0
+Environment=LD_LIBRARY_PATH=/opt/cuda/targets/x86_64-linux/lib:/opt/cuda/lib64
+ExecStart=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin/python -m nx_dictate --model large-v3 --device 11 --backend ydotool
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target

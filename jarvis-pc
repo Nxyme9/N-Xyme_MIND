@@ -1,0 +1,138 @@
+#!/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin/python3
+"""jarvis-pc — Total PC control. Voice/text → PC action OR → Mojo Brain.
+Usage:
+  jarvis-pc --fifo           # Listen on FIFO (for kphone)
+  jarvis-pc --command "..."  # One command
+  jarvis-pc                  # Interactive stdin
+"""
+import os, sys, json, subprocess, time, threading
+from pathlib import Path
+
+ROOT = Path("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND")
+FIFO_PATH = "/tmp/jarvis_fifo"
+MOJO_BRAIN_URL = "http://127.0.0.1:9091"
+
+# ── PC Commands ──
+COMMANDS = {
+    "open chrome": lambda: subprocess.Popen(["google-chrome"]),
+    "open firefox": lambda: subprocess.Popen(["firefox"]),
+    "open terminal": lambda: subprocess.Popen(["gnome-terminal"]),
+    "open code": lambda: subprocess.Popen(["code", ROOT]),
+    "open files": lambda: subprocess.Popen(["nautilus"]),
+    "open discord": lambda: subprocess.Popen(["discord"]),
+    "open spotify": lambda: subprocess.Popen(["spotify"]),
+    "lock": lambda: subprocess.run(["loginctl", "lock-session"]),
+    "sleep": lambda: subprocess.run(["systemctl", "suspend"]),
+    "volume up": lambda: subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", "+10%"]),
+    "volume down": lambda: subprocess.run(["pactl", "set-sink-volume", "@DEFAULT_SINK@", "-10%"]),
+    "mute": lambda: subprocess.run(["pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle"]),
+    "brightness up": lambda: subprocess.run(["brightnessctl", "s", "+10%"]),
+    "brightness down": lambda: subprocess.run(["brightnessctl", "s", "-10%"]),
+}
+
+def handle_command(text):
+    """Parse and execute a PC control command. Returns response dict or None."""
+    t = text.lower().strip()
+    
+    # Check exact commands
+    for cmd, action in COMMANDS.items():
+        if cmd in t:
+            try:
+                action()
+                return {"status": "ok", "command": cmd, "action": "pc"}
+            except Exception as e:
+                return {"status": "error", "command": cmd, "error": str(e)}
+    
+    # Type text
+    if t.startswith("type ") and len(t) > 5:
+        try:
+            import pyautogui
+            pyautogui.write(text[5:], interval=0.02)
+            return {"status": "ok", "command": "type", "action": "pc"}
+        except: pass
+    
+    # File search
+    if t.startswith("search ") or t.startswith("find "):
+        q = t.replace("search ", "").replace("find ", "")
+        r = subprocess.run(["find", os.path.expanduser("~"), "-maxdepth", "4", "-iname", f"*{q}*", "-type", "f"], capture_output=True, text=True, timeout=10)
+        files = [f for f in r.stdout.strip().split("\n") if f][:10]
+        return {"status": "ok", "files": files, "action": "pc"}
+    
+    # Screenshot
+    if "screenshot" in t or "screen" in t:
+        try:
+            import pyautogui
+            path = f"/tmp/screenshot-{int(time.time())}.png"
+            pyautogui.screenshot(path)
+            return {"status": "ok", "command": "screenshot", "file": path, "action": "pc"}
+        except: pass
+    
+    return None  # Not a PC command
+
+def route_to_mojo_brain(text):
+    """Route through mojo-brain for local vs cloud decision."""
+    print(f"  🧠 Consulting Mojo Brain...")
+    try:
+        import urllib.request
+        req = urllib.request.Request(
+            MOJO_BRAIN_URL,
+            json.dumps({"query": text, "source": "jarvis-pc"}).encode(),
+            {"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read())
+            decision = result.get("decision", "cloud")
+            print(f"  🧠 Mojo: {decision.upper()} ({result.get('method','?')})")
+            return result
+    except Exception as e:
+        print(f"  ⚠ Mojo Brain unavailable, fallback to Kairos: {e}")
+        subprocess.run([str(ROOT / "mojo-chat"), "send", "PC Control", "Kairos", text])
+        return {"decision": "cloud", "method": "fallback"}
+
+def process_text(text, source="fifo"):
+    """Process text: try PC command first, then route to Mojo Brain."""
+    text = text.strip()
+    if not text:
+        return
+    print(f"  📥 [{source}] {text[:80]}")
+    
+    result = handle_command(text)
+    if result:
+        print(f"  ⚡ PC: {result.get('command','?')}")
+    else:
+        route_to_mojo_brain(text)
+
+def fifo_listen_loop():
+    """Read from FIFO, process commands."""
+    if not os.path.exists(FIFO_PATH):
+        os.mkfifo(FIFO_PATH)
+    print(f"  📡 Listening on FIFO: {FIFO_PATH}")
+    print(f"  🧠 Mojo Brain: {MOJO_BRAIN_URL}")
+    print()
+    while True:
+        try:
+            with open(FIFO_PATH, "r") as fifo:
+                for line in fifo:
+                    process_text(line.strip(), "fifo")
+        except FileNotFoundError:
+            time.sleep(1)
+
+def stdin_loop():
+    """Read from stdin."""
+    print("  ⌨️  Type a command. Ctrl+C to quit.\n")
+    try:
+        for line in sys.stdin:
+            process_text(line.strip(), "stdin")
+    except KeyboardInterrupt:
+        print("\n  💤 Jarvis PC sleeping.")
+
+if __name__ == "__main__":
+    if "--fifo" in sys.argv:
+        fifo_listen_loop()
+    elif "--command" in sys.argv:
+        idx = sys.argv.index("--command") + 1
+        if idx < len(sys.argv):
+            result = handle_command(" ".join(sys.argv[idx:]))
+            print(json.dumps(result))
+    else:
+        stdin_loop()

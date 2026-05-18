@@ -1,0 +1,12 @@
+{
+  "allowed": [
+    "file_read",
+    "review_adversarial",
+    "review_code",
+    "safe_delete",
+    "search_code",
+    "search_memory",
+    "delegate_task"
+  ],
+  "blocked": []
+}

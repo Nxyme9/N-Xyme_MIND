@@ -1,0 +1,181 @@
+{
+  "name": "N-Xyme Agent Protocol",
+  "short_name": "NAP",
+  "version": "3.0.0",
+  "status": "active",
+  "last_updated": "2026-05-17",
+  "memory_id": "mem_1779024484",
+  "tool_naming": {
+    "pattern": "<domain>_<action>[_<target>]",
+    "tools": [
+      "file_read",
+      "file_write",
+      "file_edit",
+      "file_batch_read",
+      "file_batch_write",
+      "file_glob",
+      "file_grep",
+      "search_code",
+      "search_memory",
+      "search_semantic",
+      "review_code",
+      "review_adversarial",
+      "verify_code",
+      "config_edit",
+      "config_validate",
+      "config_sync",
+      "config_remove",
+      "agent_add",
+      "agent_list",
+      "agent_edit",
+      "schema_check",
+      "safe_delete",
+      "read_memory",
+      "write_memory",
+      "list_memory",
+      "web_fetch",
+      "web_search",
+      "project_map",
+      "session_status",
+      "session_digest",
+      "context_prune",
+      "delegate_task",
+      "route_task",
+      "ask_question",
+      "spawn_task",
+      "apply_patch",
+      "bash",
+      "parallel_task",
+      "task_status",
+      "session_tasks",
+      "bg_submit",
+      "bg_status",
+      "bg_list",
+      "bg_cancel",
+      "cache_stats",
+      "cache_clear",
+      "nap_protocol"
+    ]
+  },
+  "delegation_chain": {
+    "spec": "ADCS Lite",
+    "field": "_delegation_chain",
+    "resolution": [
+      "_agent",
+      "_delegation_chain",
+      "active-agent.json",
+      "env_vars"
+    ],
+    "scope_rule": "child.tools = parent.tools \u2229 child.profileTools"
+  },
+  "parallel_execution": {
+    "pattern": "same_session_parallel",
+    "max_workers": 10,
+    "tools": [
+      "parallel_task",
+      "task_status",
+      "session_tasks"
+    ]
+  },
+  "background_tasks": {
+    "pattern": "non_blocking_queue",
+    "tools": [
+      "bg_submit",
+      "bg_status",
+      "bg_list",
+      "bg_cancel"
+    ]
+  },
+  "caching": {
+    "layers": {
+      "file_cache": {
+        "max_size": 500,
+        "ttl": 60
+      },
+      "search_cache": {
+        "max_size": 200,
+        "ttl": 300
+      },
+      "config_cache": {
+        "max_size": 50,
+        "ttl": 600
+      }
+    }
+  },
+  "delete_protection": {
+    "pattern": "rm_to_trash",
+    "trash_dir": "data/trash/",
+    "retention_days": 30,
+    "blocked": [
+      "rm",
+      "unlink",
+      "shred",
+      "find -delete",
+      "find exec rm"
+    ]
+  },
+  "permission_model": {
+    "pattern": "per_agent_tools_json",
+    "files": "agents/*/tools/tools.json",
+    "enforcement": "mcp_server_check"
+  },
+  "mcp_servers": {
+    "bash-mcp": {
+      "path": "services/bash-mcp/server.py",
+      "purpose": "shell_execution"
+    },
+    "nx-tools": {
+      "path": "services/megatool-mcp/server.py",
+      "purpose": "config_agents_files_memory_web_parallel_background"
+    },
+    "bmad-mcp": {
+      "path": "services/bmad-mcp/src/server.py",
+      "purpose": "bmad_skills"
+    },
+    "nx_agents": {
+      "path": "bins/nx_agents",
+      "purpose": "orchestration_sessions_memory"
+    }
+  },
+  "missing_mcps": {
+    "nx-testing": [
+      "test_run",
+      "test_coverage",
+      "lint_code",
+      "verify_code"
+    ],
+    "nx-git": [
+      "git_status",
+      "git_commit",
+      "git_branch",
+      "git_diff"
+    ],
+    "nx-monitor": [
+      "system_metrics",
+      "process_list",
+      "log_tail",
+      "health_check"
+    ],
+    "nx-network": [
+      "http_request",
+      "api_test",
+      "port_scan"
+    ]
+  },
+  "governance": {
+    "version_control": "nap-change-log.json",
+    "validator": "nap-validator.py",
+    "approval_required_for": [
+      "major changes",
+      "tool removals",
+      "MCP server changes"
+    ],
+    "auto_approved": [
+      "minor tool additions",
+      "cache config changes",
+      "documentation updates"
+    ],
+    "rollback_plan": "Restore previous version from change log",
+    "audit_log": "All changes logged with hash, timestamp, approver"
+  }
+}

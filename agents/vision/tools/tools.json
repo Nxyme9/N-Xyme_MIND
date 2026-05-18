@@ -1,0 +1,9 @@
+{
+  "allowed": [
+    "ask_question",
+    "file_read",
+    "safe_delete",
+    "delegate_task"
+  ],
+  "blocked": []
+}

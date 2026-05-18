@@ -1,0 +1,15 @@
+[Unit]
+Description=N-Xyme GPU Embedding Server — Rosetta v13 on RTX 3080 Ti
+After=network.target
+
+[Service]
+Type=simple
+Environment=PATH=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin:/usr/bin:/bin
+ExecStart=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bins/gpu-server start
+ExecStop=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bins/gpu-server stop
+ExecReload=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/bins/gpu-server restart
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

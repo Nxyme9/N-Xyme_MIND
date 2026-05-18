@@ -1,0 +1,21 @@
+{
+  "version": "3.0.0",
+  "changes": [
+    {
+      "version": "3.0.0",
+      "date": "2026-05-17",
+      "type": "major",
+      "description": "Initial NAP protocol with unified naming, delegation chains, parallel execution, caching, background tasks",
+      "author": "N-Xyme Team",
+      "approved_by": "User",
+      "hash": "pending"
+    }
+  ],
+  "approval_process": {
+    "proposer": "Agent Builder or User",
+    "validator": "NAP Validator",
+    "approver": "User (for major changes), Agent Builder (for minor)",
+    "deployer": "Orchestrator (Sisyphus)",
+    "rollback": "Automatic on validation failure"
+  }
+}

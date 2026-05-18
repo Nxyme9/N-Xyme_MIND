@@ -1,0 +1,12 @@
+[Unit]
+Description=N-Xyme Event Daemon — agent-to-agent messaging socket
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=python3 /home/nxyme/N-Xyme_CODE/N-Xyme_MIND/services/mojo-router/src/event_daemon.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

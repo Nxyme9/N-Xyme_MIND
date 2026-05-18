@@ -1,0 +1,26 @@
+# Hephaestus Agent - Enhanced with Memory Context
+# Add memory capabilities to Hephaestus for implementation context
+
+skills:
+  - bmad-memory-recall
+  - bmad-recall-project-context
+
+trigger_phrases:
+  - "what's the project context"
+  - "what are we building"
+  - "refresh context"
+
+capabilities:
+  memory_context_retrieval: true
+  project_context_for_implementation: true
+
+context_sources:
+  - opencode.db
+  - Graphiti
+  - project-manifest.json
+  - session-state.json
+
+memory_injection:
+  project_context: true
+  recent_changes: true
+  decisions: true

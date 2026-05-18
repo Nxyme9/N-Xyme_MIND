@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+"""Train embedding centroids from YOUR real query→intent data.
+Loads from data/ml/query-intent-pairs.json (16k+ real pairs).
+
+Usage:
+  gpu-train                    # Rebuild centroids
+  gpu-train --analyze          # Show class distribution
+"""
+import json, os, sys, time, urllib.request
+from collections import Counter
+
+ROOT = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+QUERY_FILE = f"{ROOT}/data/ml/query-intent-pairs.json"
+OUTPUT = f"{ROOT}/data/identity/trained-weights.json"
+
+def embed(text):
+    req = urllib.request.Request(
+        "http://127.0.0.1:8088/v1/embeddings",
+        json.dumps({"input": text[:500]}).encode(),
+        {"Content-Type": "application/json"}
+    )
+    return json.loads(urllib.request.urlopen(req, timeout=10).read())["data"][0]["embedding"]
+
+if __name__ == "__main__":
+    if not os.path.exists(QUERY_FILE):
+        print(f"No query pairs found at {QUERY_FILE}")
+        sys.exit(1)
+
+    with open(QUERY_FILE) as f:
+        pairs = json.load(f)
+
+    print(f"Loaded {len(pairs)} query→intent pairs")
+    c = Counter(p["intent"] for p in pairs)
+    for intent, count in c.most_common():
+        print(f"  {intent}: {count}")
+
+    # Build centroids per intent
+    centroids = {}
+    for p in pairs[:500]:  # sample 500 for speed
+        intent = p["intent"]
+        if intent not in centroids:
+            centroids[intent] = {"sum": None, "count": 0}
+        try:
+            emb = embed(p["query"])
+            if centroids[intent]["sum"] is None:
+                centroids[intent]["sum"] = emb
+            else:
+                centroids[intent]["sum"] = [a + b for a, b in zip(centroids[intent]["sum"], emb)]
+            centroids[intent]["count"] += 1
+        except:
+            pass
+
+    avg_centroids = {}
+    for intent, data in centroids.items():
+        if data["count"] > 0:
+            avg_centroids[intent] = [v / data["count"] for v in data["sum"]]
+
+    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
+    with open(OUTPUT, "w") as f:
+        json.dump({"classes": list(avg_centroids.keys()), "centroids": avg_centroids}, f)
+
+    print(f"Saved {len(avg_centroids)} centroids ({list(avg_centroids.keys())})")
+    print(f"  Used {sum(data['count'] for data in centroids.values())} examples")

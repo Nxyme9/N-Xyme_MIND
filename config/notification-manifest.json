@@ -1,0 +1,80 @@
+{
+  "manifest_version": "1.0",
+  "created": "2026-05-18",
+  "policy": "Every notification source MUST register here with a documented kill switch before deployment.",
+  "sources": [
+    {
+      "name": "nx-dictate.service",
+      "type": "systemd-service",
+      "description": "Dictation daemon — audio capture & transcription",
+      "restart_policy": "always (CHANGED to on-failure after crisis)",
+      "kill_switch": "systemctl --user stop --now nx-dictate.service && systemctl --user disable nx-dictate.service",
+      "dashboard_control": true,
+      "status": "active"
+    },
+    {
+      "name": "nx-heartbeat.timer",
+      "type": "systemd-timer",
+      "description": "Periodic heartbeat check — was generating notification noise",
+      "kill_switch": "systemctl --user disable --now nx-heartbeat.timer",
+      "dashboard_control": true,
+      "status": "disabled"
+    },
+    {
+      "name": "nx-guardian.timer",
+      "type": "systemd-timer",
+      "description": "Guardian monitor — was auto-starting and generating notifications",
+      "kill_switch": "systemctl --user disable --now nx-guardian.timer",
+      "dashboard_control": true,
+      "status": "disabled"
+    },
+    {
+      "name": "nx-meta-monitor.timer",
+      "type": "systemd-timer",
+      "description": "Meta monitor — was auto-starting without documented kill switch",
+      "kill_switch": "systemctl --user disable --now nx-meta-monitor.timer",
+      "dashboard_control": true,
+      "status": "disabled"
+    },
+    {
+      "name": "dictation-feedback.py",
+      "type": "python-script",
+      "description": "Dictation feedback — notify-send calls that couldn't be silenced",
+      "kill_switch": "Edit feedback.py to comment out notify-send calls, or pkill -f feedback.py",
+      "dashboard_control": false,
+      "status": "silenced"
+    },
+    {
+      "name": "ralph-loop-state",
+      "type": "persistent-state",
+      "description": "Ralph loop persisted at data/ralph-state/active.md — survived restarts",
+      "kill_switch": "rm -f data/ralph-state/active.md",
+      "dashboard_control": true,
+      "status": "managed"
+    },
+    {
+      "name": "token-guard-event-stream",
+      "type": "plugin-event-stream",
+      "description": "Token guard toast notifications — could only be killed by restarting opencode",
+      "kill_switch": "Restart opencode to clear stale event streams",
+      "dashboard_control": false,
+      "status": "monitored"
+    },
+    {
+      "name": "plugin-toasts",
+      "type": "plugin-notification",
+      "description": "nx-plugin.js toast notifications — generated through the TUI notification system",
+      "kill_switch": "Restart opencode; or disable the plugin in opencode.json",
+      "dashboard_control": false,
+      "status": "monitored"
+    }
+  ],
+  "rules": [
+    "NO new notification source shall be added without registering here first.",
+    "Every source MUST have a documented, single-command kill switch.",
+    "Systemd services MUST NOT use Restart=always unless explicitly approved.",
+    "Every systemd timer MUST be disable-able from the dashboard.",
+    "Persistent state files MUST have a cleanup mechanism.",
+    "Plugin event streams MUST have a kill switch that does NOT require full restart."
+  ]
+}

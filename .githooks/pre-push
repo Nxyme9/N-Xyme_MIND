@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# Pre-push hook: run release check before every push
+# To bypass: git push --no-verify
+
+set -euo pipefail
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+cd "$REPO_ROOT"
+
+if [ -f scripts/release-check.sh ]; then
+    echo ""
+    echo "═══════════════════════════════════════════"
+    echo "  🔍 Pre-push: Running release check..."
+    echo "═══════════════════════════════════════════"
+    
+    bash scripts/release-check.sh
+    EXIT_CODE=$?
+    
+    if [ $EXIT_CODE -eq 2 ]; then
+        echo ""
+        echo -e "\033[0;31m❌ Push BLOCKED by release check.\033[0m"
+        echo "   Fix blocking issues or use: git push --no-verify"
+        exit 1
+    elif [ $EXIT_CODE -eq 1 ]; then
+        echo ""
+        echo -e "\033[1;33m⚠️  Push proceeding with warnings.\033[0m"
+        echo "   Review warnings above before release."
+    else
+        echo ""
+        echo -e "\033[0;32m✅ Release check passed. Push allowed.\033[0m"
+    fi
+fi
+
+exit 0

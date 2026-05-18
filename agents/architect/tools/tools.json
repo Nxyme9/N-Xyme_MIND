@@ -1,0 +1,13 @@
+{
+  "allowed": [
+    "bash",
+    "file_batch_read",
+    "file_glob",
+    "file_grep",
+    "file_read",
+    "project_map",
+    "safe_delete",
+    "delegate_task"
+  ],
+  "blocked": []
+}

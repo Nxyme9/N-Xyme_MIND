@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0'  # weekly: check Mojo updates
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for git mv tracking
+      
+      # Mojo setup via pixi (official recommended way)
+      - uses: prefix-dev/setup-pixi@v0.8
+        with:
+          pixi-version: latest
+          cache: true
+      
+      # Build Mojo engine
+      - name: Build Mojo engine
+        run: pixi run build-all
+      
+      # Build MCP template
+      - name: Build MCP template
+        run: pixi run build-mcp
+      
+      # Verify compiled binaries exist
+      - name: Verify binaries
+        run: |
+          ls -lh bins/nx-engine bins/compiled-agent
+          file bins/nx-engine bins/compiled-agent
+      
+      # Basic smoke test
+      - name: Smoke test
+        run: |
+          echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | timeout 3 ./bins/compiled-agent || true
+      
+      # Format check
+      - name: Format check
+        run: pixi run format --check || echo "Format issues found (non-blocking)"
+      
+      # Upload binaries as artifacts
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nx-engine-linux
+          path: bins/

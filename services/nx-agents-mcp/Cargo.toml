@@ -1,0 +1,32 @@
+[package]
+name = "nx_agents"
+version = "0.5.0"
+edition = "2021"
+rust-version = "1.84"
+description = "N-Xyme MCP server - session isolation, memory, audit, loops"
+license = "MIT"
+repository = "https://github.com/nxyme/nx-agents"
+readme = "../../README.md"
+keywords = ["mcp", "ai", "agent", "nx-agents"]
+categories = ["command-line-utilities", "development-tools"]
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "instagram"
+path = "src/instagram.rs"
+
+[dependencies]
+ort = "2.0.0-rc.12"
+minilm = { path = "../minilm" }
+ml = { path = "../../ml" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { version = "0.12", features = ["blocking", "json"], optional = true }
+chrono = { version = "0.4", features = ["serde"], optional = true }
+
+[features]
+default = []
+instagram-hook = ["reqwest", "chrono"]
+

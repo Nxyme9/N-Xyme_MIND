@@ -1,0 +1,17 @@
+{
+  "allowed": [
+    "read",
+    "list_memory",
+    "read_memory",
+    "search_memory",
+    "write_memory",
+    "session_status",
+    "bmad_memory_consolidate",
+    "bmad_memory_recall",
+    "bmad_memory_search",
+    "delegate_task",
+    "ask",
+    "read"
+  ],
+  "blocked": []
+}

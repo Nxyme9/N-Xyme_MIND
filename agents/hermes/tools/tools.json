@@ -1,0 +1,27 @@
+{
+  "allowed": [
+    "call_omo_agent",
+    "delegate_task",
+    "embed_similarity",
+    "embed_text",
+    "file_glob",
+    "file_grep",
+    "file_read",
+    "list_memory",
+    "read_memory",
+    "search_memory",
+    "search_semantic",
+    "session_status",
+    "web_fetch",
+    "web_search",
+    "write_memory"
+  ],
+  "blocked": [
+    "apply_patch",
+    "bash",
+    "file_batch_write",
+    "file_edit",
+    "file_write",
+    "verify_code"
+  ]
+}

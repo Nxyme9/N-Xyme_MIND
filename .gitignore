@@ -1,0 +1,126 @@
+# ============================================================
+# N-Xyme_MIND .gitignore
+# Generated for agentic operating system with ML + data heavy
+# ============================================================
+
+# ---- Build artifacts ----
+**/target/
+**/Cargo.lock
+bins/
+node_modules/
+dist/
+*.o
+*.so
+*.dylib
+*.exe
+*.pyc
+__pycache__/
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ---- Python virtual environments ----
+venv/
+mojo-venv/
+.env
+.env.*
+*.env
+
+# ---- Secrets & config ----
+secrets/
+**/secrets.env
+**/api-keys*
+**/token*
+**/.auth*
+config/nx_agents.json.backup
+
+# ---- Runtime session data (large, ephemeral) ----
+data/sessions/
+data/audit/
+data/triggers/
+data/notifications/
+data/ralph-state.json
+data/memory/
+data/transcripts/
+data/opencode/
+data/consolidated/
+
+# ---- Plan execution state ----
+data/plans/in_progress/
+data/plans/active/
+data/plans/failed/
+
+# ---- Evolution state (generated) ----
+data/evolution/fallbacks/
+data/evolution/observations/
+data/evolution/patches/
+
+# ---- ML & training data (large, generated) ----
+data/ml/
+data/learning/training/cache/
+data/learning/training/checkpoints/
+data/learning/training/models/
+data/learning/outcomes/
+data/learning/signals/
+data/voices/
+
+# ---- Large generated indices ----
+data/drive_index.json
+
+# ---- Service runtime & build artifacts ----
+services/**/state/
+services/**/__pycache__/
+services/**/*.pyc
+services/token-guard/state/
+services/bmad-mcp/state/
+services/llamabridge/
+services/minilm/
+services/rosenna_trainer/
+
+# ---- MCP state files ----
+*.state.json
+*.runtime.json
+*.local.json
+
+# ---- IDE & editor ----
+.idea/
+.vscode/
+*.code-workspace
+
+# ---- Backup & temp files ----
+*.bak
+*.orig
+data/trash/
+
+# ---- Compiled binaries (source-only tracking) ----
+scripts/sync-agents
+services/mojo-router/src/daemon
+services/mojo-router/src/engine
+services/mojo-router/src/main
+services/mojo-router/src/main_compiled
+services/mojo-router/src/state_bin
+services/mojo-router/src/test_input
+services/mojo-router/src/test_sys2
+services/mojo/src/daemon
+services/mojo/src/engine
+services/mojo/src/state
+services/mojo/src/telegram
+phone-web
+
+# ---- Archive (125GB+ legacy data) ----
+archive/
+
+# ---- Large generated files ----
+**/*.log
+**/*.log.*
+*.jsonl
+**/node_modules/
+**/target/
+**/dist/
+
+# ---- Git itself ----
+.gitattributes

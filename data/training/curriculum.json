@@ -1,0 +1,240 @@
+{
+  "generated_at": "2026-05-18T06:00:31.649881",
+  "total_items": 26,
+  "items": [
+    {
+      "agent": "unknown",
+      "task_type": "tool:read",
+      "focus_error": "no_error",
+      "failure_count": 574,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'read' calls — 574 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'read' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:bash",
+      "focus_error": "no_error",
+      "failure_count": 407,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'bash' calls — 407 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'bash' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:glob",
+      "focus_error": "no_error",
+      "failure_count": 109,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'glob' calls — 109 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_edit",
+      "focus_error": "no_error",
+      "failure_count": 53,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_edit' calls — 53 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'nx-tools_file_edit' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:edit",
+      "focus_error": "no_error",
+      "failure_count": 50,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'edit' calls — 50 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'edit' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_read",
+      "focus_error": "no_error",
+      "failure_count": 44,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_read' calls — 44 failures with 'no_error'. Current success rate: 0%. Suggested drill: Verify file paths before read/write. Check permissions."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:grep",
+      "focus_error": "no_error",
+      "failure_count": 34,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'grep' calls — 34 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:write",
+      "focus_error": "no_error",
+      "failure_count": 32,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'write' calls — 32 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'write' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:task",
+      "focus_error": "no_error",
+      "failure_count": 31,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'task' calls — 31 failures with 'no_error'. Current success rate: 0%. Suggested drill: Verify agent name exists in config. Use delegate_task not task()."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:websearch",
+      "focus_error": "no_error",
+      "failure_count": 28,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'websearch' calls — 28 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "Agent Builder",
+      "task_type": "tool:read",
+      "focus_error": "no_error",
+      "failure_count": 21,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'read' calls — 21 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'read' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:todowrite",
+      "focus_error": "no_error",
+      "failure_count": 20,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'todowrite' calls — 20 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'todowrite' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:webfetch",
+      "focus_error": "no_error",
+      "failure_count": 20,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'webfetch' calls — 20 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'webfetch' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_grep",
+      "focus_error": "no_error",
+      "failure_count": 20,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_grep' calls — 20 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:skill",
+      "focus_error": "no_error",
+      "failure_count": 18,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'skill' calls — 18 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'skill' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_write",
+      "focus_error": "no_error",
+      "failure_count": 17,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_write' calls — 17 failures with 'no_error'. Current success rate: 0%. Suggested drill: Verify file paths before read/write. Check permissions."
+    },
+    {
+      "agent": "Hephaestus - Builder",
+      "task_type": "tool:read",
+      "focus_error": "no_error",
+      "failure_count": 12,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'read' calls — 12 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'read' calls. Document fix for reuse."
+    },
+    {
+      "agent": "Librarian - Research",
+      "task_type": "tool:websearch",
+      "focus_error": "no_error",
+      "failure_count": 10,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'websearch' calls — 10 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_batch_read",
+      "focus_error": "no_error",
+      "failure_count": 5,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_batch_read' calls — 5 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'nx-tools_file_batch_read' calls. Document fix for reuse."
+    },
+    {
+      "agent": "Hephaestus - Builder",
+      "task_type": "tool:todowrite",
+      "focus_error": "no_error",
+      "failure_count": 4,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'todowrite' calls — 4 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'todowrite' calls. Document fix for reuse."
+    },
+    {
+      "agent": "Hephaestus - Builder",
+      "task_type": "tool:grep",
+      "focus_error": "no_error",
+      "failure_count": 4,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'grep' calls — 4 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "Librarian - Research",
+      "task_type": "tool:todowrite",
+      "focus_error": "no_error",
+      "failure_count": 3,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'todowrite' calls — 3 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'todowrite' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:invalid",
+      "focus_error": "no_error",
+      "failure_count": 3,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'invalid' calls — 3 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'invalid' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_file_glob",
+      "focus_error": "no_error",
+      "failure_count": 3,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_file_glob' calls — 3 failures with 'no_error'. Current success rate: 0%. Suggested drill: Check regex syntax. Use correct pattern format."
+    },
+    {
+      "agent": "Hephaestus - Builder",
+      "task_type": "tool:bash",
+      "focus_error": "no_error",
+      "failure_count": 3,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'bash' calls — 3 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'bash' calls. Document fix for reuse."
+    },
+    {
+      "agent": "unknown",
+      "task_type": "tool:nx-tools_config_validate",
+      "focus_error": "no_error",
+      "failure_count": 3,
+      "current_success_rate": 0.0,
+      "priority": "critical",
+      "suggested_focus": "Practice 'nx-tools_config_validate' calls — 3 failures with 'no_error'. Current success rate: 0%. Suggested drill: Analyse and correct 'no_error' errors during 'nx-tools_config_validate' calls. Document fix for reuse."
+    }
+  ]
+}

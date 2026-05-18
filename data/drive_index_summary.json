@@ -1,0 +1,33 @@
+{
+  "total_files": 278860,
+  "total_size_gb": 390.907039464,
+  "scan_time_s": 216.10843420028687,
+  "by_type": {
+    ".json": 83865,
+    ".py": 24996,
+    ".md": 37264,
+    ".yaml": 3437,
+    ".js": 12574,
+    ".db": 5982,
+    ".ts": 46521,
+    ".yml": 1186,
+    ".toml": 839,
+    ".jsonl": 57305,
+    ".rs": 3413,
+    ".onnx": 106,
+    ".npy": 825,
+    ".gguf": 69,
+    ".safetensors": 430,
+    ".mojo": 33,
+    ".sqlite3": 5,
+    ".sqlite": 10
+  },
+  "by_drive": {
+    "/home/nxyme": 126417,
+    "/mnt/Library": 3487,
+    "/mnt/WIN_LIBRARY": 148844,
+    "/run/media/nxyme/nx_dirve": 112
+  },
+  "index_path": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/drive_index.json",
+  "timestamp": 1779002058.943837
+}

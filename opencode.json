@@ -1,0 +1,154 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/deepseek-v4-flash-free",
+  "skills": {
+    "paths": [
+      "./config/rules",
+      "./bmad/core/skills",
+      "./bmad/bmm/workflows",
+      "./bmad/tea/workflows",
+      "./bmad/gds/workflows",
+      "./agents"
+    ]
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 10000
+  },
+  "plugin": [
+    "./.opencode/plugins/no-code-sisyphus.js",
+    "./.opencode/plugins/ralph-autoloop.js",
+    "./.opencode/plugins/token-guard.js",
+    "./.opencode/plugins/nx-plugin.js"
+  ],
+  "mcp": {
+    "nx": {
+      "type": "local",
+      "command": [
+        "./bins/nx_agents"
+      ],
+      "enabled": false,
+      "timeout": 30000
+    },
+    "bmad": {
+      "type": "local",
+      "command": [
+        "python3",
+        "./services/bmad-mcp/src/server.py"
+      ],
+      "enabled": true,
+      "timeout": 15000
+    },
+    "bash_mcp": {
+      "type": "local",
+      "command": [
+        "python3",
+        "./services/bash-mcp/server.py"
+      ],
+      "enabled": true,
+      "timeout": 60000
+    },
+    "nx-tools": {
+      "type": "local",
+      "command": [
+        "python3",
+        "./services/megatool-mcp/server.py"
+      ],
+      "enabled": true,
+      "timeout": 30000
+    },
+    "hephaestus-agent": {
+      "type": "local",
+      "command": [
+        "./bins/hephaestus-agent"
+      ],
+      "enabled": true,
+      "timeout": 15000
+    }
+  },
+  "permission": "allow",
+  "provider": {
+    "opencode": {
+      "models": {
+        "deepseek-v4-flash-free": {
+          "limit": {
+            "context": 1048576,
+            "output": 384000
+          }
+        },
+        "minimax-m2.5-free": {
+          "limit": {
+            "context": 204800,
+            "output": 65536
+          }
+        },
+        "qwen3.6-plus-free": {
+          "limit": {
+            "context": 1048576,
+            "output": 65536
+          }
+        },
+        "ring-2.6-1t-free": {
+          "limit": {
+            "context": 262144,
+            "output": 65536
+          }
+        },
+        "trinity-large-preview-free": {
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
+        }
+      }
+    }
+  },
+  "agent": {
+    "Catalyst": {
+      "description": "OMO orchestrator \u2014 classifies requests, routes to 6 specialists, verifies results.",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agents/omo/catalyst.agent.md}"
+    },
+    "Hephaestus - Builder": {
+      "description": "OMO deep code agent \u2014 complex implementation, refactoring, quality gates.",
+      "mode": "primary",
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agents/omo/hephaestus.agent.md}"
+    },
+    "Explore - Search": {
+      "description": "OMO codebase search agent \u2014 file patterns, code content, architecture discovery.",
+      "mode": "subagent",
+      "model": "opencode/minimax-m2.5-free",
+      "prompt": "{file:./agents/omo/explorer.agent.md}"
+    },
+    "Librarian - Research": {
+      "description": "OMO research agent \u2014 web fetching, documentation, OSS code, best practices.",
+      "mode": "subagent",
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agents/omo/librarian.agent.md}"
+    },
+    "Momus - Critic": {
+      "description": "OMO adversarial critic \u2014 5-lens review: identity, tools, delegation, hallucination, quality.",
+      "mode": "subagent",
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agents/omo/momus.agent.md}"
+    },
+    "Metis - Consultant": {
+      "description": "OMO pre-planning consultant \u2014 surfaces assumptions, risks, blind spots before execution.",
+      "mode": "subagent",
+      "model": "opencode/deepseek-v4-flash-free",
+      "prompt": "{file:./agents/omo/metis.agent.md}"
+    },
+    "Sisyphus Junior - Code Writer": {
+      "description": "OMO quick code writer \u2014 simple edits, config changes, docs, fixes.",
+      "mode": "subagent",
+      "model": "opencode/minimax-m2.5-free",
+      "prompt": "{file:./agents/omo/sisyphus-junior.agent.md}"
+    }
+  },
+  "instructions": [
+    "## GLOBAL RULES\n\n- Never write code that executes as root\n- No permanent deletes \u2014 use data/trash/\n- Per-agent tools.json is the source of truth for tool access\n- Always validate config after editing opencode.json\n- Custom N-Xyme keys belong in config/nx_agents.json, not opencode.json"
+  ]
+}

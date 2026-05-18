@@ -1,0 +1,26 @@
+[project]
+name = "nxyme-mind"
+version = "1.0.0b1"
+description = "N-Xyme MIND — compiled Mojo agent OS"
+platforms = ["linux-64"]
+
+[tasks]
+setup = "bash scripts/setup.sh"
+build-all = "mojo build services/mojo/src/main.mojo -o bins/nx-engine"
+build-mcp = "mojo build agents/templates/compiled-agent.mojo -o bins/compiled-agent"
+test = "mojo test services/mojo/src/"
+format = "mojo format services/mojo/src/"
+
+[dependencies]
+python = ">=3.14"
+mojo = ">=1.0.0b1"
+
+[pypi-dependencies]
+numpy = ">=2.0"
+torch = ">=2.6"
+transformers = ">=4.50"
+sentence-transformers = ">=3.0"
+sounddevice = ">=0.5"
+pywhispercpp = ">=1.0"
+silero-vad = ">=5.0"
+pynvml = ">=11.5"

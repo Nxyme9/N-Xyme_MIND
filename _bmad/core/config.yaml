@@ -1,0 +1,6 @@
+project_name: "N-Xyme MIND"
+output_folder: "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data"
+user_name: "User"
+communication_language: "en"
+document_output_language: "en"
+user_skill_level: "expert"

@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""mojo-chat — LLM-to-LLM relay through the Mojo daemon socket.
+One hook for any model (Claude, GPT, local, whatever) to talk to any other.
+
+Usage:
+  mojo-chat send "Kairos" "Hey Hephaestus, how's the build?"
+                                  Send a message to agent "Hephaestus"
+  mojo-chat listen "Kairos"       Wait for messages addressed to "Kairos"
+  mojo-chat broadcast "Kairos" "Hello everyone"
+                                  Broadcast to all connected agents
+  mojo-chat relay "Kairos" "Hephaestus" "Build the new feature"
+                                  Relay a task between agents
+  mojo-chat status                Show all agents connected to the socket
+"""
+import json, os, sys, time
+import socket as sock
+import select
+import threading
+
+SOCKET_PATH = "/tmp/nx-event-daemon.sock"
+ROOT = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+
+def connect():
+    """Connect to the Mojo daemon Unix socket."""
+    s = sock.socket(sock.AF_UNIX, sock.SOCK_STREAM)
+    s.settimeout(5)
+    try:
+        s.connect(SOCKET_PATH)
+        return s
+    except ConnectionRefusedError:
+        print(f"✗ Mojo daemon not running at {SOCKET_PATH}")
+        print("  Start it: gpu-server start")
+        print("  Or check: ls {SOCKET_PATH}")
+        sys.exit(1)
+
+def send_msg(session_id, source, target, msg_type, payload):
+    """Send a message through the daemon socket."""
+    s = connect()
+    msg = {
+        "type": msg_type,
+        "source": source,
+        "target": target,
+        "payload": payload,
+        "session_id": session_id,
+        "timestamp": time.time()
+    }
+    s.sendall((json.dumps(msg) + "\n\n").encode())
+    s.close()
+
+def listen_loop(agent_name):
+    """Listen for messages addressed to this agent."""
+    print(f"  {agent_name} listening on {SOCKET_PATH}...")
+    s = connect()
+    buffer = ""
+    s.settimeout(None)
+    
+    while True:
+        try:
+            data = s.recv(4096).decode()
+            if not data:
+                break
+            buffer += data
+            while "\n\n" in buffer:
+                msg, buffer = buffer.split("\n\n", 1)
+                try:
+                    d = json.loads(msg)
+                    target = d.get("target", "")
+                    if target == agent_name or target == "all":
+                        print(f"\n  ← FROM {d.get('source','?')}: {d.get('payload','')}")
+                        if d.get("type") == "relay":
+                            print(f"  ↻ RELAY: execute '{d.get('payload')}'")
+                except:
+                    pass
+        except:
+            break
+
+def cmd_send(source, target, msg):
+    send_msg("mojo-chat", source, target, "message", msg)
+    print(f"  → TO {target}: {msg}")
+
+def cmd_listen(agent_name):
+    listen_loop(agent_name)
+
+def cmd_broadcast(source, msg):
+    send_msg("mojo-chat", source, "all", "broadcast", msg)
+    print(f"  → BROADCAST: {msg}")
+
+def cmd_relay(source, target, task):
+    send_msg("mojo-chat", source, target, "relay", task)
+    print(f"  ↻ {source} → {target}: relay task '{task}'")
+
+def cmd_status():
+    print(f"Socket: {SOCKET_PATH}")
+    if os.path.exists(SOCKET_PATH):
+        print(f"Status: running")
+        print(f"Protocol: JSON messages separated by \\n\\n")
+        print(f"Format: {{\"type\":\"message\", \"source\":\"...\", \"target\":\"...\", \"payload\":\"...\"}}")
+    else:
+        print(f"Status: not running")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print(__doc__)
+        sys.exit(1)
+
+    cmd = sys.argv[1]
+    
+    if cmd == "send" and len(sys.argv) >= 4:
+        cmd_send(sys.argv[2], sys.argv[3], " ".join(sys.argv[4:]))
+    elif cmd == "listen" and len(sys.argv) >= 3:
+        cmd_listen(sys.argv[2])
+    elif cmd == "broadcast" and len(sys.argv) >= 4:
+        cmd_broadcast(sys.argv[2], " ".join(sys.argv[3:]))
+    elif cmd == "relay" and len(sys.argv) >= 5:
+        cmd_relay(sys.argv[2], sys.argv[3], " ".join(sys.argv[4:]))
+    elif cmd == "status":
+        cmd_status()
+    else:
+        print(__doc__)

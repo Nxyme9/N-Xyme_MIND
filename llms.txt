@@ -1,0 +1,23 @@
+# N-Xyme MIND 🔥
+
+> A Mojo-powered multi-agent orchestration system with 7 OMO agents, MCP servers, and 156K+ vector memory for AI consciousness and task delegation.
+
+N-Xyme MIND is an open-source platform that coordinates specialized AI agents (Catalyst, Hephaestus, Sisyphus Jr, Librarian, Explorer, Momus, Metis) through a hierarchical routing system with quality gates, confidence scoring, and embedded memory.
+
+## Getting Started
+
+- [Quick Start Guide](https://github.com/nxyme/N-Xyme_MIND#quick-start): Install and run your first agent delegation in under 5 minutes
+- [Architecture Overview](https://github.com/nxyme/N-Xyme_MIND#architecture): System design with 7 OMO agents, MCP servers, and routing tree
+- [AGENTS.md](https://github.com/nxyme/N-Xyme_MIND/blob/main/AGENTS.md): Complete agent definitions, routing rules, and delegation protocols
+
+## Core System
+
+- [OMO Agents](https://github.com/nxyme/N-Xyme_MIND/tree/main/agents/omo): Individual agent configurations for Catalyst, Hephaestus, Sisyphus Jr, Librarian, Explorer, Momus, Metis
+- [BMAD Skills](https://github.com/nxyme/N-Xyme_MIND/tree/main/bmad/core/skills): 70+ workflow skills for planning, research, code review, testing
+- [MCP Servers](https://github.com/nxyme/N-Xyme_MIND/tree/main/services): bash-mcp, megatool-mcp, bmad-mcp service configurations
+- [Memory System](https://github.com/nxyme/N-Xyme_MIND/tree/main/data/memory): Vector embeddings and agent consciousness states
+
+## Optional
+
+- [Session Transcripts](https://github.com/nxyme/N-Xyme_MIND/tree/main/data/sessions): Historical delegation logs
+- [Configuration](https://github.com/nxyme/N-Xyme_MIND/blob/main/opencode.json): Master configuration reference

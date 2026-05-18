@@ -1,0 +1,59 @@
+# Catalyst Agent Map — BMAD Role → Agent Mapping
+# Maps BMAD workflow roles to N-Xyme Catalyst agents
+
+role_mappings:
+  analyst:
+    catalyst_agent: oracle
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    capabilities: [architecture_review, debugging, consultation, tradeoff_analysis]
+    
+  architect:
+    catalyst_agent: hephaestus
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    capabilities: [code_generation, complex_implementations, refactoring, architecture]
+    
+  dev:
+    catalyst_agent: hephaestus
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    fallback_agent: sisyphus-junior
+    fallback_model: ollama/qwen2.5-coder:7b
+    fallback_tier: local
+    capabilities: [code_generation, test_driven_development, implementation]
+    
+  pm:
+    catalyst_agent: prometheus
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    capabilities: [planning, requirements_analysis, risk_assessment, stakeholder_alignment]
+    
+  sm:
+    catalyst_agent: atlas
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    capabilities: [todo_management, task_tracking, sprint_planning]
+    
+  qa:
+    catalyst_agent: sisyphus-junior
+    model: ollama/qwen2.5-coder:7b
+    tier: local
+    capabilities: [subtask_execution, category_routing, testing]
+    
+  tech-writer:
+    catalyst_agent: companion
+    model: ollama/llama3.2:latest
+    tier: local
+    capabilities: [chat, documentation, explanation]
+    
+  ux-designer:
+    catalyst_agent: multimodal-looker
+    model: opencode/mimo-v2-pro-free
+    tier: cloud
+    capabilities: [image_analysis, document_processing, ui_design]
+
+# Metadata
+version: 1.0.0
+created: 2026-03-25
+description: Maps BMAD workflow roles to N-Xyme Catalyst agents for the chain pipeline

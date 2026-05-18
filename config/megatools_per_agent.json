@@ -1,0 +1,39 @@
+{
+  "agents": {
+    "Catalyst": {
+      "role": "OMO Orchestrator",
+      "tools": ["delegate_task", "call_omo_agent", "skill", "write_memory", "search_memory"],
+      "optimized_for": "Classifying, routing to 6 specialists, verifying results, audit trail"
+    },
+    "Hephaestus": {
+      "role": "OMO Deep Builder",
+      "tools": ["file_read", "file_write", "file_edit", "file_batch_write", "file_glob", "file_grep", "safe_delete", "verify_code", "delegate_task", "skill"],
+      "optimized_for": "Complex multi-file implementation, refactoring, quality gates"
+    },
+    "Sisyphus Junior": {
+      "role": "OMO Quick Writer",
+      "tools": ["file_read", "file_write", "file_edit"],
+      "optimized_for": "Single-file edits, config changes, docs, simple fixes"
+    },
+    "Librarian": {
+      "role": "OMO Researcher",
+      "tools": ["webfetch", "websearch", "skill"],
+      "optimized_for": "Web research, documentation, OSS code, best practices"
+    },
+    "Explorer": {
+      "role": "OMO Searcher",
+      "tools": ["file_glob", "file_grep", "project_map", "file_read", "skill"],
+      "optimized_for": "Codebase search, pattern finding, architecture discovery"
+    },
+    "Momus": {
+      "role": "OMO Critic",
+      "tools": ["file_read", "file_grep", "search_code", "project_map", "skill"],
+      "optimized_for": "5-lens adversarial review: identity, tools, delegation, hallucination, quality"
+    },
+    "Metis": {
+      "role": "OMO Consultant",
+      "tools": ["file_read", "search_memory", "search_code", "project_map", "skill"],
+      "optimized_for": "Pre-planning analysis, assumption surfacing, risk identification"
+    }
+  }
+}

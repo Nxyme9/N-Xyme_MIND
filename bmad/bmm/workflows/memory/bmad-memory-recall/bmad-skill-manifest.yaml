@@ -1,0 +1,7 @@
+---
+name: bmad_memory_recall
+description: Recall relevant context from unified memory across all sources. Use when the user says "recall context", "what do we know about", or "refresh my memory on".
+canonicalId: bmad-memory-recall
+module: bmm
+path: _bmad/bmm/workflows/memory/bmad-memory-recall/SKILL.md
+install_to_bmad: "true"

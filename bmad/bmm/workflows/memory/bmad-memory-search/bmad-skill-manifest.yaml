@@ -1,0 +1,7 @@
+---
+name: bmad_memory_search
+description: Search across all memory sources for specific information. Use when the user says "search memories", "find in memory", or "look up in memory".
+canonicalId: bmad-memory-search
+module: bmm
+path: _bmad/bmm/workflows/memory/bmad-memory-search/SKILL.md
+install_to_bmad: "true"

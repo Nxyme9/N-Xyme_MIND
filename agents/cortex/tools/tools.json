@@ -1,0 +1,37 @@
+{
+  "allowed": [
+    "bash",
+    "file_read",
+    "file_batch_read",
+    "file_write",
+    "file_edit",
+    "file_glob",
+    "file_grep",
+    "project_map",
+    "search_memory",
+    "read_memory",
+    "write_memory",
+    "list_memory",
+    "search_semantic",
+    "embed_text",
+    "embed_similarity",
+    "search_code",
+    "consciousness_record",
+    "consciousness_identity",
+    "pc_aware",
+    "pc_scan",
+    "session_status",
+    "safe_delete",
+    "parallel_task",
+    "delegate_task"
+  ],
+  "blocked": [
+    "review_code",
+    "verify_code",
+    "ralph_start",
+    "ralph_iterate",
+    "agent_edit",
+    "config_edit",
+    "config_remove"
+  ]
+}

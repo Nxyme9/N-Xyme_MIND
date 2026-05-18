@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-05-18T06:00:31.650819",
+  "records_processed_total": 1541,
+  "agents": 5,
+  "failure_clusters": 35,
+  "flagged_repeats": 26,
+  "curriculum_items": 26,
+  "agent_summary": {
+    "unknown": {
+      "overall_success_rate": 0.0,
+      "total_tasks": 1475,
+      "daily_rate": 0.0,
+      "weekly_rate": 0.0
+    },
+    "Cortex - Memory & Knowledge": {
+      "overall_success_rate": 0.0,
+      "total_tasks": 2,
+      "daily_rate": 0.0,
+      "weekly_rate": 0.0
+    },
+    "Librarian - Research": {
+      "overall_success_rate": 0.0,
+      "total_tasks": 15,
+      "daily_rate": 0.0,
+      "weekly_rate": 0.0
+    },
+    "Agent Builder": {
+      "overall_success_rate": 0.0,
+      "total_tasks": 24,
+      "daily_rate": 0.0,
+      "weekly_rate": 0.0
+    },
+    "Hephaestus - Builder": {
+      "overall_success_rate": 0.0,
+      "total_tasks": 25,
+      "daily_rate": 0.0,
+      "weekly_rate": 0.0
+    }
+  }
+}

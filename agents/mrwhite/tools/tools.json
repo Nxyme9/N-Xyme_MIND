@@ -1,0 +1,12 @@
+{
+  "allowed": [
+    "bash",
+    "file_edit",
+    "file_read",
+    "file_write",
+    "safe_delete",
+    "web_search",
+    "delegate_task"
+  ],
+  "blocked": []
+}

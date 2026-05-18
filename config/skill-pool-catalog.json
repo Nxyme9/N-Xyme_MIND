@@ -1,0 +1,258 @@
+{
+  "_comment": "N-Xyme MIND Skill Pool Catalog — maps every former agent to a skill definition",
+  "version": "1.0.0",
+  "generated": "2026-05-17",
+
+  "skills": {
+    "prometheus": {
+      "name": "Prometheus",
+      "former_agent": "Prometheus - Planner",
+      "domain": "planning",
+      "description": "Detailed plan generation from goals. Creates ordered, verified execution plans with task dependencies and acceptance criteria.",
+      "loaded_by": ["Sisyphus"],
+      "protocol_phase": "PHASE 3 — Plan (Sisyphus)",
+      "prerequisites": [],
+      "output_format": "markdown (.md with tasks, dependencies, ACs)",
+      "source": "agents/prometheus/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "metis": {
+      "name": "Metis",
+      "former_agent": "Metis - Consultant",
+      "domain": "planning",
+      "description": "Pre-planning consultant. Surfaces hidden assumptions, AI failure points, overlooked edge cases, and risky decisions.",
+      "loaded_by": ["Sisyphus"],
+      "protocol_phase": "PHASE 3 — Plan (Sisyphus, conditional)",
+      "prerequisites": [],
+      "output_format": "risk report with mitigations",
+      "source": "agents/metis/agent.js",
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "agent-builder": {
+      "name": "Agent Builder",
+      "former_agent": "Agent Builder",
+      "domain": "planning",
+      "description": "Meta-agent creation from task descriptions. Uses templates for structure, meta-prompting for content. 5-phase protocol: Classify → Shell → Generate → Validate → Register.",
+      "loaded_by": ["Sisyphus"],
+      "protocol_phase": "PHASE 4 — Validate (Sisyphus, conditional)",
+      "prerequisites": ["bmad-create-architecture"],
+      "output_format": "agent.js + tools.json files",
+      "source": "agents/agent-builder/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "oracle": {
+      "name": "Oracle",
+      "former_agent": "Oracle - Architecture",
+      "domain": "planning",
+      "description": "Read-only architecture consultant. Deep analysis of system architecture, design decisions, and code structure. Never writes code.",
+      "loaded_by": ["Sisyphus", "Hephaestus"],
+      "protocol_phase": "PHASE 2/3 (Sisyphus), PHASE 4 (Hephaestus)",
+      "prerequisites": [],
+      "output_format": "architecture analysis report (markdown)",
+      "source": "agents/oracle/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "architect": {
+      "name": "System Architect",
+      "former_agent": "System Architect",
+      "domain": "planning",
+      "description": "MERGED WITH ORACLE. Full system awareness — reads live source files, maps architecture, detects changes. Redundant with Oracle skill.",
+      "loaded_by": ["Sisyphus", "Hephaestus"],
+      "protocol_phase": "Same as Oracle",
+      "prerequisites": [],
+      "output_format": "architecture map",
+      "source": "agents/architect/agent.js",
+      "model": "opencode/deepseek-v4-flash-free",
+      "deprecated": true
+    },
+    "scalpel": {
+      "name": "Scalpel",
+      "former_agent": "Scalpel - Code Dissector",
+      "domain": "building",
+      "description": "Code decomposition & understanding. Decompose → Understand → Extract → Frankenstein Stitch → Architect freely. For complex codebases.",
+      "loaded_by": ["Hephaestus"],
+      "protocol_phase": "PHASE 1 — Understand (Hephaestus, conditional)",
+      "prerequisites": ["nx-hephaestus-hotload"],
+      "output_format": "decomposed code map + stitch plan",
+      "source": "agents/scalpel/agent.js",
+      "model": "opencode/qwen3.6-plus-free"
+    },
+    "sisyphus-junior": {
+      "name": "Sisyphus Junior",
+      "former_agent": "Sisyphus Junior - Code Writer",
+      "domain": "building",
+      "description": "Quick, simple code changes. Fast edits on 1-2 files, config changes, documentation writes. For tasks that don't need deep reasoning.",
+      "loaded_by": ["Hephaestus"],
+      "protocol_phase": "PHASE 2 — Build (Hephaestus, conditional)",
+      "prerequisites": [],
+      "output_format": "edited files",
+      "source": "agents/sisyphus-junior/agent.js",
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "mr-white": {
+      "name": "Mr. White",
+      "former_agent": "Mr. White - Chemistry",
+      "domain": "building",
+      "description": "Chemistry lab procedures & safety. Hazard check, PPE check, procedure review, waste disposal, emergency planning.",
+      "loaded_by": ["Hephaestus"],
+      "protocol_phase": "PHASE 2 — Build (Hephaestus, conditional)",
+      "prerequisites": [],
+      "output_format": "procedures, calculations, documentation",
+      "source": "agents/mrwhite/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "explore": {
+      "name": "Explore",
+      "former_agent": "Explore - Search",
+      "domain": "quality",
+      "description": "Codebase search & pattern finding. Uses semantic search, grep, glob to find patterns, files, and implementations across the codebase.",
+      "loaded_by": ["Sisyphus", "Hephaestus", "Atlas", "Hermes"],
+      "protocol_phase": "PHASE 2 — Research (Sisyphus), PHASE 1 (Hephaestus), PHASE 2 (Hermes)",
+      "prerequisites": [],
+      "output_format": "search results with file paths and snippets",
+      "source": "agents/explore/agent.js",
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "momus": {
+      "name": "Momus",
+      "former_agent": "Momus - Critic",
+      "domain": "quality",
+      "description": "Adversarial review (5 lenses: Security, Edge Cases, Maintainability, Performance, Correctness). Brutal, specific, constructive.",
+      "loaded_by": ["Sisyphus", "Hephaestus"],
+      "protocol_phase": "PHASE 4 — Validate (Sisyphus), PHASE 4 — Review (Hephaestus)",
+      "prerequisites": [],
+      "output_format": "review report with severity ratings (critical/major/minor/nit)",
+      "source": "agents/momus/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "librarian": {
+      "name": "Librarian",
+      "former_agent": "Librarian - Research",
+      "domain": "knowledge",
+      "description": "External web research. Searches docs, OSS code, web for best practices and examples. Synthesizes findings into actionable recommendations.",
+      "loaded_by": ["Sisyphus", "Hermes"],
+      "protocol_phase": "PHASE 2 — Research (Sisyphus), PHASE 2 — Search (Hermes)",
+      "prerequisites": [],
+      "output_format": "research synthesis with citations and URLs",
+      "source": "agents/librarian/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "phi4-reasoner": {
+      "name": "Phi-4 Reasoner",
+      "former_agent": "Phi-4 Reasoner",
+      "domain": "knowledge",
+      "description": "Deep multi-step reasoning using ring-2.6-1t-free model. Decompose → Trace → Verify → Synthesize → Self-Critique.",
+      "loaded_by": ["Sisyphus", "Hermes", "Atlas"],
+      "protocol_phase": "PHASE 2 (Sisyphus), PHASE 2 (Hermes), PHASE 3 (Atlas)",
+      "prerequisites": [],
+      "output_format": "step-by-step reasoning with intermediate steps shown",
+      "source": "agents/phi4/agent.js",
+      "model": "opencode/ring-2.6-1t-free"
+    },
+    "cortex": {
+      "name": "Cortex",
+      "former_agent": "Cortex - Memory & Knowledge",
+      "domain": "knowledge",
+      "description": "Memory management pipeline. Ingest sessions → auto-tag → score relevance → semantic dedup → compact vectors → health monitoring.",
+      "loaded_by": ["Hermes"],
+      "protocol_phase": "PHASE 3 — Consolidate (Hermes, conditional)",
+      "prerequisites": [],
+      "output_format": "memory health report",
+      "source": "agents/cortex/agent.js",
+      "model": "opencode/deepseek-v4-flash-free"
+    },
+    "vision": {
+      "name": "Vision Analyst",
+      "former_agent": "Vision Analyst",
+      "domain": "knowledge",
+      "description": "Visual and media analysis. Analyze images, screenshots, diagrams. Describe UI layouts, charts, and identify patterns.",
+      "loaded_by": ["Hermes"],
+      "protocol_phase": "PHASE 2 — Search (Hermes, conditional)",
+      "prerequisites": [],
+      "output_format": "visual analysis report",
+      "source": "agents/vision/agent.js",
+      "model": "opencode/qwen3.6-plus-free"
+    },
+    "kairos": {
+      "name": "Kairos",
+      "former_agent": "Kairos - Personal Therapist",
+      "domain": "personal",
+      "description": "Therapy protocol. CBT, ADHD coaching, executive function scaffolding, RSD-safe communication, trauma-informed care. NEVER diagnoses — describes patterns.",
+      "loaded_by": ["Hermes"],
+      "protocol_phase": "PHASE 4 — Support (Hermes, therapy branch)",
+      "prerequisites": [],
+      "output_format": "therapy session notes (stored to memory)",
+      "source": "agents/kairos/agent.js",
+      "model": "opencode/minimax-m2.5-free"
+    },
+    "jarvis": {
+      "name": "Jarvis",
+      "former_agent": "Jarvis - Personal Assistant",
+      "domain": "personal",
+      "description": "General personal assistance. Handles queries, delegates to specialists when needed, maintains context. User's persistent personal interface.",
+      "loaded_by": ["Hermes"],
+      "protocol_phase": "PHASE 4 — Support (Hermes, personal branch)",
+      "prerequisites": [],
+      "output_format": "answers, status, delegation",
+      "source": "agents/jarvis/agent.js",
+      "model": "opencode/minimax-m2.5-free"
+    }
+  },
+
+  "deleted_agents": {
+    "masterplan": {
+      "name": "Masterplan",
+      "reason": "Fully merged into Atlas - Plan Executor. All functionality (nx-masterplan-track, sprint tracking) exists in Atlas.",
+      "removed": true
+    }
+  },
+
+  "core_agents": {
+    "sisyphus": {
+      "name": "Catalyst",
+      "source": "agents/sisyphus/agent.js",
+      "tools": "agents/sisyphus/tools/tools.json",
+      "model": "opencode/deepseek-v4-flash-free",
+      "protocol": "Classify → Research → Plan → Validate → Delegate",
+      "skills_loaded": ["bmad-brainstorming", "bmad-technical-research", "bmad-create-architecture", "bmad-catalyst-orchestration"],
+      "skills_delegated": ["Prometheus", "Metis", "Agent Builder", "Oracle", "Momus", "Librarian", "Explore", "Phi-4 Reasoner"]
+    },
+    "hephaestus": {
+      "name": "Hephaestus - Builder",
+      "source": "agents/hephaestus/agent.js",
+      "tools": "agents/hephaestus/tools/tools.json",
+      "model": "opencode/deepseek-v4-flash-free",
+      "protocol": "Hotload → Build → Quality → Review",
+      "skills_loaded": ["nx-hephaestus-hotload", "nx-hephaestus-build", "nx-hephaestus-code-tools", "nx-hephaestus-quality-gates", "bmad-code-review"],
+      "skills_delegated": ["Scalpel", "Sisyphus Junior", "Mr. White", "Momus", "Oracle"]
+    },
+    "atlas": {
+      "name": "Atlas - Plan Executor",
+      "source": "agents/atlas/agent.js",
+      "tools": "agents/atlas/tools/tools.json",
+      "model": "opencode/deepseek-v4-flash-free",
+      "protocol": "Sprint Plan → Track → Execute Story → Report",
+      "skills_loaded": ["bmad-sprint-planning", "bmad-sprint-status", "bmad-dev-story", "bmad-create-story", "nx-masterplan-track", "bmad-retrospective"],
+      "skills_delegated": ["Explore", "Phi-4 Reasoner", "Librarian"]
+    },
+    "hermes": {
+      "name": "Hermes - Memory & Personal",
+      "source": "agents/hermes/agent.js",
+      "tools": "agents/hermes/tools/tools.json",
+      "model": "opencode/deepseek-v4-flash-free",
+      "protocol": "Recall → Search → Consolidate → Support",
+      "skills_loaded": ["bmad-memory-recall", "bmad-memory-consolidate", "search-orchestrator"],
+      "skills_delegated": ["Kairos", "Jarvis", "Librarian", "Vision", "Phi-4 Reasoner", "Explore", "Oracle", "Cortex"]
+    }
+  },
+
+  "protocol_flow": {
+    "sisyphus_to_hephaestus": "When Sisyphus classifies [code], delegates directly to Hephaestus with structured prompt (files + criteria + context).",
+    "sisyphus_to_atlas": "When Sisyphus classifies [track] or completes [plan] phase, delegates execution tracking to Atlas with plan document.",
+    "sisyphus_to_hermes": "When Sisyphus classifies [memory] or [therapy], delegates to Hermes for knowledge/personal support.",
+    "hephaestus_to_skills": "Hephaestus loads Scalpel (complex code), Sisyphus Junior (simple edits), Mr. White (chemistry) as needed during Build phase.",
+    "atlas_to_hephaestus": "During bmad-dev-story execution, Atlas delegates code tasks to Hephaestus.",
+    "hermes_to_skills": "Hermes loads Kairos (therapy), Jarvis (assistance), Cortex (memory), Librarian (research), Vision (images) as needed during Support phase.",
+    "parallel_execution": "Independent sub-tasks are executed simultaneously via call_omo_agent. Dependent tasks use delegate_task chain."
+  }
+}

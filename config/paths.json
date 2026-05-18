@@ -1,0 +1,22 @@
+{
+  "project_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND",
+  "mojo_daemon": "services/mojo-router/src/daemon",
+  "mojo_daemon_v1": "bins/mojo_daemon_v1",
+  "bridge_daemon": "services/bridge/bridge_daemon.py",
+  "codex_daemon": "services/codex/codex_daemon.py",
+  "mcp_binary": "bins/nx_agents",
+  "embedding_onnx": "data/memory/models/embedding.onnx",
+  "megatool_mcp": "services/megatool-mcp/server.py",
+  "ingest_log": "data/memory/vectors/ingest.jsonl",
+  "state_file": "services/nx-agents-mcp/data/sessions/state.json",
+  "sessions_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/sessions",
+  "transcripts_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/transcripts",
+  "opencode_db": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/opencode/db/opencode.db",
+  "opencode_logs": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/opencode/logs",
+  "opencode_diffs": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/opencode/session_diff",
+  "memory_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/memory",
+  "audit_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/audit",
+  "bmad_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/bmad",
+  "trash_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/trash",
+  "training_root": "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/training"
+}

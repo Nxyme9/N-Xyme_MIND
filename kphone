@@ -1,0 +1,98 @@
+#!/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin/python3
+"""kphone — Voice → Whisper GPU → FIFO → jarvis-pc pipeline.
+Usage:
+  kphone                    # One turn
+  kphone --loop             # Continuous (Ctrl+C to quit)
+  kphone --loop --wake      # With 'Hey Jarvis' wake word
+"""
+import json, os, sys, time, tempfile, wave, subprocess, asyncio
+import numpy as np
+import sounddevice as sd
+
+ROOT = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+SAMPLE_RATE = 16000
+SILENCE_SEC = 1.2
+FIFO_PATH = "/tmp/jarvis_fifo"
+VOICE = "en-GB-RyanNeural"
+
+def record_until_silence():
+    chunks, silence_start = [], None
+    buf = sd.InputStream(samplerate=SAMPLE_RATE, channels=1, dtype="float32", blocksize=1600)
+    with buf:
+        while True:
+            chunk, _ = buf.read(1600)
+            chunks.append(chunk)
+            amp = np.abs(chunk).mean()
+            if amp < 0.02:
+                if silence_start is None: silence_start = time.time()
+                elif time.time() - silence_start > SILENCE_SEC: break
+            else: silence_start = None
+    return np.concatenate(chunks)[:int(len(np.concatenate(chunks)) - SAMPLE_RATE * SILENCE_SEC)]
+
+def save_wav(audio):
+    f = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    with wave.open(f.name, "wb") as wf:
+        wf.setnchannels(1); wf.setsampwidth(2); wf.setframerate(SAMPLE_RATE)
+        wf.writeframes((audio * 32767).astype(np.int16).tobytes())
+    return f.name
+
+def send_to_fifo(text):
+    """Send transcribed text to jarvis-pc via FIFO."""
+    try:
+        if not os.path.exists(FIFO_PATH):
+            os.mkfifo(FIFO_PATH)
+        fd = os.open(FIFO_PATH, os.O_RDWR | os.O_NONBLOCK)
+        os.write(fd, (text + "\n").encode())
+        os.close(fd)
+        print(f"\n  🎤 You: {text}")
+        print(f"  🤖 Jarvis PC processing...")
+    except OSError:
+        print(f"\n  🎤 You: {text}")
+        print(f"  ⚠ (FIFO unavailable, install jarvis-pc)")
+
+def check_wake_word(transcriber):
+    """Listen for 'Hey Jarvis' wake word. Returns True if detected."""
+    buf = sd.rec(int(2 * SAMPLE_RATE), samplerate=SAMPLE_RATE, channels=1, dtype="float32")
+    sd.wait()
+    wav = save_wav(buf)
+    segs, _ = transcriber.transcribe(wav, beam_size=1, vad_filter=True)
+    text = " ".join(s.text for s in segs).strip().lower()
+    return "hey jarvis" in text or "hey jarvis" in text
+
+if __name__ == "__main__":
+    has_wake = "--wake" in sys.argv
+    continuous = "--loop" in sys.argv
+
+    try: from faster_whisper import WhisperModel
+    except:
+        subprocess.run([f"{ROOT}/venv/bin/pip", "install", "faster-whisper", "numpy", "sounddevice", "edge-tts"])
+        from faster_whisper import WhisperModel
+
+    print("Loading Whisper on GPU...")
+    stt = WhisperModel("medium", device="cuda", compute_type="int8_float16")
+    
+    if has_wake:
+        print("\n=== 🎯 Waiting for 'Hey Jarvis'... ===")
+    else:
+        print("\n=== 🎤 Speak (Ctrl+C to quit) ===")
+    
+    try:
+        while True:
+            if has_wake and not continuous:
+                # Wait for wake word before each turn
+                print("  🎯 Say 'Hey Jarvis'...", end=" ", flush=True)
+                if not check_wake_word(stt):
+                    continue
+                print("✅")
+            
+            audio = record_until_silence()
+            wav = save_wav(audio)
+            segments, _ = stt.transcribe(wav, beam_size=5, vad_filter=True)
+            text = " ".join(s.text for s in segments).strip()
+            if text:
+                send_to_fifo(text)
+            
+            if not continuous:
+                break
+    except KeyboardInterrupt:
+        print("\n  📞 Phone ended.")

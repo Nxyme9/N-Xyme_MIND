@@ -1,0 +1,132 @@
+#!/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin/python3
+"""mojo-brain.py — The Mojo decision router.
+NativeBackend decides: local or cloud?
+Local → gpu-route (8ms). Cloud → Kairos.
+Phone → Telegram. Pablo → DM. Agents → real debate.
+
+Usage:
+  mojo-brain.py                    # Start the brain
+  MOJO_MODE=cloud mojo-brain.py    # Cloud only (for testing)
+"""
+import os, sys, json, subprocess, time, threading, http.server
+from pathlib import Path
+
+ROOT = Path("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND")
+MOJO_ENGINE = ROOT / "services/mojo-router/src/engine"
+GPU_ROUTE = ROOT / "gpu-route"
+KAIROS_CONTEXT = ROOT / "data/identity/kairos-context.json"
+SESSION_REGISTRY = ROOT / "data/identity/session-registry.json"
+
+def mojo_routes(query, confidence_threshold=0.7):
+    """Ask Mojo NativeBackend: route this query.
+    Returns: local (use GPU) or cloud (call Kairos)."""
+    try:
+        # Run Mojo engine for routing decision
+        result = subprocess.run(
+            [str(MOJO_ENGINE)],
+            input=json.dumps({"type": "route", "query": query}).encode(),
+            capture_output=True, text=True, timeout=5,
+            env={**os.environ, "LD_LIBRARY_PATH": "/tmp/mojo_venv/lib/python3.14/site-packages/modular/lib"}
+        )
+        return json.loads(result.stdout)
+    except:
+        # Fallback: use gpu-route
+        try:
+            result = subprocess.run(
+                [str(GPU_ROUTE), query],
+                capture_output=True, text=True, timeout=10
+            )
+            route = json.loads(result.stdout)
+            confidence = route.get("confidence", 0)
+            return {
+                "decision": "local" if confidence >= confidence_threshold else "cloud",
+                "confidence": confidence,
+                "tool": route.get("routed_tool", "unknown"),
+                "method": "gpu-route (fallback)"
+            }
+        except:
+            return {"decision": "cloud", "confidence": 0, "method": "fallback"}
+
+def call_kairos(query, context=""):
+    """Send to cloud model (Kairos) for deep reasoning."""
+    print(f"  ☁️ Calling Kairos: {query[:60]}...")
+    # Send to Kairos via mojo-chat
+    subprocess.run([
+        str(ROOT / "mojo-chat"), "send", "Mojo Brain", "Kairos",
+        f"Query: {query} | Context: {context[:200]}"
+    ])
+    return {"status": "sent_to_kairos", "method": "cloud"}
+
+def handle_query(query, source="terminal"):
+    """Main entry point. Mojo decides, routes accordingly."""
+    print(f"\n  📥 [{source}] {query[:80]}...")
+    
+    # Step 1: Mojo routes
+    route = mojo_routes(query)
+    decision = route.get("decision", "cloud")
+    confidence = route.get("confidence", 0)
+    tool = route.get("tool", "unknown")
+    
+    print(f"  🧠 Mojo: {decision.upper()} (confidence: {confidence:.2f}, tool: {tool})")
+    
+    # Step 2: Route accordingly
+    if decision == "local" and confidence > 0.8:
+        print(f"  ⚡ Local GPU: {tool}")
+        return {"decision": "local", "tool": tool, "confidence": confidence}
+    else:
+        return call_kairos(query, f"confidence={confidence}, tool={tool}")
+
+# ── Simple HTTP server for phone/web input ──
+class BrainHandler(http.server.BaseHTTPRequestHandler):
+    def do_POST(self):
+        length = int(self.headers.get("Content-Length", 0))
+        body = json.loads(self.rfile.read(length))
+        query = body.get("query", body.get("text", ""))
+        source = body.get("source", "http")
+        if query:
+            result = handle_query(query, source)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(json.dumps(result).encode())
+        else:
+            self.send_response(400)
+            self.end_headers()
+
+if __name__ == "__main__":
+    print("╔══════════════════════════════════════╗")
+    print("║      MOJO BRAIN — DECISION ROUTER    ║")
+    print("║                                      ║")
+    print("║  Local → NativeBackend (144μs)        ║")
+    print("║  Cloud → Kairos (deep reasoning)      ║")
+    print("║  Phone → Telegram webhook             ║")
+    print("║  DMs   → Pablo via Rust binary        ║")
+    print("╚══════════════════════════════════════╝")
+    print("")
+    
+    mode = os.environ.get("MOJO_MODE", "hybrid")
+    print(f"  Mode: {mode}")
+    print(f"  Mojo engine: {'✓' if MOJO_ENGINE.exists() else '✗'} {MOJO_ENGINE}")
+    print(f"  GPU route:   {'✓' if GPU_ROUTE.exists() else '✗'} {GPU_ROUTE}")
+    print("")
+    
+    # Start HTTP server for phone/web in background
+    port = 9091
+    server = http.server.HTTPServer(("0.0.0.0", port), BrainHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    print(f"  🌐 HTTP endpoint: http://0.0.0.0:{port}")
+    print(f"     POST json = {{\"query\": \"...\", \"source\": \"...\"}}")
+    print("")
+    
+    # Interactive loop
+    print("  Type a query. Mojo decides routing.")
+    print("  Ctrl+C to stop.\n")
+    
+    try:
+        while True:
+            query = input("  > ").strip()
+            if query.lower() in ("exit", "quit"):
+                break
+            if query:
+                handle_query(query, "terminal")
+    except (KeyboardInterrupt, EOFError):
+        print("\n  🧠 Mojo Brain sleeping.")

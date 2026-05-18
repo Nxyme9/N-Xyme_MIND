@@ -1,0 +1,190 @@
+[
+  {
+    "name": "file_read",
+    "desc": "Read a single file."
+  },
+  {
+    "name": "file_write",
+    "desc": "Write content to a file."
+  },
+  {
+    "name": "file_edit",
+    "desc": "Edit a file by replacing text."
+  },
+  {
+    "name": "file_batch_read",
+    "desc": "Read multiple files in one call."
+  },
+  {
+    "name": "file_batch_write",
+    "desc": "Write content to multiple files."
+  },
+  {
+    "name": "file_glob",
+    "desc": "Find files by glob pattern."
+  },
+  {
+    "name": "file_grep",
+    "desc": "Search file contents by regex."
+  },
+  {
+    "name": "search_code",
+    "desc": "Semantic code search."
+  },
+  {
+    "name": "search_memory",
+    "desc": "Search holographic memory."
+  },
+  {
+    "name": "search_semantic",
+    "desc": "Semantic text search."
+  },
+  {
+    "name": "review_code",
+    "desc": "Review code for bugs."
+  },
+  {
+    "name": "review_adversarial",
+    "desc": "Adversarial review."
+  },
+  {
+    "name": "verify_code",
+    "desc": "Quality gates: fmt lint test."
+  },
+  {
+    "name": "config_edit",
+    "desc": "Edit a key in opencode.json."
+  },
+  {
+    "name": "config_validate",
+    "desc": "Validate opencode.json."
+  },
+  {
+    "name": "config_sync",
+    "desc": "Sync configs."
+  },
+  {
+    "name": "config_remove",
+    "desc": "Remove a key from config."
+  },
+  {
+    "name": "agent_add",
+    "desc": "Add a new agent."
+  },
+  {
+    "name": "agent_list",
+    "desc": "List all agents."
+  },
+  {
+    "name": "agent_edit",
+    "desc": "Surgical edit for agent files."
+  },
+  {
+    "name": "schema_check",
+    "desc": "Check schema coverage."
+  },
+  {
+    "name": "safe_delete",
+    "desc": "Move file to trash."
+  },
+  {
+    "name": "read_memory",
+    "desc": "Read memory entry by ID."
+  },
+  {
+    "name": "write_memory",
+    "desc": "Write entry to memory."
+  },
+  {
+    "name": "list_memory",
+    "desc": "List all memory entries."
+  },
+  {
+    "name": "web_fetch",
+    "desc": "Fetch content from URL."
+  },
+  {
+    "name": "web_search",
+    "desc": "Search the web."
+  },
+  {
+    "name": "project_map",
+    "desc": "Get project structure."
+  },
+  {
+    "name": "session_status",
+    "desc": "Session state."
+  },
+  {
+    "name": "session_digest",
+    "desc": "Session digest generator."
+  },
+  {
+    "name": "context_prune",
+    "desc": "Smart context compaction."
+  },
+  {
+    "name": "delegate_task",
+    "desc": "Delegate to another agent."
+  },
+  {
+    "name": "route_task",
+    "desc": "Route NL to appropriate tool."
+  },
+  {
+    "name": "ask_question",
+    "desc": "Ask a question."
+  },
+  {
+    "name": "spawn_task",
+    "desc": "Spawn a new agent task."
+  },
+  {
+    "name": "apply_patch",
+    "desc": "Apply a patch to code."
+  },
+  {
+    "name": "bash",
+    "desc": "Execute shell commands."
+  },
+  {
+    "name": "parallel_task",
+    "desc": "Execute tasks in parallel."
+  },
+  {
+    "name": "task_status",
+    "desc": "Get parallel task status."
+  },
+  {
+    "name": "session_tasks",
+    "desc": "Get all tasks for a session."
+  },
+  {
+    "name": "bg_submit",
+    "desc": "Submit background task."
+  },
+  {
+    "name": "bg_status",
+    "desc": "Get background task status."
+  },
+  {
+    "name": "bg_list",
+    "desc": "List background tasks."
+  },
+  {
+    "name": "bg_cancel",
+    "desc": "Cancel background task."
+  },
+  {
+    "name": "cache_stats",
+    "desc": "Get cache statistics."
+  },
+  {
+    "name": "cache_clear",
+    "desc": "Clear all caches."
+  },
+  {
+    "name": "nap_protocol",
+    "desc": "Get NAP protocol definition."
+  }
+]

@@ -1,0 +1,26 @@
+name: Release Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    tags: ["v*"]
+
+jobs:
+  release-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run release readiness check
+        run: bash scripts/release-check.sh
+
+      - name: Upload check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-check-report
+          path: /tmp/release-check-*.log
+          retention-days: 7

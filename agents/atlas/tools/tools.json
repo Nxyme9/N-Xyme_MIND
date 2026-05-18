@@ -1,0 +1,24 @@
+{
+  "allowed": [
+    "ask_question",
+    "call_omo_agent",
+    "delegate_task",
+    "file_edit",
+    "file_glob",
+    "file_grep",
+    "file_read",
+    "file_write",
+    "list_memory",
+    "read_memory",
+    "safe_delete",
+    "search_memory",
+    "session_status",
+    "write_memory"
+  ],
+  "blocked": [
+    "bash",
+    "file_batch_write",
+    "apply_patch",
+    "parallel_task"
+  ]
+}

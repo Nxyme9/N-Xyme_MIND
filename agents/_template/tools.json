@@ -1,0 +1,19 @@
+{
+  "allowed": [
+    "delegate_task",
+    "call_omo_agent",
+    "file_read",
+    "file_glob",
+    "file_grep",
+    "safe_delete",
+    "search_code",
+    "search_memory"
+  ],
+  "blocked": [
+    "bash",
+    "file_write",
+    "file_batch_write",
+    "file_edit",
+    "apply_patch"
+  ]
+}

@@ -1,0 +1,13 @@
+[Unit]
+Description=N-Xyme Jarvis PC Control — voice/text → PC actions
+After=gpu-server.service event-daemon.service
+
+[Service]
+Type=simple
+Environment=PATH=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/venv/bin:/usr/bin:/bin
+ExecStart=/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/jarvis-pc --fifo
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

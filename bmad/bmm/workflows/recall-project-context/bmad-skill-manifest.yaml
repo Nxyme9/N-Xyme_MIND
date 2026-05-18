@@ -1,0 +1,7 @@
+---
+name: recall-project_context
+description: Get project context from unified memory. Use when user asks what is the current project state, what are we building, or what is the project about.
+canonicalId: bmad-recall-project-context
+module: bmm
+path: _bmad/bmm/workflows/recall-project-context/workflow.md
+install_to_bmad: "true"

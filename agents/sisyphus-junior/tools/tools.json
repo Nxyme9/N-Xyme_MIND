@@ -1,0 +1,21 @@
+{
+  "allowed": [
+    "bash",
+    "delegate_task",
+    "call_omo_agent",
+    "file_batch_read",
+    "file_edit",
+    "file_glob",
+    "file_grep",
+    "file_read",
+    "file_write",
+    "project_map",
+    "review_code",
+    "safe_delete",
+    "search_code",
+    "search_memory",
+    "verify_code",
+    "nap_protocol"
+  ],
+  "blocked": ["rm", "delete", "remove"]
+}

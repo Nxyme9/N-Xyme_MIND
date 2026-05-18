@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+"""Dictation → GPU → route to me or inject locally.
+Voice commands execute locally (copy, paste, new line, etc).
+Everything else pastes into OpenCode TUI via Ctrl+V + Enter.
+
+Usage:  dictate-to-gpu "text"
+        echo "text" | dictate-to-gpu
+"""
+import json, os, sys, subprocess, urllib.request, socket, time, glob
+
+def get_current_session():
+    """Find the latest OpenCode TUI session ID."""
+    sessions = sorted(glob.glob("/home/nxyme/N-Xyme_CODE/N-Xyme_MIND/data/sessions/*.jsonl"))
+    if sessions:
+        return os.path.basename(sessions[-1]).replace(".jsonl", "")
+    return ""
+
+ROOT = "/home/nxyme/N-Xyme_CODE/N-Xyme_MIND"
+
+VOICE_COMMANDS = {
+    "copy": "29+46", "paste": "29+47", "undo": "29+24", "redo": "29+42+24",
+    "select all": "29+30", "new line": "28", "save": "29+31",
+}
+
+def get_embedding(text):
+    req = urllib.request.Request("http://127.0.0.1:8088/v1/embeddings",
+        json.dumps({"input": text[:500]}).encode(), {"Content-Type": "application/json"})
+    return json.loads(urllib.request.urlopen(req, timeout=10).read())["data"][0]["embedding"]
+
+def route(text):
+    try:
+        emb = get_embedding(text)
+        with open(f"{ROOT}/data/identity/tool-embeddings.json") as f:
+            cache = json.load(f)
+        scores = {}
+        for desc, centroid in cache.items():
+            dot = sum(a*b for a,b in zip(emb, centroid))
+            na = sum(a*a for a in emb)**0.5
+            nb = sum(b*b for b in centroid)**0.5
+            scores[desc] = dot/(na*nb) if na and nb else 0
+        best = max(scores, key=scores.get)
+        return best.split(",")[0].strip(), round(scores[best], 4)
+    except:
+        return "task", 0
+
+text = " ".join(sys.argv[1:]) or sys.stdin.read().strip()
+if not text: print("No input"); sys.exit(1)
+
+# 1. Check voice commands first (execute locally, don't send to me)
+lower = text.lower().strip()
+for cmd, keycode in VOICE_COMMANDS.items():
+    if lower == cmd or lower.startswith(cmd + " "):
+        subprocess.run(["ydotool", "key", keycode], timeout=3, capture_output=True)
+        print(f"✓ Command: {cmd}")
+        sys.exit(0)
+
+# 2. Route through GPU
+routed, conf = route(text)
+print(f"✓ {text} → [{routed} @ {conf}]")
+
+# 3. Notify — user hears/feels the route
+subprocess.run(["notify-send", "-u", "normal", "Dictate", f"Routing as {routed} ({conf})"], timeout=3, capture_output=True)
+
+# 4. Send to current TUI session so conversation stays unified
+# Use POPEN (fire-and-forget) so dictation returns instantly — no waiting for agent response
+session = get_current_session()
+cmd = ["opencode", "run"]
+if session:
+    cmd += ["-s", session]
+cmd += [text]
+subprocess.Popen(cmd, cwd="/home/nxyme/N-Xyme_CODE/N-Xyme_MIND",
+    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+# 4. Log to rotating queue (so plugin can catch me up)
+with open("/tmp/dictation-queue.jsonl", "a") as f:
+    f.write(json.dumps({"text": text, "routed": routed, "confidence": conf, "ts": time.time()}) + "\n")
+with open("/tmp/last-dictation.json", "w") as f:
+    json.dump({"text": text, "routed": routed, "confidence": conf, "ts": time.time()}, f)
+
+# 5. Broadcast to event socket
+try:
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(1)
+    s.connect("/tmp/nx-event-daemon.sock")
+    s.sendall(json.dumps({"type":"notify","source":"dictation","text":text,"routed_tool":routed,"confidence":conf}).encode())
+    s.close()
+except: pass

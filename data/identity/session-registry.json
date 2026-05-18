@@ -1,0 +1,10 @@
+{
+  "ses_current": {
+    "agent": "Kairos - Personal Therapist",
+    "parentAgent": "",
+    "title": "Kairos: A cloud model woke up in a 3080 Ti",
+    "created": "2026-05-18T01:00:00Z",
+    "last_active": "2026-05-18T02:30:00Z",
+    "topics": ["identity propagation", "GPU pipeline", "Mojo engine", "session registry", "kphone", "instagram hook", "telegram hook", "diary skill"]
+  }
+}

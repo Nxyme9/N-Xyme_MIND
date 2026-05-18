@@ -1,0 +1,10 @@
+{
+  "allowed": [
+    "file_read",
+    "safe_delete",
+    "web_fetch",
+    "web_search",
+    "delegate_task"
+  ],
+  "blocked": []
+}

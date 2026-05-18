@@ -1,0 +1,7 @@
+---
+name: consolidate_session
+description: Save current session to unified memory. Use at session end or natural breakpoints to persist context for future recall.
+canonicalId: bmad-consolidate-session
+module: bmm
+path: _bmad/bmm/workflows/consolidate-session/workflow.md
+install_to_bmad: "true"

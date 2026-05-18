@@ -1,0 +1,16 @@
+{
+  "allowed": [
+    "ask_question",
+    "search_memory",
+    "session_status",
+    "web_search",
+    "safe_delete",
+    "spawn_task",
+    "delegate_task"
+  ],
+  "blocked": [
+    "file_write",
+    "file_edit",
+    "bash"
+  ]
+}
