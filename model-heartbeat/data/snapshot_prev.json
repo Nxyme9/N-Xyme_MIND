@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-18T10:12:28.191491+00:00",
+  "timestamp": "2026-05-19T09:52:48.076011+00:00",
   "summary": {
     "kiloai": 344,
     "opencodezen": 40,
@@ -4458,8 +4458,8 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "inflection/inflection-3-productivity",
-      "name": "Inflection: Inflection 3 Productivity",
+      "model_id": "inflection/inflection-3-pi",
+      "name": "Inflection: Inflection 3 Pi",
       "created": null,
       "is_free": false,
       "expiration_date": null,
@@ -4472,8 +4472,8 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "inflection/inflection-3-pi",
-      "name": "Inflection: Inflection 3 Pi",
+      "model_id": "inflection/inflection-3-productivity",
+      "name": "Inflection: Inflection 3 Productivity",
       "created": null,
       "is_free": false,
       "expiration_date": null,
@@ -4500,20 +4500,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "meta-llama/llama-3.2-11b-vision-instruct",
-      "name": "Meta: Llama 3.2 11B Vision Instruct",
-      "created": null,
-      "is_free": false,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.000000245",
-        "completion": "0.000000245"
-      },
-      "architecture": "{'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
-      "owner": null
-    },
-    {
-      "provider": "kiloai",
       "model_id": "meta-llama/llama-3.2-1b-instruct",
       "name": "Meta: Llama 3.2 1B Instruct",
       "created": null,
@@ -4524,6 +4510,20 @@
         "completion": "0.000000201"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
+      "owner": null
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "meta-llama/llama-3.2-11b-vision-instruct",
+      "name": "Meta: Llama 3.2 11B Vision Instruct",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.000000245",
+        "completion": "0.000000245"
+      },
+      "architecture": "{'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
       "owner": null
     },
     {
@@ -4556,20 +4556,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "cohere/command-r-plus-08-2024",
-      "name": "Cohere: Command R+ (08-2024)",
-      "created": null,
-      "is_free": false,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000025",
-        "completion": "0.00001"
-      },
-      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere'}",
-      "owner": null
-    },
-    {
-      "provider": "kiloai",
       "model_id": "cohere/command-r-08-2024",
       "name": "Cohere: Command R (08-2024)",
       "created": null,
@@ -4578,6 +4564,20 @@
       "pricing": {
         "prompt": "0.00000015",
         "completion": "0.0000006"
+      },
+      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere'}",
+      "owner": null
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "cohere/command-r-plus-08-2024",
+      "name": "Cohere: Command R+ (08-2024)",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000025",
+        "completion": "0.00001"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere'}",
       "owner": null
@@ -4655,20 +4655,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "meta-llama/llama-3.1-70b-instruct",
-      "name": "Meta: Llama 3.1 70B Instruct",
-      "created": null,
-      "is_free": false,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000004",
-        "completion": "0.0000004"
-      },
-      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
-      "owner": null
-    },
-    {
-      "provider": "kiloai",
       "model_id": "meta-llama/llama-3.1-8b-instruct",
       "name": "Meta: Llama 3.1 8B Instruct",
       "created": null,
@@ -4677,6 +4663,20 @@
       "pricing": {
         "prompt": "0.00000002",
         "completion": "0.00000005"
+      },
+      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
+      "owner": null
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "meta-llama/llama-3.1-70b-instruct",
+      "name": "Meta: Llama 3.1 70B Instruct",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000004",
+        "completion": "0.0000004"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3'}",
       "owner": null
@@ -4697,8 +4697,8 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "openai/gpt-4o-mini-2024-07-18",
-      "name": "OpenAI: GPT-4o-mini (2024-07-18)",
+      "model_id": "openai/gpt-4o-mini",
+      "name": "OpenAI: GPT-4o-mini",
       "created": null,
       "is_free": false,
       "expiration_date": null,
@@ -4712,8 +4712,8 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "openai/gpt-4o-mini",
-      "name": "OpenAI: GPT-4o-mini",
+      "model_id": "openai/gpt-4o-mini-2024-07-18",
+      "name": "OpenAI: GPT-4o-mini (2024-07-18)",
       "created": null,
       "is_free": false,
       "expiration_date": null,
@@ -4769,20 +4769,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "openai/gpt-4o",
-      "name": "OpenAI: GPT-4o",
-      "created": null,
-      "is_free": false,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000025",
-        "completion": "0.00001"
-      },
-      "architecture": "{'input_modalities': ['text', 'image', 'file', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'GPT'}",
-      "owner": "openai"
-    },
-    {
-      "provider": "kiloai",
       "model_id": "openai/gpt-4o-2024-05-13",
       "name": "OpenAI: GPT-4o (2024-05-13)",
       "created": null,
@@ -4791,6 +4777,20 @@
       "pricing": {
         "prompt": "0.000005",
         "completion": "0.000015"
+      },
+      "architecture": "{'input_modalities': ['text', 'image', 'file', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'GPT'}",
+      "owner": "openai"
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "openai/gpt-4o",
+      "name": "OpenAI: GPT-4o",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000025",
+        "completion": "0.00001"
       },
       "architecture": "{'input_modalities': ['text', 'image', 'file', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'GPT'}",
       "owner": "openai"
@@ -4955,20 +4955,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "mistralai/mistral-7b-instruct-v0.1",
-      "name": "Mistral: Mistral 7B Instruct v0.1",
-      "created": null,
-      "is_free": false,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.00000011",
-        "completion": "0.00000019"
-      },
-      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral'}",
-      "owner": null
-    },
-    {
-      "provider": "kiloai",
       "model_id": "openai/gpt-3.5-turbo-instruct",
       "name": "OpenAI: GPT-3.5 Turbo Instruct",
       "created": null,
@@ -4980,6 +4966,20 @@
       },
       "architecture": "{'input_modalities': ['text', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'GPT'}",
       "owner": "openai"
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "mistralai/mistral-7b-instruct-v0.1",
+      "name": "Mistral: Mistral 7B Instruct v0.1",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.00000011",
+        "completion": "0.00000019"
+      },
+      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral'}",
+      "owner": null
     },
     {
       "provider": "kiloai",
@@ -5180,7 +5180,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-7",
       "name": "claude-opus-4-7",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5191,7 +5191,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-6",
       "name": "claude-opus-4-6",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5202,7 +5202,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-5",
       "name": "claude-opus-4-5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5213,7 +5213,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-1",
       "name": "claude-opus-4-1",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5224,7 +5224,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4-6",
       "name": "claude-sonnet-4-6",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5235,7 +5235,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4-5",
       "name": "claude-sonnet-4-5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5246,7 +5246,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4",
       "name": "claude-sonnet-4",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5257,7 +5257,7 @@
       "provider": "opencodezen",
       "model_id": "claude-haiku-4-5",
       "name": "claude-haiku-4-5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5268,7 +5268,7 @@
       "provider": "opencodezen",
       "model_id": "gemini-3.1-pro",
       "name": "gemini-3.1-pro",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5279,7 +5279,7 @@
       "provider": "opencodezen",
       "model_id": "gemini-3-flash",
       "name": "gemini-3-flash",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5290,7 +5290,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.5",
       "name": "gpt-5.5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5301,7 +5301,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.5-pro",
       "name": "gpt-5.5-pro",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5312,7 +5312,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4",
       "name": "gpt-5.4",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5323,7 +5323,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-pro",
       "name": "gpt-5.4-pro",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5334,7 +5334,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-mini",
       "name": "gpt-5.4-mini",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5345,7 +5345,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-nano",
       "name": "gpt-5.4-nano",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5356,7 +5356,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.3-codex-spark",
       "name": "gpt-5.3-codex-spark",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5367,7 +5367,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.3-codex",
       "name": "gpt-5.3-codex",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5378,7 +5378,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.2",
       "name": "gpt-5.2",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5389,7 +5389,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.2-codex",
       "name": "gpt-5.2-codex",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5400,7 +5400,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1",
       "name": "gpt-5.1",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5411,7 +5411,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex-max",
       "name": "gpt-5.1-codex-max",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5422,7 +5422,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex",
       "name": "gpt-5.1-codex",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5433,7 +5433,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex-mini",
       "name": "gpt-5.1-codex-mini",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5444,7 +5444,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5",
       "name": "gpt-5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5455,7 +5455,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5-codex",
       "name": "gpt-5-codex",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5466,7 +5466,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5-nano",
       "name": "gpt-5-nano",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5477,7 +5477,7 @@
       "provider": "opencodezen",
       "model_id": "glm-5.1",
       "name": "glm-5.1",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5488,7 +5488,7 @@
       "provider": "opencodezen",
       "model_id": "glm-5",
       "name": "glm-5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5499,7 +5499,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.7",
       "name": "minimax-m2.7",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5510,7 +5510,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.5",
       "name": "minimax-m2.5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5521,7 +5521,7 @@
       "provider": "opencodezen",
       "model_id": "kimi-k2.6",
       "name": "kimi-k2.6",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5532,7 +5532,7 @@
       "provider": "opencodezen",
       "model_id": "kimi-k2.5",
       "name": "kimi-k2.5",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5543,7 +5543,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.6-plus",
       "name": "qwen3.6-plus",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5554,7 +5554,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.5-plus",
       "name": "qwen3.5-plus",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5565,7 +5565,7 @@
       "provider": "opencodezen",
       "model_id": "big-pickle",
       "name": "big-pickle",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5576,7 +5576,7 @@
       "provider": "opencodezen",
       "model_id": "deepseek-v4-flash-free",
       "name": "deepseek-v4-flash-free",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5587,7 +5587,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.6-plus-free",
       "name": "qwen3.6-plus-free",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5598,7 +5598,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.5-free",
       "name": "minimax-m2.5-free",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5609,7 +5609,7 @@
       "provider": "opencodezen",
       "model_id": "nemotron-3-super-free",
       "name": "nemotron-3-super-free",
-      "created": 1779099147,
+      "created": 1779184367,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -7072,7 +7072,7 @@
       "name": "Arcee AI: Trinity Large Preview",
       "created": 1769552670,
       "is_free": null,
-      "expiration_date": null,
+      "expiration_date": "2026-05-21",
       "pricing": {
         "prompt": "0.00000015",
         "completion": "0.00000045"
@@ -10272,8 +10272,8 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "inflection/inflection-3-productivity",
-      "name": "Inflection: Inflection 3 Productivity",
+      "model_id": "inflection/inflection-3-pi",
+      "name": "Inflection: Inflection 3 Pi",
       "created": 1728604800,
       "is_free": null,
       "expiration_date": null,
@@ -10286,8 +10286,8 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "inflection/inflection-3-pi",
-      "name": "Inflection: Inflection 3 Pi",
+      "model_id": "inflection/inflection-3-productivity",
+      "name": "Inflection: Inflection 3 Productivity",
       "created": 1728604800,
       "is_free": null,
       "expiration_date": null,
@@ -10314,20 +10314,6 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "meta-llama/llama-3.2-11b-vision-instruct",
-      "name": "Meta: Llama 3.2 11B Vision Instruct",
-      "created": 1727222400,
-      "is_free": null,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.000000245",
-        "completion": "0.000000245"
-      },
-      "architecture": "{'modality': 'text+image->text', 'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
       "model_id": "meta-llama/llama-3.2-1b-instruct",
       "name": "Meta: Llama 3.2 1B Instruct",
       "created": 1727222400,
@@ -10338,6 +10324,20 @@
         "completion": "0.000000201"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
+      "owner": null
+    },
+    {
+      "provider": "openrouter",
+      "model_id": "meta-llama/llama-3.2-11b-vision-instruct",
+      "name": "Meta: Llama 3.2 11B Vision Instruct",
+      "created": 1727222400,
+      "is_free": null,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.000000245",
+        "completion": "0.000000245"
+      },
+      "architecture": "{'modality': 'text+image->text', 'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
       "owner": null
     },
     {
@@ -10384,20 +10384,6 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "cohere/command-r-plus-08-2024",
-      "name": "Cohere: Command R+ (08-2024)",
-      "created": 1724976000,
-      "is_free": null,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000025",
-        "completion": "0.00001"
-      },
-      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere', 'instruct_type': None}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
       "model_id": "cohere/command-r-08-2024",
       "name": "Cohere: Command R (08-2024)",
       "created": 1724976000,
@@ -10406,6 +10392,20 @@
       "pricing": {
         "prompt": "0.00000015",
         "completion": "0.0000006"
+      },
+      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere', 'instruct_type': None}",
+      "owner": null
+    },
+    {
+      "provider": "openrouter",
+      "model_id": "cohere/command-r-plus-08-2024",
+      "name": "Cohere: Command R+ (08-2024)",
+      "created": 1724976000,
+      "is_free": null,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000025",
+        "completion": "0.00001"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Cohere', 'instruct_type': None}",
       "owner": null
@@ -10497,20 +10497,6 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "meta-llama/llama-3.1-70b-instruct",
-      "name": "Meta: Llama 3.1 70B Instruct",
-      "created": 1721692800,
-      "is_free": null,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000004",
-        "completion": "0.0000004"
-      },
-      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
       "model_id": "meta-llama/llama-3.1-8b-instruct",
       "name": "Meta: Llama 3.1 8B Instruct",
       "created": 1721692800,
@@ -10519,6 +10505,20 @@
       "pricing": {
         "prompt": "0.00000002",
         "completion": "0.00000005"
+      },
+      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
+      "owner": null
+    },
+    {
+      "provider": "openrouter",
+      "model_id": "meta-llama/llama-3.1-70b-instruct",
+      "name": "Meta: Llama 3.1 70B Instruct",
+      "created": 1721692800,
+      "is_free": null,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000004",
+        "completion": "0.0000004"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Llama3', 'instruct_type': 'llama3'}",
       "owner": null
@@ -10539,8 +10539,8 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "openai/gpt-4o-mini-2024-07-18",
-      "name": "OpenAI: GPT-4o-mini (2024-07-18)",
+      "model_id": "openai/gpt-4o-mini",
+      "name": "OpenAI: GPT-4o-mini",
       "created": 1721260800,
       "is_free": null,
       "expiration_date": null,
@@ -10554,8 +10554,8 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "openai/gpt-4o-mini",
-      "name": "OpenAI: GPT-4o-mini",
+      "model_id": "openai/gpt-4o-mini-2024-07-18",
+      "name": "OpenAI: GPT-4o-mini (2024-07-18)",
       "created": 1721260800,
       "is_free": null,
       "expiration_date": null,
@@ -10611,20 +10611,6 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "openai/gpt-4o",
-      "name": "OpenAI: GPT-4o",
-      "created": 1715558400,
-      "is_free": null,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.0000025",
-        "completion": "0.00001"
-      },
-      "architecture": "{'modality': 'text+image+file->text', 'input_modalities': ['text', 'image', 'file'], 'output_modalities': ['text'], 'tokenizer': 'GPT', 'instruct_type': None}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
       "model_id": "openai/gpt-4o-2024-05-13",
       "name": "OpenAI: GPT-4o (2024-05-13)",
       "created": 1715558400,
@@ -10633,6 +10619,20 @@
       "pricing": {
         "prompt": "0.000005",
         "completion": "0.000015"
+      },
+      "architecture": "{'modality': 'text+image+file->text', 'input_modalities': ['text', 'image', 'file'], 'output_modalities': ['text'], 'tokenizer': 'GPT', 'instruct_type': None}",
+      "owner": null
+    },
+    {
+      "provider": "openrouter",
+      "model_id": "openai/gpt-4o",
+      "name": "OpenAI: GPT-4o",
+      "created": 1715558400,
+      "is_free": null,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.0000025",
+        "completion": "0.00001"
       },
       "architecture": "{'modality': 'text+image+file->text', 'input_modalities': ['text', 'image', 'file'], 'output_modalities': ['text'], 'tokenizer': 'GPT', 'instruct_type': None}",
       "owner": null
@@ -10797,20 +10797,6 @@
     },
     {
       "provider": "openrouter",
-      "model_id": "mistralai/mistral-7b-instruct-v0.1",
-      "name": "Mistral: Mistral 7B Instruct v0.1",
-      "created": 1695859200,
-      "is_free": null,
-      "expiration_date": "2026-05-30",
-      "pricing": {
-        "prompt": "0.00000011",
-        "completion": "0.00000019"
-      },
-      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral', 'instruct_type': 'mistral'}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
       "model_id": "openai/gpt-3.5-turbo-instruct",
       "name": "OpenAI: GPT-3.5 Turbo Instruct",
       "created": 1695859200,
@@ -10821,6 +10807,20 @@
         "completion": "0.000002"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'GPT', 'instruct_type': 'chatml'}",
+      "owner": null
+    },
+    {
+      "provider": "openrouter",
+      "model_id": "mistralai/mistral-7b-instruct-v0.1",
+      "name": "Mistral: Mistral 7B Instruct v0.1",
+      "created": 1695859200,
+      "is_free": null,
+      "expiration_date": "2026-05-30",
+      "pricing": {
+        "prompt": "0.00000011",
+        "completion": "0.00000019"
+      },
+      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral', 'instruct_type': 'mistral'}",
       "owner": null
     },
     {
