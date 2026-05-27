@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-05-26T10:02:31.259845+00:00",
+  "timestamp": "2026-05-27T09:59:10.994190+00:00",
   "summary": {
     "kiloai": 345,
     "opencodezen": 42,
-    "openrouter": 357
+    "openrouter": 356
   },
-  "total_models": 744,
+  "total_models": 743,
   "models": [
     {
       "provider": "kiloai",
@@ -134,15 +134,55 @@
     },
     {
       "provider": "kiloai",
+      "model_id": "stealth/claude-sonnet-4.6",
+      "name": "Stealth: Claude Sonnet 4.6 (20% off)",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.000002400000",
+        "completion": "0.000012000000",
+        "request": "0",
+        "image": "0",
+        "web_search": "0",
+        "internal_reasoning": "0",
+        "input_cache_read": "0.000000240000",
+        "input_cache_write": "0.000003000000"
+      },
+      "architecture": "{'modality': 'text+image->text', 'input_modalities': ['text', 'image', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
+      "owner": "anthropic"
+    },
+    {
+      "provider": "kiloai",
+      "model_id": "stealth/claude-opus-4.6",
+      "name": "Stealth: Claude Opus 4.6 (20% off)",
+      "created": null,
+      "is_free": false,
+      "expiration_date": null,
+      "pricing": {
+        "prompt": "0.000004000000",
+        "completion": "0.000020000000",
+        "request": "0",
+        "image": "0",
+        "web_search": "0",
+        "internal_reasoning": "0",
+        "input_cache_read": "0.000000400000",
+        "input_cache_write": "0.000005000000"
+      },
+      "architecture": "{'modality': 'text+image->text', 'input_modalities': ['text', 'image', 'pdf'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
+      "owner": "anthropic"
+    },
+    {
+      "provider": "kiloai",
       "model_id": "moonshotai/kimi-k2.6",
       "name": "MoonshotAI: Kimi K2.6",
       "created": null,
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000073",
-        "completion": "0.00000349",
-        "input_cache_read": "0.00000025"
+        "prompt": "0.00000095",
+        "completion": "0.000004",
+        "input_cache_read": "0.00000016"
       },
       "architecture": "{'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -207,8 +247,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000000279",
-        "completion": "0.0000012"
+        "prompt": "0.0000003",
+        "completion": "0.0000012",
+        "input_cache_read": "0.00000006"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -241,9 +282,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000098",
-        "completion": "0.00000308",
-        "input_cache_read": "0.000000182"
+        "prompt": "0.0000014",
+        "completion": "0.0000044",
+        "input_cache_read": "0.00000026"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -593,7 +634,8 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.0000003",
-        "completion": "0.0000018"
+        "completion": "0.0000018",
+        "input_cache_write": "0.000000375"
       },
       "architecture": "{'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3'}",
       "owner": null
@@ -606,7 +648,7 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000015",
+        "prompt": "0.00000014",
         "completion": "0.000001"
       },
       "architecture": "{'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen'}",
@@ -635,23 +677,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000000435",
-        "completion": "0.00000087",
-        "input_cache_read": "0.000000003625"
-      },
-      "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'DeepSeek'}",
-      "owner": null
-    },
-    {
-      "provider": "kiloai",
-      "model_id": "deepseek/deepseek-v4-flash:free",
-      "name": "DeepSeek: DeepSeek V4 Flash (free)",
-      "created": null,
-      "is_free": true,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0",
-        "completion": "0"
+        "prompt": "0.000001608",
+        "completion": "0.000003216",
+        "input_cache_read": "0.000000134"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'DeepSeek'}",
       "owner": null
@@ -664,9 +692,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000001",
-        "completion": "0.0000002",
-        "input_cache_read": "0.00000002"
+        "prompt": "0.000000134",
+        "completion": "0.000000268",
+        "input_cache_read": "0.0000000268"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'DeepSeek'}",
       "owner": null
@@ -709,9 +737,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000001",
-        "completion": "0.000003",
-        "input_cache_read": "0.0000002"
+        "prompt": "0.000000435",
+        "completion": "0.00000087",
+        "input_cache_read": "0.0000000036"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -724,9 +752,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000004",
-        "completion": "0.000002",
-        "input_cache_read": "0.00000008"
+        "prompt": "0.00000014",
+        "completion": "0.00000028",
+        "input_cache_read": "0.0000000028"
       },
       "architecture": "{'input_modalities': ['text', 'audio', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -1266,8 +1294,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.000000065",
-        "completion": "0.00000026",
-        "input_cache_write": "0.00000008125"
+        "completion": "0.00000026"
       },
       "architecture": "{'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3'}",
       "owner": null
@@ -1345,8 +1372,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.00000026",
-        "completion": "0.00000156",
-        "input_cache_write": "0.000000325"
+        "completion": "0.00000156"
       },
       "architecture": "{'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3'}",
       "owner": null
@@ -1373,8 +1399,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000015",
-        "completion": "0.00000115"
+        "prompt": "0.0000003",
+        "completion": "0.0000012",
+        "input_cache_read": "0.00000003"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -1387,9 +1414,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000006",
-        "completion": "0.00000192",
-        "input_cache_read": "0.00000012"
+        "prompt": "0.000001",
+        "completion": "0.0000032",
+        "input_cache_read": "0.0000005"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -1462,7 +1489,7 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000009",
+        "prompt": "0.0000001",
         "completion": "0.0000003",
         "input_cache_read": "0.00000002"
       },
@@ -1477,9 +1504,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000004",
-        "completion": "0.0000019",
-        "input_cache_read": "0.00000009"
+        "prompt": "0.0000006",
+        "completion": "0.000003",
+        "input_cache_read": "0.0000001"
       },
       "architecture": "{'input_modalities': ['text', 'image'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -1623,8 +1650,8 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000029",
-        "completion": "0.00000095",
+        "prompt": "0.0000003",
+        "completion": "0.0000012",
         "input_cache_read": "0.00000003"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
@@ -1953,9 +1980,10 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000000252",
-        "completion": "0.000000378",
-        "input_cache_read": "0.0000000252"
+        "prompt": "0.0000003705",
+        "completion": "0.0000011115",
+        "input_cache_read": "0.0000000741",
+        "input_cache_write": "0.000000463125"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'DeepSeek'}",
       "owner": null
@@ -2185,8 +2213,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.000000255",
-        "completion": "0.000001",
-        "input_cache_read": "0.00000003"
+        "completion": "0.00000102"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -2687,8 +2714,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.00000026",
-        "completion": "0.00000078",
-        "input_cache_write": "0.000000325"
+        "completion": "0.00000078"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3'}",
       "owner": null
@@ -3040,9 +3066,8 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000013",
-        "completion": "0.00000085",
-        "input_cache_read": "0.000000025"
+        "prompt": "0.000000125",
+        "completion": "0.00000084"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other'}",
       "owner": null
@@ -3273,8 +3298,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000000075",
-        "completion": "0.0000002"
+        "prompt": "0.0000001",
+        "completion": "0.0000003",
+        "input_cache_read": "0.00000001"
       },
       "architecture": "{'input_modalities': ['image', 'text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral'}",
       "owner": null
@@ -4708,8 +4734,9 @@
       "is_free": false,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000002",
-        "completion": "0.00000003"
+        "prompt": "0.00000015",
+        "completion": "0.00000015",
+        "input_cache_read": "0.000000015"
       },
       "architecture": "{'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Mistral'}",
       "owner": null
@@ -5101,25 +5128,6 @@
     },
     {
       "provider": "kiloai",
-      "model_id": "x-ai/grok-code-fast-1:optimized:free",
-      "name": "xAI: Grok Code Fast 1, retiring May 15 (free)",
-      "created": null,
-      "is_free": true,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0.000000000000",
-        "completion": "0.000000000000",
-        "request": "0",
-        "image": "0",
-        "web_search": "0",
-        "internal_reasoning": "0",
-        "input_cache_read": "0.000000000000"
-      },
-      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
-      "owner": "openai"
-    },
-    {
-      "provider": "kiloai",
       "model_id": "qwen/qwen3.7-max",
       "name": "Qwen: Qwen3.7 Max",
       "created": null,
@@ -5220,7 +5228,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-7",
       "name": "claude-opus-4-7",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5231,7 +5239,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-6",
       "name": "claude-opus-4-6",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5242,7 +5250,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-5",
       "name": "claude-opus-4-5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5253,7 +5261,7 @@
       "provider": "opencodezen",
       "model_id": "claude-opus-4-1",
       "name": "claude-opus-4-1",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5264,7 +5272,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4-6",
       "name": "claude-sonnet-4-6",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5275,7 +5283,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4-5",
       "name": "claude-sonnet-4-5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5286,7 +5294,7 @@
       "provider": "opencodezen",
       "model_id": "claude-sonnet-4",
       "name": "claude-sonnet-4",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5297,7 +5305,7 @@
       "provider": "opencodezen",
       "model_id": "claude-haiku-4-5",
       "name": "claude-haiku-4-5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5308,7 +5316,7 @@
       "provider": "opencodezen",
       "model_id": "gemini-3.5-flash",
       "name": "gemini-3.5-flash",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5319,7 +5327,7 @@
       "provider": "opencodezen",
       "model_id": "gemini-3.1-pro",
       "name": "gemini-3.1-pro",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5330,7 +5338,7 @@
       "provider": "opencodezen",
       "model_id": "gemini-3-flash",
       "name": "gemini-3-flash",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5341,7 +5349,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.5",
       "name": "gpt-5.5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5352,7 +5360,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.5-pro",
       "name": "gpt-5.5-pro",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5363,7 +5371,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4",
       "name": "gpt-5.4",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5374,7 +5382,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-pro",
       "name": "gpt-5.4-pro",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5385,7 +5393,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-mini",
       "name": "gpt-5.4-mini",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5396,7 +5404,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.4-nano",
       "name": "gpt-5.4-nano",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5407,7 +5415,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.3-codex-spark",
       "name": "gpt-5.3-codex-spark",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5418,7 +5426,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.3-codex",
       "name": "gpt-5.3-codex",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5429,7 +5437,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.2",
       "name": "gpt-5.2",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5440,7 +5448,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.2-codex",
       "name": "gpt-5.2-codex",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5451,7 +5459,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1",
       "name": "gpt-5.1",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5462,7 +5470,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex-max",
       "name": "gpt-5.1-codex-max",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5473,7 +5481,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex",
       "name": "gpt-5.1-codex",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5484,7 +5492,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5.1-codex-mini",
       "name": "gpt-5.1-codex-mini",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5495,7 +5503,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5",
       "name": "gpt-5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5506,7 +5514,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5-codex",
       "name": "gpt-5-codex",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5517,7 +5525,7 @@
       "provider": "opencodezen",
       "model_id": "gpt-5-nano",
       "name": "gpt-5-nano",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5528,7 +5536,7 @@
       "provider": "opencodezen",
       "model_id": "grok-build-0.1",
       "name": "grok-build-0.1",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5539,7 +5547,7 @@
       "provider": "opencodezen",
       "model_id": "glm-5.1",
       "name": "glm-5.1",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5550,7 +5558,7 @@
       "provider": "opencodezen",
       "model_id": "glm-5",
       "name": "glm-5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5561,7 +5569,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.7",
       "name": "minimax-m2.7",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5572,7 +5580,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.5",
       "name": "minimax-m2.5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5583,7 +5591,7 @@
       "provider": "opencodezen",
       "model_id": "kimi-k2.6",
       "name": "kimi-k2.6",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5594,7 +5602,7 @@
       "provider": "opencodezen",
       "model_id": "kimi-k2.5",
       "name": "kimi-k2.5",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5605,7 +5613,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.6-plus",
       "name": "qwen3.6-plus",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5616,7 +5624,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.5-plus",
       "name": "qwen3.5-plus",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5627,7 +5635,7 @@
       "provider": "opencodezen",
       "model_id": "big-pickle",
       "name": "big-pickle",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5638,7 +5646,7 @@
       "provider": "opencodezen",
       "model_id": "deepseek-v4-flash-free",
       "name": "deepseek-v4-flash-free",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5649,7 +5657,7 @@
       "provider": "opencodezen",
       "model_id": "qwen3.6-plus-free",
       "name": "qwen3.6-plus-free",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5660,7 +5668,7 @@
       "provider": "opencodezen",
       "model_id": "minimax-m2.5-free",
       "name": "minimax-m2.5-free",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5671,7 +5679,7 @@
       "provider": "opencodezen",
       "model_id": "nemotron-3-super-free",
       "name": "nemotron-3-super-free",
-      "created": 1779789750,
+      "created": 1779875950,
       "is_free": null,
       "expiration_date": null,
       "pricing": null,
@@ -5686,9 +5694,10 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000025",
-        "completion": "0.0000075",
-        "input_cache_write": "0.000003125"
+        "prompt": "0.00000125",
+        "completion": "0.00000375",
+        "input_cache_read": "0.00000025",
+        "input_cache_write": "0.0000015625"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Qwen', 'instruct_type': None}",
       "owner": null
@@ -5801,7 +5810,7 @@
       "name": "Baidu Qianfan: CoBuddy (free)",
       "created": 1778035480,
       "is_free": null,
-      "expiration_date": null,
+      "expiration_date": "2026-05-27",
       "pricing": {
         "prompt": "0",
         "completion": "0"
@@ -6056,7 +6065,8 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.0000003",
-        "completion": "0.0000018"
+        "completion": "0.0000018",
+        "input_cache_write": "0.000000375"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3', 'instruct_type': None}",
       "owner": null
@@ -6084,7 +6094,7 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000015",
+        "prompt": "0.00000014",
         "completion": "0.000001"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen', 'instruct_type': None}",
@@ -6113,9 +6123,8 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000003",
-        "completion": "0.000002",
-        "input_cache_read": "0.00000015"
+        "prompt": "0.00000029",
+        "completion": "0.0000032"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3', 'instruct_type': None}",
       "owner": null
@@ -6233,9 +6242,9 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.000001",
-        "completion": "0.000003",
-        "input_cache_read": "0.0000002"
+        "prompt": "0.000000435",
+        "completion": "0.00000087",
+        "input_cache_read": "0.0000000036"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
       "owner": null
@@ -6248,9 +6257,9 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.0000004",
-        "completion": "0.000002",
-        "input_cache_read": "0.00000008"
+        "prompt": "0.00000014",
+        "completion": "0.00000028",
+        "input_cache_read": "0.0000000028"
       },
       "architecture": "{'modality': 'text+image+audio+video->text', 'input_modalities': ['text', 'audio', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
       "owner": null
@@ -6479,20 +6488,6 @@
         "input_cache_read": "0.00000024"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['image', 'text', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
-      "owner": null
-    },
-    {
-      "provider": "openrouter",
-      "model_id": "arcee-ai/trinity-large-thinking:free",
-      "name": "Arcee AI: Trinity Large Thinking (free)",
-      "created": 1775058318,
-      "is_free": null,
-      "expiration_date": null,
-      "pricing": {
-        "prompt": "0",
-        "completion": "0"
-      },
-      "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
       "owner": null
     },
     {
@@ -6923,8 +6918,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.000000065",
-        "completion": "0.00000026",
-        "input_cache_write": "0.00000008125"
+        "completion": "0.00000026"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3', 'instruct_type': None}",
       "owner": null
@@ -7040,8 +7034,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.00000026",
-        "completion": "0.00000156",
-        "input_cache_write": "0.000000325"
+        "completion": "0.00000156"
       },
       "architecture": "{'modality': 'text+image+video->text', 'input_modalities': ['text', 'image', 'video'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3', 'instruct_type': None}",
       "owner": null
@@ -8473,8 +8466,7 @@
       "expiration_date": null,
       "pricing": {
         "prompt": "0.00000026",
-        "completion": "0.00000078",
-        "input_cache_write": "0.000000325"
+        "completion": "0.00000078"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Qwen3', 'instruct_type': None}",
       "owner": null
@@ -8883,9 +8875,8 @@
       "is_free": null,
       "expiration_date": null,
       "pricing": {
-        "prompt": "0.00000013",
-        "completion": "0.00000085",
-        "input_cache_read": "0.000000025"
+        "prompt": "0.000000125",
+        "completion": "0.00000084"
       },
       "architecture": "{'modality': 'text->text', 'input_modalities': ['text'], 'output_modalities': ['text'], 'tokenizer': 'Other', 'instruct_type': None}",
       "owner": null
@@ -9414,7 +9405,7 @@
       "name": "Qwen: Qwen3 30B A3B",
       "created": 1745878604,
       "is_free": null,
-      "expiration_date": null,
+      "expiration_date": "2026-06-05",
       "pricing": {
         "prompt": "0.00000009",
         "completion": "0.00000045"
@@ -10684,7 +10675,7 @@
       "name": "Sao10k: Llama 3 Euryale 70B v2.1",
       "created": 1718668800,
       "is_free": null,
-      "expiration_date": null,
+      "expiration_date": "2026-06-05",
       "pricing": {
         "prompt": "0.00000148",
         "completion": "0.00000148"
@@ -10698,7 +10689,7 @@
       "name": "NousResearch: Hermes 2 Pro - Llama-3 8B",
       "created": 1716768000,
       "is_free": null,
-      "expiration_date": null,
+      "expiration_date": "2026-06-05",
       "pricing": {
         "prompt": "0.00000014",
         "completion": "0.00000014"
